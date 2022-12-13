@@ -57,8 +57,8 @@ class Initialize extends Command
         mkdir($path, 0777, true);
 
         $langWholeList = array_keys(include(base_path("vendor/umpirsky/language-list/data/en/language.php")));
-        $countryWholeList = array_keys(include(base_path("vendor/umpirsky/country-list/data/en/language.php")));
-        $currencyWholeList = array_keys(include(base_path("vendor/umpirsky/currency-list/data/en/language.php")));
+        $countryWholeList = array_keys(include(base_path("vendor/umpirsky/country-list/data/en/country.php")));
+        $currencyWholeList = array_keys(include(base_path("vendor/umpirsky/currency-list/data/en/currency.php")));
         file_put_contents(config_path('omx/localeLangList.php'), "<?php return " . var_export($langWholeList, true) . ";");
         file_put_contents(config_path('omx/localeCountryList.php'), "<?php return " . var_export($countryWholeList, true) . ";");
         file_put_contents(config_path('omx/localeCurrencyList.php'), "<?php return " . var_export($currencyWholeList, true) . ";");
