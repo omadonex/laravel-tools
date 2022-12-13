@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'redirectIfNoLocale' => true,
+
     'localeList' => [
         'en',
     ],

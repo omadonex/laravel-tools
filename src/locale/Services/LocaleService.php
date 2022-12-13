@@ -132,19 +132,24 @@ class LocaleService implements ILocaleService
         return $list;
     }
 
-    public function setLocaleFromRoute(): string
+    public function setLocaleFromRoute(): ?string
     {
         $locale = request()->segment(1);
         if ($locale && $this->isLocaleCorrect($locale)) {
-            $locale = $this->getLocaleFact($locale);
-            if ($locale != $this->getLocaleCurrent()) {
-                app()->setLocale($locale);
+            $locale = $this->isLocaleSupported($locale) ? $locale : null;
+            $localeFact = $this->getLocaleFact($locale);
+            if ($localeFact != $this->getLocaleCurrent()) {
+                app()->setLocale($localeFact);
             }
+
+            return $locale;
         }
 
-        return $locale;
-    }
+        app()->setLocale($this->getLocaleDefault());
 
+        return null;
+    }
+    
     public function getLangWholeList(): array
     {
         return $this->langWholeList;
@@ -188,14 +193,15 @@ class LocaleService implements ILocaleService
         $path = $parsed['path'] ?? '';
 
         $list = [];
+        $redirectIfNoLocale = config('omx.locale.redirectIfNoLocale', true);
         foreach ($this->getTranslatedLangList() as $langItem) {
             if ($langItem['lang'] !== $this->getLocaleDefault()) {
                 $parsed['path'] = "/{$langItem['lang']}{$path}";
             } else {
-                $parsed['path'] = $path;
+                $parsed['path'] = $redirectIfNoLocale ? "/{$langItem['lang']}{$path}" : $path;
             }
 
-            $list[] = [
+            $list[$langItem['lang']] = [
                 'lang' => $langItem['lang'],
                 'name' => $langItem['native'],
                 'url' => UtilsCustom::buildUrl($parsed),
