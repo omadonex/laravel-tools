@@ -29,19 +29,19 @@ class Initialize extends Command
     public function handle()
     {
         if (!file_exists(base_path('vendor/umpirsky/country-list'))) {
-            $this->error('Error: "umpirsky/country-list" package is not installed! Run: `composer require-dev umpirsky/country-list`');
+            $this->error('Error: "umpirsky/country-list" package is not installed! Run: `composer require --dev umpirsky/country-list`');
 
             return ;
         }
 
         if (!file_exists(base_path('vendor/umpirsky/currency-list'))) {
-            $this->error('Error: "umpirsky/currency-list" package is not installed! Run: `composer require-dev umpirsky/currency-list`');
+            $this->error('Error: "umpirsky/currency-list" package is not installed! Run: `composer require --dev umpirsky/currency-list`');
 
             return ;
         }
 
         if (!file_exists(base_path('vendor/umpirsky/language-list'))) {
-            $this->error('Error: "umpirsky/language-list" package is not installed! Run: `composer require-dev umpirsky/language-list`');
+            $this->error('Error: "umpirsky/language-list" package is not installed! Run: `composer require --dev umpirsky/language-list`');
 
             return ;
         }
