@@ -46,7 +46,7 @@ class Initialize extends Command
             return ;
         }
 
-        $langList = config('omx.locale.langList', []);
+        $localeList = config('omx.locale.localeList', []);
         $currencyList = config('omx.locale.currencyList', []);
 
         $path = lang_path('vendor/omx-locale');
@@ -63,25 +63,25 @@ class Initialize extends Command
         file_put_contents(config_path('omx/localeCountryList.php'), "<?php return " . var_export($countryWholeList, true) . ";");
         file_put_contents(config_path('omx/localeCurrencyList.php'), "<?php return " . var_export($currencyWholeList, true) . ";");
 
-        foreach ($langList as $lang) {
-            if (!file_exists("{$path}/{$lang}")) {
-                mkdir("{$path}/{$lang}");
+        foreach ($localeList as $locale) {
+            if (!file_exists("{$path}/{$locale}")) {
+                mkdir("{$path}/{$locale}");
             }
 
-            $localizedCountryList = array_change_key_case(include(base_path("vendor/umpirsky/country-list/data/{$lang}/country.php")));
-            file_put_contents("{$path}/{$lang}/country.php", "<?php return " . var_export($localizedCountryList, true) . ";");
+            $localizedCountryList = array_change_key_case(include(base_path("vendor/umpirsky/country-list/data/{$locale}/country.php")));
+            file_put_contents("{$path}/{$locale}/country.php", "<?php return " . var_export($localizedCountryList, true) . ";");
 
-            $localizedCurrencyList = array_change_key_case(include(base_path("vendor/umpirsky/currency-list/data/{$lang}/currency.php")));
+            $localizedCurrencyList = array_change_key_case(include(base_path("vendor/umpirsky/currency-list/data/{$locale}/currency.php")));
             $filteredCurrencyList = array_filter($localizedCurrencyList, function ($key) use ($currencyList) {
                 return in_array($key, $currencyList);
             }, ARRAY_FILTER_USE_KEY);
-            file_put_contents("{$path}/{$lang}/currency.php", "<?php return " . var_export($filteredCurrencyList, true) . ";");
+            file_put_contents("{$path}/{$locale}/currency.php", "<?php return " . var_export($filteredCurrencyList, true) . ";");
 
-            $localizedLangList = array_change_key_case(include(base_path("vendor/umpirsky/language-list/data/{$lang}/language.php")));
-            $filteredLangList = array_filter($localizedLangList, function ($key) use ($langList) {
-                return in_array($key, $langList);
+            $localizedLangList = array_change_key_case(include(base_path("vendor/umpirsky/language-list/data/{$locale}/language.php")));
+            $filteredLangList = array_filter($localizedLangList, function ($key) use ($localeList) {
+                return in_array($key, $localeList);
             }, ARRAY_FILTER_USE_KEY);
-            file_put_contents("{$path}/{$lang}/lang.php", "<?php return " . var_export($filteredLangList, true) . ";");
+            file_put_contents("{$path}/{$locale}/lang.php", "<?php return " . var_export($filteredLangList, true) . ";");
         }
     }
 }
