@@ -47,6 +47,7 @@ class LocaleRedirect
 
         if ($redirectIfNoLocale) {
             $url = $localeService->getRouteLangList($request->fullUrl())[$localeService->getLocaleDefault()]['url'];
+            dd($url, $localeService->getRouteLangList($request->fullUrl()), $localeService->getLocaleDefault());
 
             return new RedirectResponse($url, Response::HTTP_FOUND, ['Vary' => 'Accept-Language']);
         }

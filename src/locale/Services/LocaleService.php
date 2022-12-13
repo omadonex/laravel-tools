@@ -149,7 +149,7 @@ class LocaleService implements ILocaleService
 
         return null;
     }
-    
+
     public function getLangWholeList(): array
     {
         return $this->langWholeList;
