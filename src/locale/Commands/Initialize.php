@@ -49,15 +49,19 @@ class Initialize extends Command
         $langList = config('omx.locale.langList', []);
         $currencyList = config('omx.locale.currencyList', []);
 
-        $path = lang_path('vendor/omx/locale');
+        $path = lang_path('vendor/omx-locale');
         if (file_exists($path)) {
             UtilsCustom::removeDir($path);
         }
 
         mkdir($path, 0777, true);
 
-        $langAllList = array_keys(include(base_path("vendor/umpirsky/language-list/data/en/language.php")));
-        file_put_contents(config_path('omx/lang.php'), "<?php return " . var_export($langAllList, true) . ";");
+        $langWholeList = array_keys(include(base_path("vendor/umpirsky/language-list/data/en/language.php")));
+        $countryWholeList = array_keys(include(base_path("vendor/umpirsky/country-list/data/en/language.php")));
+        $currencyWholeList = array_keys(include(base_path("vendor/umpirsky/currency-list/data/en/language.php")));
+        file_put_contents(config_path('omx/localeLangList.php'), "<?php return " . var_export($langWholeList, true) . ";");
+        file_put_contents(config_path('omx/localeCountryList.php'), "<?php return " . var_export($countryWholeList, true) . ";");
+        file_put_contents(config_path('omx/localeCurrencyList.php'), "<?php return " . var_export($currencyWholeList, true) . ";");
 
         foreach ($langList as $lang) {
             if (!file_exists("{$path}/{$lang}")) {

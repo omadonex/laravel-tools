@@ -2,6 +2,8 @@
 
 namespace Omadonex\LaravelTools\Locale\Traits;
 
+use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
+
 trait TranslateTrait
 {
     public function translates()
@@ -9,36 +11,36 @@ trait TranslateTrait
         return $this->hasMany(get_class() . 'Translate', 'model_id');
     }
 
-    public function getTranslate($lang = null, $defaultLangProp = null)
+    public function getTranslate(string $locale = null, $defaultLangProp = null)
     {
-        $langKey = $lang ?: app()->getLangCurrent();
-        $filtered = $this->translates->filter(function ($value, $key) use ($langKey) {
-            return $value->lang === $langKey;
+        $locale = $locale ?: app(ILocaleService::class)->getLocaleCurrent();
+        $filtered = $this->translates->filter(function ($value, $key) use ($locale) {
+            return $value->lang === $locale;
         });
 
         if ($filtered->count()) {
             return $filtered->first();
         }
 
-        $defaultLangKey = app('locale')->getLangDefault();
+        $locale = app(ILocaleService::class)->getLocaleDefault();
         if ($defaultLangProp && property_exists($this, $defaultLangProp)) {
-            $defaultLangKey = $this->$defaultLangProp;
+            $locale = $this->$defaultLangProp;
         }
 
-        return $this->translates->filter(function ($value, $key) use ($defaultLangKey) {
-            return $value->lang === $defaultLangKey;
+        return $this->translates->filter(function ($value, $key) use ($locale) {
+            return $value->lang === $locale;
         })->first();
     }
 
-    public function hasTranslateForLang($lang = null)
+    public function hasTranslateForLocale(string $locale = null): bool
     {
-        $langKey = $lang ?: app('locale')->getLangCurrent();
+        $locale = $locale ?: app(ILocaleService::class)->getLocaleCurrent();
 
-        return in_array($langKey, $this->translates->pluck('lang')->all());
+        return in_array($locale, $this->translates->pluck('lang')->all());
     }
 
-    public function getAvailableLangList()
+    public function getAvailableLocaleList(): array
     {
-        return app('locale')->getLangList($this->translates->pluck('lang')->all());
+        return app(ILocaleService::class)->getTranslatedLangList($this->translates->pluck('lang')->all());
     }
 }

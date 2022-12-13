@@ -6,13 +6,13 @@ use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
 
 trait TranslateResourceTrait
 {
-    public function getTranslateIfLoaded($translateResourceClass, $full = true, $lang = null)
+    public function getTranslateIfLoaded($translateResourceClass, $full = true, $locale = null)
     {
-        $lang = $lang ?: app('locale')->getLangCurrent();
+        $locale = $locale ?: app(ILocaleService::class)->getLocaleCurrent();
         $data = [];
 
         if ($this->resource->relationLoaded('translates')) {
-            $data['t'] = new $translateResourceClass($this->getTranslate($lang, ILocaleService::PROP_LANG_DEFAULT));
+            $data['t'] = new $translateResourceClass($this->getTranslate($locale, ILocaleService::PROP_LOCALE_DEFAULT));
             if ($full) {
                 $data['tHas'] = $this->hasTranslateForLang();
                 $data['tList'] = $this->getAvailableLangList();

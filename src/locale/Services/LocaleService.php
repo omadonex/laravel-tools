@@ -7,12 +7,16 @@ use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 
 class LocaleService implements ILocaleService
 {
-    private $moduleList;
-    private $langList;
-    private $langAllList;
-    private $currencyList;
+    private array $moduleList;
 
-    protected $entryMap = [];
+    private array $localeList;
+    private array $currencyList;
+
+    private array $langWholeList;
+    private array $countryWholeList;
+    private array $currencyWholeList;
+
+    protected array $entryMap = [];
 
     /**
      * Locale constructor.
@@ -22,17 +26,20 @@ class LocaleService implements ILocaleService
     {
         $this->moduleList = $moduleList;
 
-        $this->langList = $this->getLangSupportedList();
-        $this->langAllList = config('omx.lang');
-        $this->currencyList = $this->getCurrencySupportedList();
+        $this->localeList = config('omx.locale.localeList');
+        $this->currencyList = config('omx.locale.currencyList');
+
+        $this->langWholeList = config('omx.localeLangList');
+        $this->countryWholeList = config('omx.localeCountryList');
+        $this->currencyWholeList = config('omx.localeCurrencyList');
     }
 
-    public function getLangDefault(): string
+    public function getLocaleDefault(): string
     {
         return config('app.fallback_locale');
     }
 
-    public function getLangCurrent(): string
+    public function getLocaleCurrent(): string
     {
         return app()->getLocale();
     }
@@ -42,46 +49,49 @@ class LocaleService implements ILocaleService
         return config('omx.locale.currencyDefault');
     }
 
-    protected function getLangSupportedList(): array
+    public function isLocaleCorrect(string $locale): bool
     {
-        return config('omx.locale.langList');
+        return in_array($locale, $this->langWholeList);
     }
 
-    protected function getCurrencySupportedList(): array
+    public function isCountryCorrect(string $country): bool
     {
-        return config('omx.locale.currencyList');
+        return in_array($country, $this->countryWholeList);
     }
 
-    private function getLangFact(string $lang = null): string
+    public function isCurrencyCorrect(string $currency): bool
     {
-        if (($lang === null) || !$this->isLangSupported($lang)) {
-            return $this->getLangDefault();
+        return in_array($currency, $this->currencyWholeList);
+    }
+
+    public function isLocaleSupported(string $lang): bool
+    {
+        return in_array($lang, $this->localeList);
+    }
+
+    private function getLocaleFact(string $locale = null): string
+    {
+        if (($locale === null) || !$this->isLocaleSupported($locale)) {
+            return $this->getLocaleDefault();
         }
 
-        return $lang;
+        return $locale;
     }
 
-    /**
-     * @param array $langList
-     * @param string|null $langTrans
-     * @param bool $addNative
-     *
-     * @return array
-     */
-    public function getLangList(array $langList = [], string $locale = null, bool $addNative = true): array
+    public function getTranslatedLangList(array $langList = [], string $locale = null, bool $addNative = true): array
     {
-        $langList = $langList ? array_intersect($langList, $this->langList) : $this->langList;
-        $locale = $this->getLangFact($locale);
+        $langList = $langList ?: $this->localeList;
+        $locale = $this->getLocaleFact($locale);
 
         $list = [];
         foreach ($langList as $lang) {
             $item = [
                 'lang' => $lang,
-                'name' => config("omx.locale.{$langTrans}.lang")[$lang],
+                'name' => __("locale::lang.{$lang}", [], $locale),
             ];
 
             if ($addNative) {
-                $item['native'] = config("omx.locale.{$lang}.lang")[$lang];
+                $item['native'] = __("locale::lang.{$lang}", [], $lang);
             }
 
             $list[] = $item;
@@ -90,101 +100,67 @@ class LocaleService implements ILocaleService
         return $list;
     }
 
-    /**
-     * @param array $currencyList
-     * @param string|null $langTrans
-     *
-     * @return array
-     */
-    public function getCurrencyList(array $currencyList = [], string $langTrans = null): array
+    public function getTranslatedCurrencyList(array $currencyList = [], string $locale = null): array
     {
-        $currencyList = $currencyList ? array_intersect($currencyList, $this->currencyList) : $this->currencyList;
-        $langTrans = $this->getLangFact($langTrans);
+        $currencyList = $currencyList ?: $this->currencyList;
+        $locale = $this->getLocaleFact($locale);
 
         $list = [];
         foreach ($currencyList as $currency) {
             $list[] = [
                 'currency' => $currency,
-                'name' => config("omx.locale.{$langTrans}.currency")[$currency],
+                'name' => __("locale::currency.{$currency}", [], $locale),
             ];
         }
 
         return $list;
     }
 
-    /**
-     * @param string|null $langTrans
-     *
-     * @return array
-     */
-    public function getCountryList(string $langTrans = null): array
+    public function getTranslatedCountryList(array $countryList = [], string $locale = null): array
     {
-        $langTrans = $this->getLangFact($langTrans);
+        $countryList = $countryList ?: $this->countryWholeList;
+        $locale = $this->getLocaleFact($locale);
 
-        return config("omx.locale.{$langTrans}.country");
-    }
-
-    /**
-     * @param string|null $lang
-     */
-    public function setLang(string $lang = null): void
-    {
-        $lang = $this->getLangFact($lang);
-        if ($lang !== $this->getLangCurrent()) {
-            $this->app->setLocale($lang);
-            //Carbon::setLocale($language);
-        }
-    }
-
-    /**
-     * @return string|null
-     */
-    public function setLangFromRoute(): ?string
-    {
-        $lang = $this->app->request->segment(1);
-        if ($lang && $this->isLangCorrect($lang)) {
-            $lang = $this->isLangSupported($lang) ? $lang : null;
-            $this->setLang($lang);
-
-            return $lang;
+        $list = [];
+        foreach ($countryList as $country) {
+            $list[] = [
+                'country' => $country,
+                'name' => __("locale::country.{$country}", [], $locale),
+            ];
         }
 
-        $this->setLang();
-
-        return null;
+        return $list;
     }
 
-    /**
-     * @param string $lang
-     * @return bool
-     */
-    public function isLangCorrect(string $lang): bool
+    public function setLocaleFromRoute(): string
     {
-        return in_array($lang, $this->langAllList);
+        $locale = request()->segment(1);
+        if ($locale && $this->isLocaleCorrect($locale)) {
+            $locale = $this->getLocaleFact($locale);
+            if ($locale != $this->getLocaleCurrent()) {
+                app()->setLocale($locale);
+            }
+        }
+
+        return $locale;
     }
 
-    /**
-     * @param string $lang
-     * @return bool
-     */
-    public function isLangSupported(string $lang): bool
+    public function getLangWholeList(): array
     {
-        return in_array($lang, $this->langList);
+        return $this->langWholeList;
     }
 
-    /**
-     * @return array
-     */
-    public function getLangAllList(): array
+    public function getCountryWholeList(): array
     {
-        return $this->langAllList;
+        return $this->countryWholeList;
     }
 
-    /**
-     * @param string $url
-     * @return string
-     */
-    public function getUrlWithoutLang(string $url): string
+    public function getCurrencyWholeList(): array
+    {
+        return $this->currencyWholeList;
+    }
+
+    public function getUrlWithoutLocale(string $url): string
     {
         $parsed = parse_url($url);
         if (!array_key_exists('path', $parsed)) {
@@ -192,32 +168,28 @@ class LocaleService implements ILocaleService
         }
 
         $segments = explode('/', $parsed['path']);
-        $lang = $segments[1];
+        $locale = $segments[1];
 
-        if ($this->isLangCorrect($lang)) {
+        if ($this->isLocaleCorrect($locale)) {
             if (count($segments) > 2) {
-                return preg_replace("/\/{$lang}\//", '/', $url, 1);
+                return preg_replace("/\/{$locale}\//", '/', $url, 1);
             }
 
-            return preg_replace("/\/{$lang}/", '', $url, 1);
+            return preg_replace("/\/{$locale}/", '', $url, 1);
         }
 
         return $url;
     }
 
-    /**
-     * @param string $currentUrl
-     * @return array
-     */
     public function getRouteLangList(string $currentUrl): array
     {
-        $currentUrlWithoutLang = $this->getUrlWithoutLang($currentUrl);
+        $currentUrlWithoutLang = $this->getUrlWithoutLocale($currentUrl);
         $parsed = parse_url($currentUrlWithoutLang);
         $path = $parsed['path'] ?? '';
 
         $list = [];
-        foreach ($this->getLangList() as $langItem) {
-            if ($langItem['lang'] !== $this->getLangDefault()) {
+        foreach ($this->getTranslatedLangList() as $langItem) {
+            if ($langItem['lang'] !== $this->getLocaleDefault()) {
                 $parsed['path'] = "/{$langItem['lang']}{$path}";
             } else {
                 $parsed['path'] = $path;
@@ -234,33 +206,21 @@ class LocaleService implements ILocaleService
         return $list;
     }
 
-    /**
-     * @param string $name
-     * @param $parameters
-     * @param bool $absolute
-     *
-     * @return string
-     */
     public function route(string $name, $parameters = [], bool $absolute = true): string
     {
         $url = route($name, $parameters, $absolute);
 
-        $lang = $this->getLangCurrent();
-        if ($lang === $this->getLangDefault()) {
+        $locale = $this->getLocaleCurrent();
+        if ($locale === $this->getLocaleDefault()) {
             return $url;
         }
 
         $parsed = parse_url($url);
-        $parsed['path'] = "/{$lang}{$parsed['path']}";
+        $parsed['path'] = "/{$locale}{$parsed['path']}";
 
         return UtilsCustom::buildUrl($parsed);
     }
 
-    /**
-     * @param string $lang
-     *
-     * @return string
-     */
     public function getFlag(string $lang): string
     {
         switch ($lang) {
@@ -270,19 +230,11 @@ class LocaleService implements ILocaleService
         return $lang;
     }
 
-    /**
-     * @return string
-     */
     public function getFlagCurrent(): string
     {
-        return $this->getFlag($this->getLangCurrent());
+        return $this->getFlag($this->getLocaleCurrent());
     }
 
-    /**
-     * @param string $entry
-     *
-     * @return array
-     */
     private function getEntryMap(string $entry): array
     {
         $data = array_merge($this->entryMap, [
@@ -297,17 +249,11 @@ class LocaleService implements ILocaleService
         return $data;
     }
 
-    /**
-     * @param string|null $lang
-     * @param string $entry
-     *
-     * @return array
-     */
-    public function getEntryData(string $lang = null, string $entry = self::ENTRY_ALL): array
-    {
-        $totalData = $this->getTotalData($lang);
-        $entryList = $this->getEntryMap($entry);
-
+//    public function getEntryData(string $lang = null, string $entry = self::ENTRY_ALL): array
+//    {
+//        $totalData = $this->getTotalData($lang);
+//        $entryList = $this->getEntryMap($entry);
+//
 //        if (count($entryModuleList)) {
 //            if ($entryModuleList[0] === '*') {
 //                $entryModuleList = array_keys($this->moduleList);
@@ -315,27 +261,20 @@ class LocaleService implements ILocaleService
 //                $entryModuleList = array_diff(array_keys($this->moduleList), array_slice($entryModuleList, 0));
 //            }
 //        }
-//
+//    }
 
-    }
-
-    /**
-     * @param string|null $lang
-     *
-     * @return array
-     */
-    public function getTotalData(string $lang = null): array
+    public function getTotalData(string $locale = null): array
     {
         $data = [];
 
-        $langList = $lang ? [$lang] : $this->getLangSupportedList();
-        foreach ($langList as $langItem) {
-            $data[$langItem]['app'] = $this->getTranslations($langItem);
-            $data[$langItem]['vendor'] = $this->getTranslationsVendor($langItem);
+        $localeList = $locale ? [$locale] : $this->localeList;
+        foreach ($localeList as $localeItem) {
+            $data[$localeItem]['app'] = $this->getTranslations($localeItem);
+            $data[$localeItem]['vendor'] = $this->getTranslationsVendor($localeItem);
             foreach ($this->moduleList as $module) {
-                $trans = $this->getTranslations($langItem, $module);
+                $trans = $this->getTranslations($localeItem, $module);
                 if (!is_null($trans)) {
-                    $data[$langItem][$module->getLowerName()] = $trans;
+                    $data[$localeItem][$module->getLowerName()] = $trans;
                 }
             }
         }
@@ -343,20 +282,14 @@ class LocaleService implements ILocaleService
         return $data;
     }
 
-    /**
-     * @param string $lang
-     * @param null $module
-     *
-     * @return array
-     */
-    private function getTranslations(string $lang, $module = null): array
+    private function getTranslations(string $locale, $module = null): array
     {
         $trans = [];
         if (is_null($module)) {
-            $pathPart = "lang/{$this->getLangDefault()}";
+            $pathPart = "lang/{$this->getLocaleDefault()}";
             $path = base_path($pathPart);
         } else {
-            $pathPart = "Resources/lang/{$this->getLangDefault()}";
+            $pathPart = "Resources/lang/{$this->getLocaleDefault()}";
             $path = $module->getExtraPath($pathPart);
         }
 
@@ -369,32 +302,24 @@ class LocaleService implements ILocaleService
                 $filePathPart = "{$pathPart}/{$file}";
                 $filePath = $module ? $module->getExtraPath($filePathPart) : base_path($filePathPart);
                 $fileTranslations = include $filePath;
-                $trans[$name] = $this->getTranslationsArray($lang, $fileTranslations, $name, $module);
+                $trans[$name] = $this->getTranslationsArray($locale, $fileTranslations, $name, $module);
             }
         }
 
         return $trans;
     }
 
-    /**
-     * @param string $lang
-     * @param array $arr
-     * @param string $transKey
-     * @param $module
-     *
-     * @return array
-     */
-    private function getTranslationsArray(string $lang, array $arr, string $transKey, $module): array
+    private function getTranslationsArray(string $locale, array $arr, string $transKey, $module): array
     {
         $transArr = [];
         foreach ($arr as $key => $value) {
             $newTransKey = "{$transKey}.{$key}";
 
             if (is_array($value)) {
-                $trans = $this->getTranslationsArray($lang, $value, $newTransKey, $module);
+                $trans = $this->getTranslationsArray($locale, $value, $newTransKey, $module);
             } else {
                 $prefix = is_null($module) ? '' : "{$module->getLowerName()}::";
-                $trans = trans($prefix . $newTransKey, [], $lang);
+                $trans = __($prefix . $newTransKey, [], $locale);
             }
 
             $transArr[$key] = $trans;
@@ -403,11 +328,6 @@ class LocaleService implements ILocaleService
         return $transArr;
     }
 
-    /**
-     * @param string $lang
-     *
-     * @return array
-     */
     private function getTranslationsVendor(string $lang): array
     {
         $trans = [];
@@ -418,7 +338,7 @@ class LocaleService implements ILocaleService
             unset($packages[0]);
             unset($packages[1]);
             foreach ($packages as $dir) {
-                $pathFiles = "{$vendorPath}/{$dir}/{$this->getLangDefault()}";
+                $pathFiles = "{$vendorPath}/{$dir}/{$this->getLocaleDefault()}";
                 $trans[$dir] = [];
                 if (is_dir($pathFiles)) {
                     $files = scandir($pathFiles);

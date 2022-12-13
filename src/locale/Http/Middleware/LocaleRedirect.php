@@ -21,17 +21,17 @@ class LocaleRedirect
     {
         /** @var ILocaleService $localeService */
         $localeService = app(ILocaleService::class);
-        $lang = $request->segment(1);
+        $locale = $request->segment(1);
 
-        if ($lang && $localeService->isLangCorrect($lang)) {
-            if ($lang === $localeService->getLangDefault()) {
+        if ($locale && $localeService->isLocaleCorrect($locale)) {
+            if ($locale === $localeService->getLocaleDefault()) {
                 session()->reflash();
 
-                return new RedirectResponse($localeService->getUrlWithoutLang($request->fullUrl()), 302, ['Vary' => 'Accept-Language']);
+                return new RedirectResponse($localeService->getUrlWithoutLocale($request->fullUrl()), 302, ['Vary' => 'Accept-Language']);
             }
 
-            if ($localeService->isLangSupported($lang)) {
-                session(['lang' => $lang]);
+            if ($localeService->isLocaleSupported($locale)) {
+                session(['locale' => $locale]);
 
                 return $next($request);
             }
