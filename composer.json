@@ -9,13 +9,11 @@
         }
     ],
     "require": {
-        "illuminate/support": "^9.43",
         "illuminate/console": "^9.43",
         "illuminate/database": "^9.43",
         "illuminate/http": "^9.43",
-        "illuminate/auth": "^9.43",
         "illuminate/routing": "^9.43",
-        "umpirsky/country-list": "^2.0"
+        "illuminate/support": "^9.43"
     },
     "autoload": {
         "psr-4": {
