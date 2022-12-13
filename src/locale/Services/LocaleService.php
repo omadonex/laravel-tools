@@ -212,6 +212,7 @@ class LocaleService implements ILocaleService
         return $list;
     }
 
+    //TODO omadonex: check method
     public function route(string $name, $parameters = [], bool $absolute = true): string
     {
         $url = route($name, $parameters, $absolute);
