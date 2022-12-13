@@ -1,0 +1,10 @@
+<?php
+
+namespace $NAMESPACE$\Interfaces\Models\Repositories;
+
+use Omadonex\LaravelTools\Support\Interfaces\Model\IModelRepository;
+
+interface I$CLASS$Repository extends IModelRepository
+{
+
+}

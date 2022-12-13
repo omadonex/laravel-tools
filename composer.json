@@ -1,0 +1,38 @@
+{
+    "name": "omadonex/laravel-tools",
+    "description": "Tools for laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yuriy Arkhipov",
+            "email": "omadonex@yandex.ru"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^9.43",
+        "illuminate/console": "^9.43",
+        "illuminate/database": "^9.43",
+        "illuminate/http": "^9.43",
+        "illuminate/auth": "^9.43",
+        "illuminate/routing": "^9.43",
+        "umpirsky/country-list": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Omadonex\\LaravelTools\\Acl\\": "src/acl",
+            "Omadonex\\LaravelTools\\Locale\\": "src/locale",
+            "Omadonex\\LaravelTools\\Support\\": "src/support"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Omadonex\\LaravelTools\\Acl\\Providers\\AclServiceProvider",
+                "Omadonex\\LaravelTools\\Locale\\Providers\\LocaleServiceProvider",
+                "Omadonex\\LaravelTools\\Support\\Providers\\SupportServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

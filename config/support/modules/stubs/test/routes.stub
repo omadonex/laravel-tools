@@ -1,0 +1,11 @@
+<?php
+
+namespace $MODULE_NAMESPACE$\$STUDLY_NAME$\Tests\Feature\Routes;
+
+use Tests\RoutesTestCase;
+
+class RoutesTest extends RoutesTestCase
+{
+    protected $module = '$LOWER_NAME$';
+    protected $configPath = 'modules/$STUDLY_NAME$/Tests/Feature/Routes/config.php';
+}
