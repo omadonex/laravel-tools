@@ -23,7 +23,7 @@ class LocaleRedirect
         /** @var ILocaleService $localeService */
         $localeService = app(ILocaleService::class);
         $locale = $request->segment(1);
-
+        
         $redirectIfNoLocale = config('omx.locale.redirectIfNoLocale');
         if ($locale && $localeService->isLocaleCorrect($locale)) {
             if ($locale === $localeService->getLocaleDefault()) {
@@ -47,7 +47,6 @@ class LocaleRedirect
 
         if ($redirectIfNoLocale) {
             $url = $localeService->getRouteLangList($request->fullUrl())[$localeService->getLocaleDefault()]['url'];
-            dd($url, $localeService->getRouteLangList($request->fullUrl()), $localeService->getLocaleDefault());
 
             return new RedirectResponse($url, Response::HTTP_FOUND, ['Vary' => 'Accept-Language']);
         }
