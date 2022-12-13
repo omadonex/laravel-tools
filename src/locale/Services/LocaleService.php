@@ -186,9 +186,9 @@ class LocaleService implements ILocaleService
         return $url;
     }
 
-    public function getRouteLangList(string $currentUrl): array
+    public function getRouteLangList(string $url): array
     {
-        $currentUrlWithoutLang = $this->getUrlWithoutLocale($currentUrl);
+        $currentUrlWithoutLang = $this->getUrlWithoutLocale($url);
         $parsed = parse_url($currentUrlWithoutLang);
         $path = $parsed['path'] ?? '';
 

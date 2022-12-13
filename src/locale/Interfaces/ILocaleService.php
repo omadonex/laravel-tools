@@ -39,11 +39,6 @@ interface ILocaleService
     public function getTranslatedCountryList(array $countryList = [], string $locale = null): array;
 
     /**
-     * Returns url without locale segment
-     */
-    public function getUrlWithoutLocale(string $url): string;
-
-    /**
      * Check that locale abbreviation is correct
      */
     public function isLocaleCorrect(string $locale): bool;
@@ -62,4 +57,24 @@ interface ILocaleService
      * Check that locale is supported
      */
     public function isLocaleSupported(string $locale): bool;
+
+    /**
+     * Determine current locale based on a first segment of route
+     */
+    public function setLocaleFromRoute(): ?string;
+
+    /**
+     * Returns url without locale segment
+     */
+    public function getUrlWithoutLocale(string $url): string;
+
+    /**
+     * Generates array of links for url with locale prefix from array of supported locales
+     */
+    public function getRouteLangList(string $url): array;
+
+    /**
+     * Generates translation array that consists of all localization files
+     */
+    public function getTotalData(string $locale = null): array;
 }
