@@ -87,11 +87,11 @@ class LocaleService implements ILocaleService
         foreach ($langList as $lang) {
             $item = [
                 'lang' => $lang,
-                'name' => __("locale::lang.{$lang}", [], $locale),
+                'name' => __("omx-locale::lang.{$lang}", [], $locale),
             ];
 
             if ($addNative) {
-                $item['native'] = __("locale::lang.{$lang}", [], $lang);
+                $item['native'] = __("omx-locale::lang.{$lang}", [], $lang);
             }
 
             $list[] = $item;
@@ -109,7 +109,7 @@ class LocaleService implements ILocaleService
         foreach ($currencyList as $currency) {
             $list[] = [
                 'currency' => $currency,
-                'name' => __("locale::currency.{$currency}", [], $locale),
+                'name' => __("omx-locale::currency.{$currency}", [], $locale),
             ];
         }
 
@@ -125,7 +125,7 @@ class LocaleService implements ILocaleService
         foreach ($countryList as $country) {
             $list[] = [
                 'country' => $country,
-                'name' => __("locale::country.{$country}", [], $locale),
+                'name' => __("omx-locale::country.{$country}", [], $locale),
             ];
         }
 
