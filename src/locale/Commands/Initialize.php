@@ -49,16 +49,12 @@ class Initialize extends Command
         $langList = config('omx.locale.langList', []);
         $currencyList = config('omx.locale.currencyList', []);
 
-        if (file_exists(config_path('omx/lang.php'))) {
-            unlink(config_path('omx/lang.php'));
-        }
-
         $path = lang_path('vendor/omx/locale');
         if (file_exists($path)) {
             UtilsCustom::removeDir($path);
         }
 
-        mkdir($path);
+        mkdir($path, 0777, true);
 
         $langAllList = array_keys(include(base_path("vendor/umpirsky/language-list/data/en/language.php")));
         file_put_contents(config_path('omx/lang.php'), "<?php return " . var_export($langAllList, true) . ";");

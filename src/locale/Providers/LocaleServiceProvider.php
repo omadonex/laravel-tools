@@ -14,7 +14,7 @@ class LocaleServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $pathRoot = realpath(__DIR__.'/../..');
+        $pathRoot = realpath(__DIR__.'/../../..');
 
         $this->loadTranslationsFrom(lang_path('vendor/omx/locale'), 'locale');
 
