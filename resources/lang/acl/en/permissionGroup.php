@@ -1,10 +1,10 @@
 <?php
 
-use Omadonex\LaravelAcl\Classes\ConstAcl;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 
 return [
-    ConstAcl::APP_PERMISSION_GROUP_ID => [
+    IAclService::PARENT_PERMISSION_GROUP_ID => [
         'name' => 'App',
-        'description' => 'Group for app permissions',
+        'description' => 'Parent group for all app permissions',
     ],
 ];

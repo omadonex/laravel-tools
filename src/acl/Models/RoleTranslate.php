@@ -10,7 +10,7 @@ class RoleTranslate extends Model
 {
     use ProtectedGenerateTrait;
 
-    protected $table = 'acl_role_translates';
+    protected $table = 'acl_role_translate';
     protected $fillable = ['model_id', 'lang', 'name', 'description'];
     public $timestamps = false;
 

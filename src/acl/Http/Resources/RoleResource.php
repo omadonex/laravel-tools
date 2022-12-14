@@ -19,7 +19,7 @@ class RoleResource extends JsonResource
     {
         return array_merge([
             'id' => $this->id,
-            'isRoot' => $this->is_root,
+            'isHidden' => $this->is_hidden,
             'isStaff' => $this->is_staff,
         ], $this->getTranslateIfLoaded(RoleTranslateResource::class, false));
     }

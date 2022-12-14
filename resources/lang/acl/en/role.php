@@ -1,15 +1,20 @@
 <?php
 
-use Omadonex\LaravelAcl\Classes\ConstAcl;
+use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 
 return [
-    ConstAcl::ROLE_USER => [
+    IRole::USER => [
         'name' => 'User',
         'description' => 'Default role for all users',
     ],
 
-    ConstAcl::ROLE_ROOT => [
+    IRole::ROOT => [
         'name' => 'Root',
-        'description' => 'A role for super user (root)',
+        'description' => 'A role for a technical super user (root)',
+    ],
+
+    IRole::ADMIN => [
+        'name' => 'Admin',
+        'description' => 'A role for a system super user (admin)',
     ],
 ];

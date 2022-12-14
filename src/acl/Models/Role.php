@@ -11,13 +11,15 @@ class Role extends Model
 {
     use TranslateTrait, ProtectedGenerateTrait;
 
-    protected $table = 'acl_roles';
-    protected $fillable = ['is_root', 'is_staff'];
+    protected $table = 'acl_role';
+    protected $fillable = ['is_staff', 'is_hidden', 'sort_index'];
     public $incrementing = false;
     public $timestamps = false;
 
     protected $casts = [
         ConstCustom::DB_FIELD_PROTECTED_GENERATE => 'boolean',
+        'is_staff' => 'boolean',
+        'is_hidden' => 'boolean',
     ];
 
     public $availableRelations = ['translates', 'permissions'];

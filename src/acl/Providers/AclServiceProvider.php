@@ -14,21 +14,20 @@ class AclServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        class_alias(config("auth.providers.users.model"), 'ParentModel');
+        $pathRoot = realpath(__DIR__.'/../../..');
 
-        $pathRoot = realpath(__DIR__.'/../..');
-
-        $this->loadTranslationsFrom("{$pathRoot}/resources/lang", 'acl');
-        $this->loadMigrationsFrom("{$pathRoot}/database/migrations");
+        $this->loadTranslationsFrom("{$pathRoot}/resources/lang/acl", 'omx-acl');
+        $this->loadMigrationsFrom("{$pathRoot}/database/migrations/acl");
 
         $this->publishes([
-            "{$pathRoot}/config/role.php" => config_path('acl/role.php'),
-            "{$pathRoot}/config/permission.php" => config_path('acl/permission.php'),
-            "{$pathRoot}/config/route.php" => config_path('acl/route.php'),
+            "{$pathRoot}/config/acl.php" => config_path('omx/acl/acl.php'),
+            "{$pathRoot}/config/role.php" => config_path('omx/acl/role.php'),
+            "{$pathRoot}/config/permission.php" => config_path('omx/acl/permission.php'),
+            "{$pathRoot}/config/route.php" => config_path('omx/acl/route.php'),
         ], 'config');
 
         $this->publishes([
-            "{$pathRoot}/resources/lang" => resource_path('lang/vendor/acl'),
+            "{$pathRoot}/resources/lang/acl" => lang_path('vendor/omx-acl'),
         ], 'translations');
 
         $this->commands([

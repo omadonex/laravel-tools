@@ -1,15 +1,20 @@
 <?php
 
-use Omadonex\LaravelAcl\Classes\ConstAcl;
+use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 
 return [
-    ConstAcl::ROLE_USER => [
+    IRole::USER => [
         'name' => 'Пользователь',
         'description' => 'Роль по умолчанию для всех пользователей',
     ],
 
-    ConstAcl::ROLE_ROOT => [
+    IRole::ROOT => [
         'name' => 'Root',
-        'description' => 'Роль для пользователя с самыми широкими правами (root)',
+        'description' => 'Роль для технического пользователя с самыми широкими правами (root)',
+    ],
+
+    IRole::ADMIN => [
+        'name' => 'Администратор',
+        'description' => 'Роль для системного пользователя с самыми широкими правами (admin)',
     ],
 ];

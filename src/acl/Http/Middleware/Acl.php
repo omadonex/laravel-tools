@@ -3,6 +3,7 @@
 namespace Omadonex\LaravelTools\Acl\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Response;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 
 class Acl {
@@ -14,16 +15,21 @@ class Acl {
      * @return mixed
      */
     public function handle($request, Closure $next) {
+        if (!$request->user()) {
+            abort(Response::HTTP_UNAUTHORIZED);
+        }
+
+        $routeName = $request->route()->getName();
+        $user = $request->user();
+
         /** @var IAclService $aclService */
         $aclService = app(IAclService::class);
+        $aclService->setUser($user);
 
-        $actions = $request->route()->getAction();
-        $permissions = $actions['permissions'] ?? null;
-
-        if (!$permissions || $aclService->check($permissions)) {
+        if ($aclService->checkRoute($routeName)) {
             return $next($request);
         }
 
-        abort(404);
+        abort(Response::HTTP_FORBIDDEN);
     }
 }

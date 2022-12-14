@@ -5,7 +5,7 @@ namespace Omadonex\LaravelTools\Acl\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Nwidart\Modules\Facades\Module;
-use Omadonex\LaravelTools\Acl\Classes\ConstAcl;
+use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\PermissionGroup;
 use Omadonex\LaravelTools\Acl\Models\PermissionGroupTranslate;
 use Omadonex\LaravelTools\Acl\Models\PermissionTranslate;
@@ -32,25 +32,16 @@ class Generate extends Command
     protected $description = 'Generate all data for acl based on config files';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        if (!file_exists(resource_path('lang/vendor/acl'))
-            || !file_exists(base_path('config/acl/role.php'))
-            || !file_exists(base_path('config/acl/permission.php'))) {
+        if (!file_exists(lang_path('vendor/omx-acl'))
+            || !file_exists(base_path('config/omx/acl/role.php'))
+            || !file_exists(base_path('config/omx/acl/permission.php'))
+            || !file_exists(base_path('config/omx/acl/route.php'))) {
             $this->error('Error: main config and lang files are not published!');
 
             return ;
@@ -59,23 +50,25 @@ class Generate extends Command
         Role::protectedGenerate()->delete();
         RoleTranslate::protectedGenerate()->delete();
         Permission::truncate();
+        PermissionTranslate::truncate();
         PermissionGroup::truncate();
         PermissionGroupTranslate::truncate();
-        PermissionTranslate::truncate();
+
         \DB::table('acl_pivot_permission_role')->where(ConstCustom::DB_FIELD_PROTECTED_GENERATE, true)->delete();
 
         $aclEntryList = [
             [
-                'configRole' => base_path('config/acl/role.php'),
-                'configPermission' => base_path('config/acl/permission.php'),
-                'langPath' => resource_path('lang/vendor/acl'),
+                'configRole' => base_path('config/omx/acl/role.php'),
+                'configPermission' => base_path('config/omx/acl/permission.php'),
+                'langPath' => lang_path('vendor/omx-acl'),
                 'module' => 'app',
             ],
         ];
 
+        //TODO omadonex: проверить генерацию модулей
         if (class_exists(self::NWIDART_CLASS)) {
             foreach (Module::all() as $module) {
-                $configPath = $module->getExtraPath('Config/acl');
+                $configPath = $module->getExtraPath('Config/omx/acl');
                 $aclEntryList[] = [
                     'configRole' => "{$configPath}/role.php",
                     'configPermission' => "{$configPath}/permission.php",
@@ -96,7 +89,7 @@ class Generate extends Command
             if (file_exists($langPath)) {
                 $langKeyList = array_diff(scandir($langPath), ['.', '..']);
             } else {
-                $langKeyList = [app()->currentLocale()];
+                $langKeyList = [config('app.fallback_locale')];
             }
 
             $permissionList = array_merge($permissionList, $this->createPermission($configPermission, $langPath, $langKeyList, $aclEntry['module']));
@@ -123,8 +116,9 @@ class Generate extends Command
         $createdList = [];
 
         if ($module === 'app') {
-            $data[ConstAcl::ROLE_USER] = [];
-            $data[ConstAcl::ROLE_ROOT] = ['staff' => true];
+            $data[IRole::ROOT] = ['is_staff' => false, 'is_hidden' => true, 'sort_index' => -3];
+            $data[IRole::ADMIN] = ['is_staff' => true, 'is_hidden' => false, 'sort_index' => -2];
+            $data[IRole::USER] = ['is_staff' => false, 'is_hidden' => false, 'sort_index' => -1];
         }
 
         foreach ($data as $roleId => $roleData) {
@@ -132,8 +126,9 @@ class Generate extends Command
 
             $role = Role::create([
                 'id' => $roleId,
-                'is_root' => $roleId === ConstAcl::ROLE_ROOT,
+                'is_hidden' => $roleData['hidden'] ?? false,
                 'is_staff' => $roleData['staff'] ?? false,
+                'sort_index' => $roleData['sort_index'] ?? 0,
                 ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
             ]);
 
@@ -171,9 +166,10 @@ class Generate extends Command
 
         if ($permissionGroupId === null) {
             $permissionGroupId = $module;
-            $this->createPermissionGroup($permissionGroupId, null, 0, $langPath, $langKeyList);
+            $this->createPermissionGroup($permissionGroupId, null, 1, $langPath, $langKeyList);
         }
 
+        $permissionGroupSortIndex = 1;
         foreach ($data as $key => $value) {
             if (is_string($value)) {
                 $permissionId = $value;
@@ -196,28 +192,22 @@ class Generate extends Command
             } elseif (is_array($value)) {
                 $groupId = $key;
                 $permissionList = $value;
-                $this->createPermissionGroup($groupId, $permissionGroupId, 0, $langPath, $langKeyList);
+                $this->createPermissionGroup($groupId, $permissionGroupId, $permissionGroupSortIndex, $langPath, $langKeyList);
                 $createdList = array_merge($createdList, $this->createPermission($permissionList, $langPath, $langKeyList, $module, $groupId));
+                $permissionGroupSortIndex++;
             }
         }
 
         return $createdList;
     }
 
-    /**
-     * @param string $id
-     * @param string|null $parentId
-     * @param int $order
-     * @param string $langPath
-     * @param array $langKeyList
-     */
-    private function createPermissionGroup(string $id, ?string $parentId, int $order, string $langPath, array $langKeyList): void
+    private function createPermissionGroup(string $id, ?string $parentId, int $sortIndex, string $langPath, array $langKeyList): void
     {
         if (!PermissionGroup::find($id)) {
             PermissionGroup::create([
                 'id' => $id,
                 'parent_id' => $parentId,
-                'order' => $order,
+                'sort_index' => $sortIndex,
             ]);
 
             foreach ($langKeyList as $lang) {

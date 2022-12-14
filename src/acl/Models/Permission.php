@@ -9,8 +9,8 @@ class Permission extends Model
 {
     use TranslateTrait;
 
-    protected $table = 'acl_permissions';
-    protected $fillable = [];
+    protected $table = 'acl_permission';
+    protected $fillable = ['sort_index'];
     public $incrementing = false;
     public $timestamps = false;
 
