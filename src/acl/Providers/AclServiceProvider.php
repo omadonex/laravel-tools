@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Acl\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Omadonex\LaravelTools\Acl\Commands\Generate;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 
 class AclServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,6 @@ class AclServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->alias(IAclService::class, 'acl');
     }
 }
