@@ -249,32 +249,55 @@ class AclService implements IAclService
     public function getRoutesData(): array
     {
         $routes = Route::getRoutes()->getRoutes();
-        $routesData = [];
+        $routesData = [
+            IAclService::SECTION_DENIED => [],
+            IAclService::SECTION_ALLOWED => [],
+            IAclService::SECTION_PROTECTED => [],
+            IAclService::SECTION_UNSAFE => [],
+        ];
 
         /** @var \Illuminate\Routing\Route $route */
         foreach ($routes as $route) {
             $routeName = $route->getName();
-            $routePath = $route->getPath();
-            $routeMethods = $route->getMethods();
+            $routePath = $route->uri();
+            $routeMethods = $route->methods();
 
             //Ищем в группе запрещенных для всех роутов
-            if ($this->searchInSection($routeName, self::SECTION_DENIED) === true) {
-                $routesData[self::SECTION_DENIED][] = ['name' => $routeName, 'path' => $routePath, 'methods' => $routeMethods];
+            if ($this->searchInSection($routeName, IAclService::SECTION_DENIED) === true) {
+                $routesData[IAclService::SECTION_DENIED][] = [
+                    'name' => $routeName,
+                    'path' => $routePath,
+                    'methods' => $routeMethods
+                ];
                 continue;
             }
 
             //Ищем в группе разрешенных для всех роутов
-            if ($this->searchInSection($routeName, self::SECTION_ALLOWED) === true) {
-                $routesData[self::SECTION_ALLOWED][] = ['name' => $routeName, 'path' => $routePath, 'methods' => $routeMethods];
+            if ($this->searchInSection($routeName, IAclService::SECTION_ALLOWED) === true) {
+                $routesData[IAclService::SECTION_ALLOWED][] = [
+                    'name' => $routeName,
+                    'path' => $routePath,
+                    'methods' => $routeMethods
+                ];
                 continue;
             }
 
             //Ищем в группе роутов с разрешениями
-            $permission = $this->searchInSection($routeName, self::SECTION_PROTECTED);
+            $permission = $this->searchInSection($routeName, IAclService::SECTION_PROTECTED);
             if ($permission === false) {
-                $routesData[self::SECTION_UNSAFE][] = ['name' => $routeName, 'path' => $routePath, 'action' => $route->getActionName(), 'methods' => $routeMethods];
+                $routesData[IAclService::SECTION_UNSAFE][] = [
+                    'name' => $routeName,
+                    'path' => $routePath,
+                    'action' => $route->getActionName(),
+                    'methods' => $routeMethods
+                ];
             } else {
-                $routesData[self::SECTION_PROTECTED][] = ['name' => $routeName, 'path' => $routePath, 'permissionData' => $permission, 'methods' => $routeMethods];
+                $routesData[IAclService::SECTION_PROTECTED][] = [
+                    'name' => $routeName,
+                    'path' => $routePath,
+                    'permissionData' => $permission,
+                    'methods' => $routeMethods
+                ];
             }
         }
 
