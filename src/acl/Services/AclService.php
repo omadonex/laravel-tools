@@ -248,9 +248,10 @@ class AclService implements IAclService
 
     public function getRoutesData(): array
     {
-        /** @var Route $route */
         $routes = Route::getRoutes()->getRoutes();
         $routesData = [];
+
+        /** @var \Illuminate\Routing\Route $route */
         foreach ($routes as $route) {
             $routeName = $route->getName();
             $routePath = $route->getPath();
