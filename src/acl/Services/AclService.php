@@ -2,9 +2,9 @@
 
 namespace Omadonex\LaravelTools\Acl\Services;
 
-use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
