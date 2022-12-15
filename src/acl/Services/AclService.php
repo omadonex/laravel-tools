@@ -262,6 +262,16 @@ class AclService implements IAclService
             $routePath = $route->uri();
             $routeMethods = $route->methods();
 
+            if (!$routeName) {
+                $routesData[IAclService::SECTION_UNSAFE][] = [
+                    'name' => $routeName,
+                    'path' => $routePath,
+                    'action' => $route->getActionName(),
+                    'methods' => $routeMethods
+                ];
+                continue;
+            }
+
             //Ищем в группе запрещенных для всех роутов
             if ($this->searchInSection($routeName, IAclService::SECTION_DENIED) === true) {
                 $routesData[IAclService::SECTION_DENIED][] = [
