@@ -41,8 +41,13 @@ abstract class AclNavbarService
                 continue;
             }
 
-            $permission = $menuItem['permission'] ?? [];
-            $access = $permission === [] ? true : $this->aclService->check($permission);
+            $access = true;
+            if ($permission = $menuItem['permission'] ?? null) {
+                $access = $permission ? $this->aclService->check($permission) : true;
+            }
+            if ($role = $menuItem['role'] ?? null) {
+                $access = $access && ($role ? $this->aclService->checkRole($role) : true);
+            }
 
             if ($access) {
                 $name = $menuItem['t'] ?? false ? __($menuItem['name']) : $menuItem['name'];
