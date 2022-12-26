@@ -12,7 +12,7 @@ abstract class AclNavbarService
     public function __construct(IAclService $aclService)
     {
         $this->aclService = $aclService;
-        $this->data = config('omx.acl.navbar.data', []);
+        $this->data = config('omx.acl.navbar', []);
     }
 
     public function generate()
