@@ -28,9 +28,8 @@ abstract class AclNavbarService
 
     protected abstract function rootItemAttributes(): string;
     protected abstract function lineItemHtml(): string;
-    protected abstract function singleItemTemplateHtml(string $url, string $itemName, string $iconHtml = '', string $badge = '', array $badgeParams = []): string;
-    protected abstract function listItemTemplateHtml(string $url, string $itemName, string $subHtml, string $iconHtml = '', string $badge = '', array $badgeParams = []): string;
-    protected abstract function iconHtml(string $iconName): string;
+    protected abstract function singleItemTemplateHtml(string $url, string $name, string $icon = '', string $badge = '', array $badgeParams = []): string;
+    protected abstract function listItemTemplateHtml(string $url, string $name, string $subHtml, string $icon = '', string $badge = '', array $badgeParams = []): string;
 
     private function walkMenuData($data, $level = 0)
     {
@@ -55,19 +54,18 @@ abstract class AclNavbarService
                     $route  = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
                     //TODO omadonex: params for routes
                 }
-                $iconHtml = $menuItem['icon'] ?? null ? $this->iconHtml($menuItem['icon']) : '';
 
                 if ($sub) {
                     $subHtml = self::walkMenuData($menuItem['sub'], $level + 1);
                     if ($subHtml || ($menuItem['route'] !== '#')) {
                         if ($subHtml) {
-                            $html .= $this->listItemTemplateHtml($route, $name, $subHtml, $iconHtml, $badge, $badgeParams);
+                            $html .= $this->listItemTemplateHtml($route, $name, $subHtml, $icon, $badge, $badgeParams);
                         } else {
-                            $html .= $this->singleItemTemplateHtml($route, $name, $iconHtml, $badge, $badgeParams);
+                            $html .= $this->singleItemTemplateHtml($route, $name, $icon, $badge, $badgeParams);
                         }
                     }
                 } else {
-                    $html .= $this->singleItemTemplateHtml($route, $name, $iconHtml, $badge, $badgeParams);
+                    $html .= $this->singleItemTemplateHtml($route, $name, $icon, $badge, $badgeParams);
                 }
             }
         }
