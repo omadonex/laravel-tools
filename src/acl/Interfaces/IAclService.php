@@ -35,7 +35,23 @@ interface IAclService
 
     public function checkRouteForUser($user, string $routeName): bool;
 
+    public function getRoutesData(): array;
+
+    public function isAdmin(): bool;
+
+    public function isRoot(): bool;
+
+    public function isUser(): bool;
+
+    public function isDeepMode(): bool;
+
+    public function isLoggedIn(): bool;
+
     public function setUser($user): void;
+
+    public function permissions(bool $onlyNames = false): array;
+
+    public function roles(bool $onlyNames = false): array;
 
     public function user();
 }

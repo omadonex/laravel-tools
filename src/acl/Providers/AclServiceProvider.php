@@ -17,8 +17,11 @@ class AclServiceProvider extends ServiceProvider
     {
         $pathRoot = realpath(__DIR__.'/../../..');
 
+        $this->loadRoutesFrom("{$pathRoot}/src/acl/Routes/web.php");
         $this->loadTranslationsFrom("{$pathRoot}/resources/lang/acl", 'omx-acl');
         $this->loadMigrationsFrom("{$pathRoot}/database/migrations/acl");
+        $this->loadViewsFrom("{$pathRoot}/resources/views/acl", 'omx-acl');
+        $this->loadViewsFrom("{$pathRoot}/resources/views/common", 'omx-common');
 
         $this->publishes([
             "{$pathRoot}/config/acl/acl.php" => config_path('omx/acl/acl.php'),
@@ -29,6 +32,7 @@ class AclServiceProvider extends ServiceProvider
 
         $this->publishes([
             "{$pathRoot}/resources/lang/acl" => lang_path('vendor/omx-acl'),
+            "{$pathRoot}/resources/views/acl" => resource_path('views/vendor/omx-acl'),
         ], 'translations');
 
         $this->commands([

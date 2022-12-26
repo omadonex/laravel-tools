@@ -19,6 +19,7 @@
     "autoload": {
         "psr-4": {
             "Omadonex\\LaravelTools\\Acl\\": "src/acl",
+            "Omadonex\\LaravelTools\\Common\\": "src/common",
             "Omadonex\\LaravelTools\\Locale\\": "src/locale",
             "Omadonex\\LaravelTools\\Support\\": "src/support"
         }
