@@ -10,7 +10,7 @@ class AclController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', Acl::class]);
+        $this->middleware(['web', 'auth', Acl::class]);
     }
 
     public function route(IAclService $aclService)
