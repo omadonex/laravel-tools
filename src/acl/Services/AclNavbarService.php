@@ -28,8 +28,9 @@ abstract class AclNavbarService
 
     protected abstract function rootItemAttributes(): string;
     protected abstract function lineItemHtml(): string;
-    protected abstract function singleItemTemplateHtml(string $url, string $itemName, string $badge = '', array $badgeParams = []): string;
-    protected abstract function listItemTemplateHtml(string $url, string $itemName, string $subHtml, string $badge = '', array $badgeParams = []): string;
+    protected abstract function singleItemTemplateHtml(string $url, string $itemName, string $iconHtml = '', string $badge = '', array $badgeParams = []): string;
+    protected abstract function listItemTemplateHtml(string $url, string $itemName, string $subHtml, string $iconHtml = '', string $badge = '', array $badgeParams = []): string;
+    protected abstract function iconHtml(string $iconName): string;
 
     private function walkMenuData($data, $level = 0)
     {
@@ -40,32 +41,33 @@ abstract class AclNavbarService
                 continue;
             }
 
-            $name = $menuItem['t'] ?? false ? __($menuItem['name']) : $menuItem['name'];
-            $sub = $menuItem['sub'] ?? [];
-            $badge = $menuItem['badge'] ?? '';
-            $badgeParams = $menuItem['badgeParams'] ?? [];
-            if ($menuItem['route'] === '#') {
-                $route = '#';
-            } else {
-                $route  = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
-                //TODO omadonex: params for routes
-            }
             $permission = $menuItem['permission'] ?? [];
-
             $access = $permission === [] ? true : $this->aclService->check($permission);
 
             if ($access) {
+                $name = $menuItem['t'] ?? false ? __($menuItem['name']) : $menuItem['name'];
+                $sub = $menuItem['sub'] ?? [];
+                $badge = $menuItem['badge'] ?? '';
+                $badgeParams = $menuItem['badgeParams'] ?? [];
+                if ($menuItem['route'] === '#') {
+                    $route = '#';
+                } else {
+                    $route  = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
+                    //TODO omadonex: params for routes
+                }
+                $iconHtml = $menuItem['icon'] ?? null ? $this->iconHtml($menuItem['icon']) : '';
+
                 if ($sub) {
                     $subHtml = self::walkMenuData($menuItem['sub'], $level + 1);
                     if ($subHtml || ($menuItem['route'] !== '#')) {
                         if ($subHtml) {
-                            $html .= $this->listItemTemplateHtml($route, $name, $subHtml, $badge, $badgeParams);
+                            $html .= $this->listItemTemplateHtml($route, $name, $subHtml, $iconHtml, $badge, $badgeParams);
                         } else {
-                            $html .= $this->singleItemTemplateHtml($route, $name, $badge, $badgeParams);
+                            $html .= $this->singleItemTemplateHtml($route, $name, $iconHtml, $badge, $badgeParams);
                         }
                     }
                 } else {
-                    $html .= $this->singleItemTemplateHtml($route, $name, $badge, $badgeParams);
+                    $html .= $this->singleItemTemplateHtml($route, $name, $iconHtml, $badge, $badgeParams);
                 }
             }
         }
