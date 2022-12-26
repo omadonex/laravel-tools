@@ -75,6 +75,8 @@ abstract class AclNavbarService
                     $html .= $this->singleItemTemplateHtml($route, $name, $icon, $badge, $badgeParams);
                 }
             }
+
+            $index++;
         }
 
         return $html;
