@@ -29,11 +29,12 @@ abstract class AclNavbarService
     protected abstract function rootItemAttributes(): string;
     protected abstract function lineItemHtml(): string;
     protected abstract function singleItemTemplateHtml(string $url, string $name, string $icon = '', string $badge = '', array $badgeParams = []): string;
-    protected abstract function listItemTemplateHtml(string $url, string $name, string $subHtml, string $icon = '', string $badge = '', array $badgeParams = []): string;
+    protected abstract function listItemTemplateHtml(string $url, string $name, string $subHtml, string $uniqueSubIndex, string $icon = '', string $badge = '', array $badgeParams = []): string;
 
     private function walkMenuData($data, $level = 0)
     {
         $html = '';
+        $index = 0;
         foreach ($data as $menuItem) {
             if ($menuItem['line'] ?? false) {
                 $html .= $this->lineItemHtml();
@@ -46,12 +47,13 @@ abstract class AclNavbarService
             if ($access) {
                 $name = $menuItem['t'] ?? false ? __($menuItem['name']) : $menuItem['name'];
                 $sub = $menuItem['sub'] ?? [];
+                $icon = $menuItem['icon'] ?? '';
                 $badge = $menuItem['badge'] ?? '';
                 $badgeParams = $menuItem['badgeParams'] ?? [];
                 if ($menuItem['route'] === '#') {
                     $route = '#';
                 } else {
-                    $route  = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
+                    $route = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
                     //TODO omadonex: params for routes
                 }
 
@@ -59,7 +61,7 @@ abstract class AclNavbarService
                     $subHtml = self::walkMenuData($menuItem['sub'], $level + 1);
                     if ($subHtml || ($menuItem['route'] !== '#')) {
                         if ($subHtml) {
-                            $html .= $this->listItemTemplateHtml($route, $name, $subHtml, $icon, $badge, $badgeParams);
+                            $html .= $this->listItemTemplateHtml($route, $name, $subHtml, "{$level}_{$index}", $icon, $badge, $badgeParams);
                         } else {
                             $html .= $this->singleItemTemplateHtml($route, $name, $icon, $badge, $badgeParams);
                         }
