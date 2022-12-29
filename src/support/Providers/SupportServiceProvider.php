@@ -22,7 +22,8 @@ class SupportServiceProvider extends ServiceProvider
         $pathRoot = realpath(__DIR__.'/../..');
 
         $this->loadMigrationsFrom("{$pathRoot}/database/migrations");
-        $this->loadViewsFrom("{$pathRoot}/resources/views", 'support');
+        //$this->loadViewsFrom("{$pathRoot}/resources/views", 'support');
+        $this->loadViewsFrom("{$pathRoot}/resources/views/modal", 'omx-modal');
         $this->loadTranslationsFrom("{$pathRoot}/resources/lang", 'support');
 
         $this->publishes([
