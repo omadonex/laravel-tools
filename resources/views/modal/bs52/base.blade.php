@@ -15,7 +15,7 @@
                 </div>
                 @if (!isset($hideFooter) || !$hideFooter)
                     <div class="modal-footer">
-                        <button id="modal-{{ $id }}__btn_cancel" type="button" class="btn btn-light js-btn-no" data-dismiss="modal">Отмена</button>
+                        <button id="modal-{{ $id }}__btn_cancel" type="button" class="btn btn-light js-btn-no {{ $btnSize }}" data-bs-dismiss="modal">Отмена</button>
                         @yield("footer-{$id}")
                     </div>
                 @endif

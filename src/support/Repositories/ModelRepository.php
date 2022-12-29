@@ -6,7 +6,7 @@
  * Time: 21:34
  */
 
-namespace Omadonex\LaravelTools\Support\Services\Model;
+namespace Omadonex\LaravelTools\Support\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,7 +27,7 @@ abstract class ModelRepository implements IModelRepository
     protected $modelClass;
     protected $resourceClass;
 
-    public function __construct(Model $model, $resourceClass)
+    public function __construct(Model $model, $resourceClass = null)
     {
         $this->model = $model;
         $this->modelClass = get_class($model);
@@ -47,6 +47,7 @@ abstract class ModelRepository implements IModelRepository
             'smartField' => null,
             'enabled' => null,
             'paginate' => false,
+            'page' => null,
             'closures' => [],
         ];
 
@@ -74,13 +75,13 @@ abstract class ModelRepository implements IModelRepository
         return $qb;
     }
 
-    protected function getPaginatedResult($qb, $paginate)
+    protected function getPaginatedResult($qb, $paginate, $page)
     {
         if (!$paginate) {
             return $qb->get();
         }
 
-        return $qb->paginate(($paginate === true) ? $this->model->getPerPage() : $paginate);
+        return $qb->paginate(($paginate === true) ? $this->model->getPerPage() : $paginate, ['*'], 'page', $page);
     }
 
     /**
@@ -220,7 +221,7 @@ abstract class ModelRepository implements IModelRepository
     {
         $realOptions = $this->getRealOptions($options);
 
-        $collection = $this->getPaginatedResult($this->makeQB($realOptions), $realOptions['paginate']);
+        $collection = $this->getPaginatedResult($this->makeQB($realOptions), $realOptions['paginate'], $realOptions['page']);
 
         return $this->toResource($collection, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], $realOptions['paginate']);
     }
