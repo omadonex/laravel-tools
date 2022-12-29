@@ -17,7 +17,7 @@ use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeDisabledExc
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeEnabledException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSearchedException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSmartFoundException;
-use Omadonex\LaravelTools\Support\Interfaces\Model\IModelRepository;
+use Omadonex\LaravelTools\Support\Interfaces\Repositories\IModelRepository;
 use Omadonex\LaravelTools\Support\Traits\CanBeEnabledTrait;
 use Omadonex\LaravelTools\Support\Transformers\PaginateResourceCollection;
 
