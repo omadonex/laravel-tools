@@ -23,6 +23,7 @@ class SupportServiceProvider extends ServiceProvider
 
         //$this->loadMigrationsFrom("{$pathRoot}/database/migrations");
         //$this->loadViewsFrom("{$pathRoot}/resources/views", 'support');
+        $this->loadViewsFrom("{$pathRoot}/resources/views/form", 'omx-form');
         $this->loadViewsFrom("{$pathRoot}/resources/views/modal", 'omx-modal');
 //        $this->loadTranslationsFrom("{$pathRoot}/resources/lang", 'support');
 //

@@ -4,7 +4,7 @@ namespace Omadonex\LaravelTools\Support\Traits;
 
 trait DatatablesResponseTrait
 {
-    public function toDatatablesResponse($request, $repository, $options, $listMethod = 'list') {
+    public function toDatatablesResponse($request, $repository, $options, $listMethod = 'list', $transformerClass = null) {
         $paginate = $request->length ?? false;
         $start = $request->start ?? 0;
         $length = $request->length ?? 0;
@@ -33,6 +33,6 @@ trait DatatablesResponseTrait
         $data->recordsFiltered = $data->meta->total;
         $data->draw = $request->draw;
 
-        return $data;
+        return $transformerClass ? (new $transformerClass($data))->getTransformedResponse() : $data;
     }
 }
