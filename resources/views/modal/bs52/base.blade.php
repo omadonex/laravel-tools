@@ -25,10 +25,10 @@
                         <div class="omx-overlay-text">Подождите.<br/>Идет загрузка...</div>
                     </div>
                     <div id="{{ $modalId }}__body_caption">
-                        @yield('modal-body-caption')
+                        @yield("{$modalId}-body-caption")
                     </div>
                     <div id="{{ $modalId }}__body">
-                        @yield('modal-body')
+                        @yield("{$modalId}-body")
                     </div>
                 </div>
                 @if (!isset($hideFooter) || !$hideFooter)
@@ -36,7 +36,7 @@
                         <button id="{{ $modalId }}__btn_cancel" type="button" class="btn btn-light {{ $btnSize }}" data-bs-dismiss="modal">
                             <span id="{{ $modalId }}__btn_cancel_text">{{ $cancelText }}</span>
                         </button>
-                        @yield("modal-footer")
+                        @yield("{$modalId}-footer")
                         <button id="{{ $modalId }}__btn_submit" type="button" class="btn {{ $submitContext }} {{ $btnSize }}">
                             @if (isset($spinner))
                                 <span id="{{ $modalId }}__btn_submit_spinner" style="{{ $spinnerStyle }}" class="{{ $spinner }} {{ $spinnerSize }} float-end d-none" role="status" aria-hidden="true"></span>
