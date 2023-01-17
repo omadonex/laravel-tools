@@ -34,7 +34,7 @@ abstract class ModelRepository implements IModelRepository
         $this->resourceClass = $resourceClass;
     }
 
-    private function getRealOptions($options)
+    protected function getRealOptions($options)
     {
         $keysValues = [
             'exceptions' => false,
@@ -89,9 +89,9 @@ abstract class ModelRepository implements IModelRepository
      * @return mixed
      * @throws OmxClassNotUsesTraitException
      */
-    protected function makeQB($options)
+    protected function makeQB($options, $qb = null)
     {
-        $qb = $this->model->query();
+        $qb = $qb ?: $this->model->query();
 
         if (!is_null($options['trashed'])) {
             if (!in_array(SoftDeletes::class, class_uses($this->modelClass))) {
@@ -217,11 +217,11 @@ abstract class ModelRepository implements IModelRepository
         return $this->toResource($model, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], false);
     }
 
-    public function list($options = [])
+    public function list($options = [], $qb = null)
     {
         $realOptions = $this->getRealOptions($options);
 
-        $collection = $this->getPaginatedResult($this->makeQB($realOptions), $realOptions['paginate'], $realOptions['page']);
+        $collection = $this->getPaginatedResult($this->makeQB($realOptions, $qb), $realOptions['paginate'], $realOptions['page']);
 
         return $this->toResource($collection, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], $realOptions['paginate']);
     }

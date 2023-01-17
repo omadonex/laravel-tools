@@ -4,17 +4,25 @@ namespace Omadonex\LaravelTools\Support\Traits;
 
 trait ConvertCheckboxValuesTrait
 {
-    public function convertCheckBoxValues(array $data): array {
-        return array_map(function ($item) {
-            if ($item === 'on') {
-                return 1;
+    public function convertFromCheckboxValues(array $data, array $fields): array
+    {
+        foreach ($data as $key => $value) {
+            if (in_array($key, $fields)) {
+                $data[$key] = $value === 'on';
             }
+        }
 
-            if ($item === 'off') {
-                return 0;
+        return $data;
+    }
+
+    public function convertToCheckboxValues(array $data, array $fields): array
+    {
+        foreach ($data as $key => $value) {
+            if (in_array($key, $fields)) {
+                $data[$key] = $value ? 'on' : 'off';
             }
+        }
 
-            return $item;
-        }, $data);
+        return $data;
     }
 }
