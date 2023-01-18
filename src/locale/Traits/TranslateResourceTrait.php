@@ -14,8 +14,8 @@ trait TranslateResourceTrait
         if ($this->resource->relationLoaded('translates')) {
             $data['t'] = new $translateResourceClass($this->getTranslate($locale, ILocaleService::PROP_LOCALE_DEFAULT));
             if ($full) {
-                $data['tHas'] = $this->hasTranslateForLang();
-                $data['tList'] = $this->getAvailableLangList();
+                $data['t_has'] = $this->hasTranslateForLang();
+                $data['t_list'] = $this->getAvailableLangList();
             }
         }
 

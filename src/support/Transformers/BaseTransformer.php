@@ -21,7 +21,7 @@ abstract class BaseTransformer
     protected function makeBooleanIcon()
     {
         return function ($value, $row) {
-            return $value ? boolIcon() : '';
+            return boolIcon($value);
         };
     }
 
