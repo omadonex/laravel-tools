@@ -1,0 +1,1 @@
+<input type="file" onchange="{{ $onchange }}" id="{{ $id }}" name="{{ $name }}" class="{{ $class }}">
