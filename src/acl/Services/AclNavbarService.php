@@ -28,6 +28,7 @@ abstract class AclNavbarService
 
     protected abstract function rootItemAttributes(): string;
     protected abstract function lineItemHtml(): string;
+    protected abstract function captionItemHtml(string $name, string $badge = '', array $badgeParams = []): string;
     protected abstract function singleItemTemplateHtml(string $url, string $name, string $icon = '', string $badge = '', array $badgeParams = []): string;
     protected abstract function listItemTemplateHtml(string $url, string $name, string $subHtml, string $uniqueSubIndex, string $icon = '', string $badge = '', array $badgeParams = []): string;
 
@@ -38,6 +39,13 @@ abstract class AclNavbarService
         foreach ($data as $menuItem) {
             if ($menuItem['line'] ?? false) {
                 $html .= $this->lineItemHtml();
+                continue;
+            }
+
+            if ($menuItem['caption'] ?? false) {
+                $badge = $menuItem['badge'] ?? '';
+                $badgeParams = $menuItem['badgeParams'] ?? [];
+                $html .= $this->captionItemHtml($menuItem['name'], $badge, $badgeParams);
                 continue;
             }
 
