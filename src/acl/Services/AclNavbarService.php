@@ -37,18 +37,6 @@ abstract class AclNavbarService
         $html = '';
         $index = 0;
         foreach ($data as $menuItem) {
-            if ($menuItem['line'] ?? false) {
-                $html .= $this->lineItemHtml();
-                continue;
-            }
-
-            if ($menuItem['caption'] ?? false) {
-                $badge = $menuItem['badge'] ?? '';
-                $badgeParams = $menuItem['badgeParams'] ?? [];
-                $html .= $this->captionItemHtml($menuItem['name'], $badge, $badgeParams);
-                continue;
-            }
-
             $access = true;
             if ($permission = $menuItem['permission'] ?? null) {
                 $access = $permission ? $this->aclService->check($permission) : true;
@@ -58,6 +46,18 @@ abstract class AclNavbarService
             }
 
             if ($access) {
+                if ($menuItem['line'] ?? false) {
+                    $html .= $this->lineItemHtml();
+                    continue;
+                }
+
+                if ($menuItem['caption'] ?? false) {
+                    $badge = $menuItem['badge'] ?? '';
+                    $badgeParams = $menuItem['badgeParams'] ?? [];
+                    $html .= $this->captionItemHtml($menuItem['name'], $badge, $badgeParams);
+                    continue;
+                }
+
                 $name = $menuItem['t'] ?? false ? __($menuItem['name']) : $menuItem['name'];
                 $sub = $menuItem['sub'] ?? [];
                 $icon = $menuItem['icon'] ?? '';
