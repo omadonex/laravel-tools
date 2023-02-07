@@ -17,6 +17,7 @@ use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeDisabledExc
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeEnabledException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSearchedException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSmartFoundException;
+use Omadonex\LaravelTools\Support\Classes\Utils\UtilsFilter;
 use Omadonex\LaravelTools\Support\Interfaces\Repositories\IModelRepository;
 use Omadonex\LaravelTools\Support\Traits\CanBeEnabledTrait;
 use Omadonex\LaravelTools\Support\Transformers\PaginateResourceCollection;
@@ -26,6 +27,7 @@ abstract class ModelRepository implements IModelRepository
     protected $model;
     protected $modelClass;
     protected $resourceClass;
+    protected $filterFieldsTypes = [];
 
     public function __construct(Model $model, $resourceClass = null)
     {
@@ -48,6 +50,7 @@ abstract class ModelRepository implements IModelRepository
             'enabled' => null,
             'paginate' => false,
             'page' => null,
+            'filter' => null,
             'closures' => [],
         ];
 
@@ -112,6 +115,10 @@ abstract class ModelRepository implements IModelRepository
                 throw new OmxClassNotUsesTraitException($this->modelClass, CanBeEnabledTrait::class);
             }
             $qb->byEnabled($options['enabled']);
+        }
+
+        if ($options['filter'] !== null) {
+            $qb = UtilsFilter::apply($qb, $options['filter'], $this->filterFieldsTypes);
         }
 
         foreach ($options['closures'] as $closure) {

@@ -35,4 +35,27 @@ trait DatatablesResponseTrait
 
         return $transformerClass ? (new $transformerClass($data))->getTransformedResponse() : $data;
     }
+
+    public function getFilter(string $pageId): array
+    {
+        return session('filter', [])[$pageId] ?? [];
+    }
+
+    public function updateFilter($request, string $pageId): array
+    {
+        $str = 'filter_';
+        $globalFilter = session('filter', []);
+
+        $filter = [];
+        foreach ($request->all() as $key => $value) {
+            if (substr($key, 0, strlen($str)) === $str) {
+                $filter[substr($key, strlen($str))] = $value;
+            }
+        }
+
+        $globalFilter[$pageId] = $filter;
+        session(['filter' => $globalFilter]);
+
+        return $filter;
+    }
 }
