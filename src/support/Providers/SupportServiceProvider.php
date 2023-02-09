@@ -2,13 +2,8 @@
 
 namespace Omadonex\LaravelTools\Support\Providers;
 
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
-use Omadonex\LaravelTools\Support\Commands\Database\UnsafeSeeding;
-use Omadonex\LaravelTools\Support\Commands\Module\Make;
-use Omadonex\LaravelTools\Support\Commands\Module\MakeModel;
-use Omadonex\LaravelTools\Support\Commands\Module\Remove;
-use Omadonex\LaravelTools\Support\Commands\Module\RemoveModel;
+use Omadonex\LaravelTools\Support\Commands\HistoryGenerate;
 
 class SupportServiceProvider extends ServiceProvider
 {
@@ -21,11 +16,10 @@ class SupportServiceProvider extends ServiceProvider
     {
         $pathRoot = realpath(__DIR__.'/../../..');
 
-        //$this->loadMigrationsFrom("{$pathRoot}/database/migrations");
-        //$this->loadViewsFrom("{$pathRoot}/resources/views", 'support');
+        $this->loadTranslationsFrom("{$pathRoot}/resources/lang/support", 'omx-support');
+        $this->loadMigrationsFrom("{$pathRoot}/database/migrations/support");
         $this->loadViewsFrom("{$pathRoot}/resources/views/form", 'omx-form');
         $this->loadViewsFrom("{$pathRoot}/resources/views/modal", 'omx-modal');
-//        $this->loadTranslationsFrom("{$pathRoot}/resources/lang", 'support');
 //
 //        $this->publishes([
 //            "{$pathRoot}/config/modules.php" => config_path('modules.php'),
@@ -52,6 +46,14 @@ class SupportServiceProvider extends ServiceProvider
 //
 //        Validator::extend('time', 'Omadonex\LaravelTools\Support\Services\CustomValidator@timeValidate');
 //        Validator::extend('phone', 'Omadonex\LaravelTools\Support\Services\CustomValidator@phoneValidate');
+
+        $this->publishes([
+            "{$pathRoot}/resources/lang/support" => lang_path('vendor/omx-support'),
+        ], 'translations');
+
+        $this->commands([
+            HistoryGenerate::class,
+        ]);
     }
 
     /**

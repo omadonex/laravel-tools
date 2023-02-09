@@ -257,6 +257,10 @@ abstract class ModelRepository implements IModelRepository
             $model = $model->fresh();
         }
 
+        if (method_exists('writeToHistory')) {
+            $this->writeToHistory();
+        }
+
         if (!$stopPropagation && method_exists($this, 'callbackCreated')) {
             $this->callbackCreated($model);
         }
