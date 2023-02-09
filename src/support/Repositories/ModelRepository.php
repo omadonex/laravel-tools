@@ -51,6 +51,7 @@ abstract class ModelRepository implements IModelRepository
             'paginate' => false,
             'page' => null,
             'filter' => null,
+            'search' => null,
             'closures' => [],
         ];
 
@@ -119,6 +120,15 @@ abstract class ModelRepository implements IModelRepository
 
         if ($options['filter'] !== null) {
             $qb = UtilsFilter::apply($qb, $options['filter'], $this->filterFieldsTypes);
+        }
+
+        if ($options['search'] !== null) {
+            $search = $options['search'];
+            $qb->where(function ($query) use ($search) {
+                foreach ($search['columns'] as $column) {
+                    $query->orWhere($column, 'like', "%{$search['value']}%");
+                }
+            });
         }
 
         foreach ($options['closures'] as $closure) {
