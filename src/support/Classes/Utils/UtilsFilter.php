@@ -5,11 +5,12 @@ namespace Omadonex\LaravelTools\Support\Classes\Utils;
 class UtilsFilter
 {
     const STRING_LIKE = 'stringLike';
+    const EQUALS      = 'equals';
 
     public static function apply($qb, $filterValues, $filterTypes)
     {
         foreach ($filterValues as $key => $value) {
-            if (!(($filterTypes[$key] ?? false))) {
+            if (!(($filterTypes[$key] ?? false)) || empty($value)) {
                 continue;
             }
 
@@ -25,6 +26,13 @@ class UtilsFilter
     private static function filterStringLike($qb, $key, $value)
     {
         $qb->where($key, 'like', "%{$value}%");
+
+        return $qb;
+    }
+
+    private static function filterEquals($qb, $key, $value)
+    {
+        $qb->where($key, $value);
 
         return $qb;
     }
