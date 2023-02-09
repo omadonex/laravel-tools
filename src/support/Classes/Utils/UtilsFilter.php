@@ -6,11 +6,12 @@ class UtilsFilter
 {
     const EQUALS = 'equals';
     const STRING_LIKE = 'stringLike';
+    const EQUALS      = 'equals';
 
     public static function apply($qb, $filterValues, $filterTypes)
     {
         foreach ($filterValues as $key => $value) {
-            if (!(($filterTypes[$key] ?? false))) {
+            if (!(($filterTypes[$key] ?? false)) || empty($value)) {
                 continue;
             }
 
@@ -39,6 +40,13 @@ class UtilsFilter
         if ($value !== '') {
             $qb->where($key, $value);
         }
+
+        return $qb;
+    }
+
+    private static function filterEquals($qb, $key, $value)
+    {
+        $qb->where($key, $value);
 
         return $qb;
     }
