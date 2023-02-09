@@ -7,9 +7,10 @@
         'placeholder' => $placeholder,
         'allowEmptyOption' => true,
     ];
-    
+
     if (!isset($search) || !$search) {
         $options['controlInput'] = null;
+        $options['plugins'] = ['no_backspace_delete'];
     }
 @endphp
 
