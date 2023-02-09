@@ -3,7 +3,11 @@
     /** @var $placeholder */
     $list = isset($list) ? $list: [];
     $current = old($name) ?: (isset($value) ? $value : null);
-    $options['placeholder'] = $placeholder;
+    $options = [
+        'placeholder' => $placeholder,
+        'allowEmptyOption' => true,
+    ];
+    
     if (!isset($search) || !$search) {
         $options['controlInput'] = null;
     }
