@@ -37,7 +37,6 @@ trait DatatablesResponseTrait
         }
 
         $data = $repository->$listMethod($options);
-
         $data = $data->toResponse($request)->getData();
         $data->recordsTotal = $data->meta->total;
         $data->recordsFiltered = $data->meta->total;
