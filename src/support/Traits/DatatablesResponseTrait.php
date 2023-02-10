@@ -10,6 +10,7 @@ trait DatatablesResponseTrait
         $options,
         $listMethod = 'list',
         $transformerClass = null,
+        $transformerParams = [],
         $ignoredSearchColumns = ['actions']
     ) {
         $paginate = $request->length ?? false;
@@ -52,7 +53,7 @@ trait DatatablesResponseTrait
         $data->recordsFiltered = $data->meta->total;
         $data->draw = $request->draw;
 
-        return $transformerClass ? (new $transformerClass($data))->getTransformedResponse() : $data;
+        return $transformerClass ? (new $transformerClass($data, $transformerParams))->getTransformedResponse() : $data;
     }
 
     public function evalFilter($request): array

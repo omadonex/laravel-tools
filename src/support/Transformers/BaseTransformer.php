@@ -2,14 +2,18 @@
 
 namespace Omadonex\LaravelTools\Support\Transformers;
 
+use Carbon\Carbon;
+
 abstract class BaseTransformer
 {
+    protected $params;
     protected $response;
     protected $originalData;
     protected $convertTranslate;
 
-    public function __construct($response, $convertTranslate = true)
+    public function __construct($response, $params = [], $convertTranslate = true)
     {
+        $this->params = $params;
         $this->response = $response;
         $this->convertTranslate = $convertTranslate;
         $this->originalData = $this->response->data;
@@ -22,6 +26,22 @@ abstract class BaseTransformer
     {
         return function ($value, $row) {
             return boolIcon($value);
+        };
+    }
+
+    protected function makeDateTime($format = 'd.m.Y H:i:s')
+    {
+        return function ($value, $row) use ($format) {
+            return Carbon::parse($value)->format($format);
+        };
+    }
+
+    protected function makeLink($urlName)
+    {
+        return function ($value, $row) use ($urlName) {
+            $url = route($urlName, $value);
+
+            return "<a href=\"{$url}\">{$value}</a>";
         };
     }
 
