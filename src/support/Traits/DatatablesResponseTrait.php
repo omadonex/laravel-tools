@@ -4,16 +4,26 @@ namespace Omadonex\LaravelTools\Support\Traits;
 
 trait DatatablesResponseTrait
 {
-    public function toDatatablesResponse($request, $repository, $options, $listMethod = 'list', $transformerClass = null, $ignoredSearchColumns = ['actions']) {
+    public function toDatatablesResponse(
+        $request,
+        $repository,
+        $options,
+        $listMethod = 'list',
+        $transformerClass = null,
+        $ignoredSearchColumns = ['actions']
+    ) {
         $paginate = $request->length ?? false;
         $start = $request->start ?? 0;
         $length = $request->length ?? 0;
 
-        $columns = array_filter(array_map(function ($item) {
-            return $item['name'];
-        }, $request->all()['columns']), function ($item) use ($ignoredSearchColumns) {
-            return !in_array($item, $ignoredSearchColumns);
-        });
+        $columns = array_filter(
+            array_map(function ($item) {
+                return $item['name'];
+            }, $request->all()['columns']),
+            function ($item) use ($ignoredSearchColumns) {
+                return !in_array($item, $ignoredSearchColumns);
+            }
+        );
 
         if ($request->search['value']) {
             $options['search'] = ['columns' => $columns, 'value' => $request->search['value']];
@@ -45,9 +55,25 @@ trait DatatablesResponseTrait
         return $transformerClass ? (new $transformerClass($data))->getTransformedResponse() : $data;
     }
 
-    public function getFilter(string $pageId): array
+    public function evalFilter($request): array
     {
-        return session('filter', [])[$pageId] ?? [];
+        $str = 'filter_';
+        $filter = [];
+        foreach ($request->all() as $key => $value) {
+            if (substr($key, 0, strlen($str)) === $str) {
+                $filter[substr($key, strlen($str))] = $value;
+            }
+        }
+
+        return $filter;
+    }
+
+    public function getFilter($request, string $pageId): array
+    {
+        $sessionFilter = session('filter', [])[$pageId] ?? [];
+        $requestFilter = $this->evalFilter($request);
+
+        return array_merge($sessionFilter, $requestFilter);
     }
 
     public function clearFilter(string $pageId): void
@@ -59,16 +85,8 @@ trait DatatablesResponseTrait
 
     public function updateFilter($request, string $pageId): array
     {
-        $str = 'filter_';
         $globalFilter = session('filter', []);
-
-        $filter = [];
-        foreach ($request->all() as $key => $value) {
-            if (substr($key, 0, strlen($str)) === $str) {
-                $filter[substr($key, strlen($str))] = $value;
-            }
-        }
-
+        $filter = $this->evalFilter($request);
         $globalFilter[$pageId] = $filter;
         session(['filter' => $globalFilter]);
 
