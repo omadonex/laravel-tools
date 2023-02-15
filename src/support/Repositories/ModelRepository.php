@@ -357,4 +357,9 @@ abstract class ModelRepository implements IModelRepository
             $this->query()->delete();
         }
     }
+
+    public function pluck(?string $emptyOptionName = null, string $name = 'name', string $id = 'id'): array
+    {
+        return ($emptyOptionName !== null ? ['' => $emptyOptionName] : []) + $this->model::pluck($name, $id)->toArray();
+    }
 }

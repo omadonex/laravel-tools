@@ -45,6 +45,27 @@ abstract class BaseTransformer
         };
     }
 
+    protected function makePrice()
+    {
+        return function ($value, $row) {
+            return number_format((float)$value, 2, ',', ' ');
+        };
+    }
+
+    protected function makePercent()
+    {
+        return function ($value, $row) {
+            return "{$value} %";
+        };
+    }
+
+    protected function makeIfEmpty($urlName)
+    {
+        return function ($value, $row) use ($urlName) {
+            return empty($value) ? '&mdash;' : $value;
+        };
+    }
+
     public function getTransformedData()
     {
         $transformers = $this->transformers();
