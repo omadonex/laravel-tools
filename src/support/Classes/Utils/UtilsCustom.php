@@ -195,6 +195,12 @@ class UtilsCustom
         return $name;
     }
 
+    public static function camelToDashed(string $pageId): string
+    {
+        return strtolower(preg_replace('/([^A-Z-])([A-Z])/', '$1-$2', $pageId));
+    }
+
+
     public static function deepScandir($path, $recursive = true, $nameModifierCallback = null, $ignore = [], $subfolder = null)
     {
         //TODO omadonex: для $ignore стоит сделать регулярные выражения, сейчас тупо сравниваем по имени

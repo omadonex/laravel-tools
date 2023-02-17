@@ -10,6 +10,9 @@ abstract class History extends Model
 {
     protected $guarded = [ 'id' ];
     protected $fillable = ['model_id', 'user_id', 'history_event_id', 'data', 'occur_at'];
+    protected $dates = [
+        'occur_at',
+    ];
     protected $casts = [
         'data' => 'object',
     ];

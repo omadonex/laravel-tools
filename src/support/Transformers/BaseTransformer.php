@@ -36,12 +36,13 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makeLink($urlName)
+    protected function makeLink(string $urlName, string $caption = null)
     {
-        return function ($value, $row) use ($urlName) {
+        return function ($value, $row) use ($urlName, $caption) {
             $url = route($urlName, $value);
+            $text = $caption ?: $value;
 
-            return "<a href=\"{$url}\">{$value}</a>";
+            return "<a href=\"{$url}\">{$text}</a>";
         };
     }
 
