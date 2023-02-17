@@ -60,9 +60,9 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makeIfEmpty($urlName)
+    protected function makeIfEmpty()
     {
-        return function ($value, $row) use ($urlName) {
+        return function ($value, $row) {
             return empty($value) ? '&mdash;' : $value;
         };
     }
