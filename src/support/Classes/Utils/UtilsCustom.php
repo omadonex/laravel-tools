@@ -195,11 +195,11 @@ class UtilsCustom
         return $name;
     }
 
+    //TODO omadonex: Косямба, только для двух слов
     public static function camelToDashed(string $pageId): string
     {
         return strtolower(preg_replace('/([^A-Z-])([A-Z])/', '$1-$2', $pageId));
     }
-
 
     public static function deepScandir($path, $recursive = true, $nameModifierCallback = null, $ignore = [], $subfolder = null)
     {

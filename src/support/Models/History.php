@@ -18,6 +18,10 @@ abstract class History extends Model
     ];
     public $timestamps = false;
 
+    public static function historyCasts(): array {
+        return [];
+    }
+
     public function historyEvent(): BelongsTo
     {
         return $this->belongsTo(HistoryEvent::class);
