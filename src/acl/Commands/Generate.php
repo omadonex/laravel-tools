@@ -144,11 +144,11 @@ class Generate extends Command
             foreach ($langKeyList as $lang) {
                 $langFile = "{$langPath}/{$lang}/role.php";
                 $langData = file_exists($langFile) ? include $langFile : [];
-                $this->roleService->createT($lang, [
+                $this->roleService->createT($roleId, $lang, [
                     'name' => $langData[$roleId]['name'] ?? $roleId,
                     'description'  => $langData[$roleId]['description'] ?? $roleId,
                     ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
-                ], $roleId, Role::class);
+                ]);
             }
 
             foreach ($roleData['permissions'] ?? [] as $permission) {
