@@ -250,7 +250,7 @@ abstract class ModelRepository implements IModelRepository
         return $this->makeQB($realOptions)->count();
     }
 
-    public function create($data, $fresh = true, $stopPropagation = false)
+    public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model
     {
         $model = $this->getModel()->create($data);
         if ($fresh) {
@@ -264,14 +264,31 @@ abstract class ModelRepository implements IModelRepository
         return $model;
     }
 
-    public function createT($data, $dataT, $fresh = true)
+    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true, bool $stopPropagation = false): Model
     {
-        $className = (new \ReflectionClass($this->getModel()))->getShortName() . 'Service';
+        $model = $this->create($data, $fresh, true);
+        $this->createT($lang, $model->getKey(), $dataT);
 
-        throw new OmxMethodNotImplementedInClassException($className, 'createT');
+        if (!$stopPropagation && method_exists($this, 'callbackCreatedWithT')) {
+            $this->callbackCreatedWithT($model);
+        }
+
+        return $model;
     }
 
-    public function update($modelOrId, $data, $returnModel = false, $stopPropagation = false)
+    public function createT(string $lang, int|string $id, array $dataT): void
+    {
+        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
+
+        call_user_func_array("{$classNameT}::create", [
+            [
+                'model_id' => $id,
+                'lang' => $lang,
+            ] + $dataT
+        ]);
+    }
+
+    public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
     {
         $model = $this->find($modelOrId);
         $result = $model->update($data);
@@ -283,11 +300,31 @@ abstract class ModelRepository implements IModelRepository
         return $returnModel ? $model : $result;
     }
 
-    public function updateT($modelOrId, $data, $dataT, $returnModel = false)
+    public function updateWithT(string $lang, int|string|Model $modelOrId, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model
     {
-        $className = (new \ReflectionClass($this->getModel()))->getShortName() . 'Service';
+        $model = $this->update($modelOrId, $data, true, true);
+        $this->updateT($lang, $model->getKey(), $dataT);
 
-        throw new OmxMethodNotImplementedInClassException($className, 'updateT');
+        if (!$stopPropagation && method_exists($this, 'callbackUpdatedT')) {
+            $this->callbackUpdatedT($model);
+        }
+
+        Model::reguard();
+
+        return $returnModel ? true : $model;
+    }
+
+    public function updateT(string $lang, int|string $id, array $dataT): void
+    {
+        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
+
+        call_user_func_array("{$classNameT}::updateOrCreate", [
+            [
+                'model_id' => $id,
+                'lang' => $lang,
+            ],
+            $dataT
+        ]);
     }
 
     public function updateOrCreate($data)

@@ -15,4 +15,6 @@ class HistoryEvent extends Model
     const CREATE = 1;
     const UPDATE = 2;
     const DELETE = 3;
+    const CREATE_WITH_T = 4;
+    const CREATE_T = 5;
 }

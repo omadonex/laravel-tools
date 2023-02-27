@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Support\Interfaces\Repositories;
 
+use Illuminate\Database\Eloquent\Model;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxClassNotUsesTraitException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSearchedException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSmartFoundException;
@@ -114,46 +115,34 @@ interface IModelRepository
     public function agrCount($options = []);
 
     /**
-     * Создает новую модель по введенным данным и возращает ее
-     * @param $data
-     * @param bool $fresh
-     * @param bool $stopPropagation
-     * @return mixed
+     * Создает новую модель по введенным данным и возвращает ее
      */
-    public function create($data, $fresh = true, $stopPropagation = false);
+    public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model;
 
     /**
-     * Создает новую модель вместе со связанными моделями переводов
-     * Этот метод необходимо переопределить в модели, в которой он понадобится, так как базовая реализация
-     * генерирует исключение
-     * @param $data
-     * @param $dataT
-     * @param bool $fresh
-     * @return mixed
+     * Создает новую модель вместе со связанной моделью переводов
      */
-    public function createT($data, $dataT, $fresh = true);
+    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true, bool $stopPropagation = false): Model;
+
+    /**
+     * Создает новый перевод для модели
+     */
+    public function createT(string $lang, int|string $id, array $dataT): void;
 
     /**
      * Обновляет поля модели и возвращает обновленную модель
-     * @param $modelOrId
-     * @param $data
-     * @param bool $returnModel
-     * @param bool $stopPropagation
-     * @return mixed
      */
-    public function update($modelOrId, $data, $returnModel = false, $stopPropagation = false);
+    public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model;
 
     /**
-     * Обновляет поля модели вместе со связанными моделями переводов
-     * Этот метод необходимо переопределить в модели, в которой он понадобится, так как базовая реализация
-     * генерирует исключение
-     * @param $modelOrId
-     * @param $data
-     * @param $dataT
-     * @param bool $returnModel
-     * @return mixed
+     * Обновляет поля модели вместе со связанной моделью переводов
      */
-    public function updateT($modelOrId, $data, $dataT, $returnModel = false);
+    public function updateWithT(string $lang, int|string|Model $modelOrId, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model;
+
+    /**
+     * Обновляет перевод для модели
+     */
+    public function updateT(string $lang, int|string $id, array $dataT): void;
 
     /**
      * Обновляет существущую либо создает новую модель
