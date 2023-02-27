@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Acl\Services;
 
+use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 
 abstract class AclNavbarService
@@ -34,6 +35,7 @@ abstract class AclNavbarService
 
     private function walkMenuData($data, $level = 0)
     {
+        $currentRouteName = Route::currentRouteName();
         $html = '';
         $index = 0;
         foreach ($data as $menuItem) {
@@ -69,7 +71,7 @@ abstract class AclNavbarService
                     $route = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
                     //TODO omadonex: params for routes
                 }
-                if ($menuItem['route'] === \Illuminate\Support\Facades\Route::currentRouteName()) {
+                if ($menuItem['route'] === $currentRouteName) {
                     $status = 'active';
                 }
                 if ($sub) {
