@@ -21,7 +21,7 @@ abstract class ModelService
     public function create(array $data, $fresh = true, $stopPropagation = false): Model
     {
         $model = $this->modelRepository->create($data, $fresh, $stopPropagation);
-        $this->writeToHistory(app('acl')->id(), $model->getKey(), get_class($model), HistoryEvent::CREATE, [], ['__common' => $data]);
+        $this->writeToHistory(app('acl')->id(), $model->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::CREATE, [], ['__common' => $data]);
 
         return $model;
     }
@@ -29,7 +29,7 @@ abstract class ModelService
     public function createT(int|string $modelId, string $lang, array $dataT): void
     {
         $this->modelRepository->createT($modelId, $lang, $dataT);
-        $this->writeToHistory(app('acl')->id(), $modelId, $this->modelRepository->getTranslateClass(), HistoryEvent::CREATE_T, [], ['__t' => ['__lang' => $lang, '__id' => $modelId] + $dataT]);
+        $this->writeToHistory(app('acl')->id(), $modelId, $this->modelRepository->getModelClass(), HistoryEvent::CREATE_T, [], ['__t' => ['__lang' => $lang, '__id' => $modelId] + $dataT]);
     }
 
     public function createWithT(string $lang, array $data, array $dataT, $fresh = true, $stopPropagation = false): Model
@@ -53,7 +53,7 @@ abstract class ModelService
         }
 
         if (!empty($data)) {
-            $this->writeToHistory(app('acl')->id(), $model->getKey(), get_class($model), HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $data]);
+            $this->writeToHistory(app('acl')->id(), $model->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $data]);
         }
 
         return $this->modelRepository->update($moid, $data, $returnModel, $stopPropagation);
@@ -72,7 +72,7 @@ abstract class ModelService
         }
 
         if (!empty($dataT)) {
-            $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getTranslateClass(), HistoryEvent::UPDATE_T, ['__t' => ['__lang' => $lang, '__id' => $id] + $oldData], ['__t' => ['__lang' => $lang, '__id' => $id] + $dataT]);
+            $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getModelClass(), HistoryEvent::UPDATE_T, ['__t' => ['__lang' => $lang, '__id' => $id] + $oldData], ['__t' => ['__lang' => $lang, '__id' => $id] + $dataT]);
         }
 
         $this->modelRepository->updateT($id, $lang, $dataT);
@@ -86,7 +86,7 @@ abstract class ModelService
         return $this->update($moid, $data, $returnModel, $stopPropagation);
     }
 
-    public function delete(int|string|Model $moid): int
+    public function delete(int|string|Model $moid): int|string
     {
         $model = $this->modelRepository->find($moid);
         $id = $model->getKey();
@@ -94,7 +94,7 @@ abstract class ModelService
         $this->checkDelete($model);
         $this->modelRepository->delete($model);
 
-        $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getTranslateClass(), HistoryEvent::DELETE, [], []);
+        $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getModelClass(), HistoryEvent::DELETE, [], []);
 
         return $id;
     }
@@ -102,7 +102,7 @@ abstract class ModelService
     public function deleteT(int|string $id, ?string $lang): void
     {
         $this->modelRepository->deleteT($id, $lang);
-        $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getTranslateClass(), $lang === null ? HistoryEvent::DELETE_T_ALL : HistoryEvent::DELETE_T, [], []);
+        $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getModelClass(), $lang === null ? HistoryEvent::DELETE_T_ALL : HistoryEvent::DELETE_T, [], []);
     }
 
     public function deleteWithT(int|string|Model $moid, ?string $lang = null): void
