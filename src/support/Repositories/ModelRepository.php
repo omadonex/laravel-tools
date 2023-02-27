@@ -207,7 +207,7 @@ abstract class ModelRepository implements IModelRepository
             return null;
         }
 
-        return $this->toResource($model, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], false);
+        return $this->toResource($model, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams']);
     }
 
     public function find($modelOrId, $options = [])
@@ -217,6 +217,23 @@ abstract class ModelRepository implements IModelRepository
         }
 
         return $this->doFind($modelOrId, $options);
+    }
+
+    public function findT($lang, $modelOrId, $options = [])
+    {
+        if ($modelOrId instanceof Model) {
+            return $modelOrId;
+        }
+
+        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
+
+        $collection = call_user_func_array("{$classNameT}::where", [
+            [
+                'model_id' => $modelOrId,
+            ]
+        ])->get();
+
+        return $collection->where('lang', $lang)->first();
     }
 
     public function search($options = [])
@@ -250,7 +267,7 @@ abstract class ModelRepository implements IModelRepository
         return $this->makeQB($realOptions)->count();
     }
 
-    public function create($data, $fresh = true, $stopPropagation = false)
+    public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model
     {
         $model = $this->getModel()->create($data);
         if ($fresh) {
@@ -264,14 +281,19 @@ abstract class ModelRepository implements IModelRepository
         return $model;
     }
 
-    public function createT($data, $dataT, $fresh = true)
+    public function createT(string $lang, int|string $id, array $dataT): void
     {
-        $className = (new \ReflectionClass($this->getModel()))->getShortName() . 'Service';
+        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
 
-        throw new OmxMethodNotImplementedInClassException($className, 'createT');
+        call_user_func_array("{$classNameT}::create", [
+            [
+                'model_id' => $id,
+                'lang' => $lang,
+            ] + $dataT
+        ]);
     }
 
-    public function update($modelOrId, $data, $returnModel = false, $stopPropagation = false)
+    public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
     {
         $model = $this->find($modelOrId);
         $result = $model->update($data);
@@ -283,11 +305,17 @@ abstract class ModelRepository implements IModelRepository
         return $returnModel ? $model : $result;
     }
 
-    public function updateT($modelOrId, $data, $dataT, $returnModel = false)
+    public function updateT(string $lang, int|string $id, array $dataT): void
     {
-        $className = (new \ReflectionClass($this->getModel()))->getShortName() . 'Service';
+        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
 
-        throw new OmxMethodNotImplementedInClassException($className, 'updateT');
+        call_user_func_array("{$classNameT}::updateOrCreate", [
+            [
+                'model_id' => $id,
+                'lang' => $lang,
+            ],
+            $dataT
+        ]);
     }
 
     public function updateOrCreate($data)

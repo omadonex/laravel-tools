@@ -13,6 +13,8 @@ class HistoryEvent extends Model
     public $timestamps = false;
 
     const CREATE = 1;
-    const UPDATE = 2;
-    const DELETE = 3;
+    const CREATE_T = 2;
+    const UPDATE = 3;
+    const UPDATE_T = 4;
+    const DELETE = 5;
 }

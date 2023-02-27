@@ -9,24 +9,28 @@ use Omadonex\LaravelTools\Support\Models\History;
 
 trait HistoryServiceTrait
 {
-    public function writeToHistory($userId, Model $model, $eventId, $oldData, $newData, $dtFormat = 'd.m.Y H:i:s')
+    public function writeToHistory($userId, $modelId, $modelClass, $eventId, $oldData, $newData, $dtFormat = 'd.m.Y H:i:s')
     {
-        $historyModelClass = get_class($model) . 'History';
+        $historyModelClass = "{$modelClass}History";
         /** @var History $historyModel */
         $historyModel = new $historyModelClass;
-        $historyModel->model_id = $model->getKey();
+        $historyModel->model_id = $modelId;
         $historyModel->user_id = $userId;
         $historyModel->history_event_id = $eventId;
 
-        foreach ($oldData as $key => $value) {
-            if ($oldData[$key] instanceof Carbon) {
-                $oldData[$key] = $oldData[$key]->format($dtFormat);
+        foreach ($oldData as $specKey => $data) {
+            foreach ($data as $key => $value) {
+                if ($oldData[$specKey][$key] instanceof Carbon) {
+                    $oldData[$specKey][$key] = $oldData[$specKey][$key]->format($dtFormat);
+                }
             }
         }
 
-        foreach ($newData as $key => $value) {
-            if ($newData[$key] instanceof Carbon) {
-                $newData[$key] = $newData[$key]->format($dtFormat);
+        foreach ($newData as $specKey => $data) {
+            foreach ($data as $key => $value) {
+                if ($newData[$specKey][$key] instanceof Carbon) {
+                    $newData[$specKey][$key] = $newData[$specKey][$key]->format($dtFormat);
+                }
             }
         }
 

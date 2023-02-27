@@ -6,6 +6,7 @@ class UtilsFilter
 {
     const EQUALS = 'equals';
     const STRING_LIKE = 'stringLike';
+    const YES_NO = 'yesNo';
 
     public static function apply($qb, $filterValues, $filterTypes)
     {
@@ -38,6 +39,16 @@ class UtilsFilter
         $value = trim($value);
         if ($value !== '') {
             $qb->where($key, $value);
+        }
+
+        return $qb;
+    }
+
+    private static function filterYesNo($qb, $key, $value)
+    {
+        $value = trim($value);
+        if ($value !== '') {
+            $qb->where($key, (int) $value - 1);
         }
 
         return $qb;

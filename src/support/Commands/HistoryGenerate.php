@@ -49,6 +49,16 @@ class HistoryGenerate extends Command
                 'name' => 'created',
             ],
             [
+                'id' => HistoryEvent::CREATE_WITH_T,
+                ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
+                'name' => 'created_with_t',
+            ],
+            [
+                'id' => HistoryEvent::CREATE_T,
+                ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
+                'name' => 'created_t',
+            ],
+            [
                 'id' => HistoryEvent::UPDATE,
                 ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
                 'name' => 'updated',

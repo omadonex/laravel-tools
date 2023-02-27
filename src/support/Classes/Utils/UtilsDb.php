@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Support\Classes\Utils;
 
+use Illuminate\Database\Schema\Blueprint;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
 
 class UtilsDb
@@ -34,5 +35,21 @@ class UtilsDb
     public static function addProtectedGenerateField($table)
     {
         $table->boolean(ConstCustom::DB_FIELD_PROTECTED_GENERATE)->default(false)->index();
+    }
+
+    public static function historyFieldsCallback(bool $stringModelId = false)
+    {
+        return function (Blueprint $table) use ($stringModelId) {
+            $table->id();
+            if ($stringModelId) {
+                $table->string('model_id', ConstCustom::DB_FIELD_LEN_PRIMARY_STR)->index();
+            } else {
+                $table->unsignedBigInteger('model_id')->index();
+            }
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->unsignedTinyInteger('history_event_id')->index();
+            $table->timestamp('occur_at');
+            $table->text('data');
+        };
     }
 }

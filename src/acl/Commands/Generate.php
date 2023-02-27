@@ -12,6 +12,7 @@ use Omadonex\LaravelTools\Acl\Models\PermissionTranslate;
 use Omadonex\LaravelTools\Acl\Models\RoleTranslate;
 use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\Role;
+use Omadonex\LaravelTools\Acl\Services\RoleService;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
 
 class Generate extends Command
@@ -24,12 +25,20 @@ class Generate extends Command
      */
     protected $signature = 'omx:acl:generate';
 
+    private RoleService $roleService;
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Generate all data for acl based on config files';
+
+    public function __construct(RoleService $roleService)
+    {
+        parent::__construct();
+        $this->roleService = $roleService;
+    }
 
     /**
      * Execute the console command.
@@ -124,7 +133,7 @@ class Generate extends Command
         foreach ($data as $roleId => $roleData) {
             $createdList[] = $roleId;
 
-            $role = Role::create([
+            $role = $this->roleService->create([
                 'id' => $roleId,
                 'is_hidden' => $roleData['hidden'] ?? false,
                 'is_staff' => $roleData['staff'] ?? false,
@@ -135,13 +144,11 @@ class Generate extends Command
             foreach ($langKeyList as $lang) {
                 $langFile = "{$langPath}/{$lang}/role.php";
                 $langData = file_exists($langFile) ? include $langFile : [];
-                RoleTranslate::create([
-                    'model_id' => $roleId,
-                    'lang' => $lang,
+                $this->roleService->createT($lang, [
                     'name' => $langData[$roleId]['name'] ?? $roleId,
                     'description'  => $langData[$roleId]['description'] ?? $roleId,
                     ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
-                ]);
+                ], $roleId, Role::class);
             }
 
             foreach ($roleData['permissions'] ?? [] as $permission) {
