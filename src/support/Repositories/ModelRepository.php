@@ -207,7 +207,7 @@ abstract class ModelRepository implements IModelRepository
             return null;
         }
 
-        return $this->toResource($model, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], false);
+        return $this->toResource($model, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams']);
     }
 
     public function find($modelOrId, $options = [])
@@ -217,6 +217,23 @@ abstract class ModelRepository implements IModelRepository
         }
 
         return $this->doFind($modelOrId, $options);
+    }
+
+    public function findT($lang, $modelOrId, $options = [])
+    {
+        if ($modelOrId instanceof Model) {
+            return $modelOrId;
+        }
+
+        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
+
+        $collection = call_user_func_array("{$classNameT}::where", [
+            [
+                'model_id' => $modelOrId,
+            ]
+        ])->get();
+
+        return $collection->where('lang', $lang)->first();
     }
 
     public function search($options = [])
@@ -264,18 +281,6 @@ abstract class ModelRepository implements IModelRepository
         return $model;
     }
 
-    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true, bool $stopPropagation = false): Model
-    {
-        $model = $this->create($data, $fresh, true);
-        $this->createT($lang, $model->getKey(), $dataT);
-
-        if (!$stopPropagation && method_exists($this, 'callbackCreatedWithT')) {
-            $this->callbackCreatedWithT($model);
-        }
-
-        return $model;
-    }
-
     public function createT(string $lang, int|string $id, array $dataT): void
     {
         $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
@@ -298,20 +303,6 @@ abstract class ModelRepository implements IModelRepository
         }
 
         return $returnModel ? $model : $result;
-    }
-
-    public function updateWithT(string $lang, int|string|Model $modelOrId, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model
-    {
-        $model = $this->update($modelOrId, $data, true, true);
-        $this->updateT($lang, $model->getKey(), $dataT);
-
-        if (!$stopPropagation && method_exists($this, 'callbackUpdatedT')) {
-            $this->callbackUpdatedT($model);
-        }
-
-        Model::reguard();
-
-        return $returnModel ? true : $model;
     }
 
     public function updateT(string $lang, int|string $id, array $dataT): void

@@ -15,7 +15,7 @@ class RoleService extends ModelService
 
     public function checkDelete(Model $model): void
     {
-        /** @var Unit $model */
+        /** @var Un it $model */
         if ($model->nomenclatures()->exists()) {
             UserException::throw(UserException::ERR_CODE_1102);
         }

@@ -7,6 +7,14 @@ return [
         'name' => 'Запись создана',
     ],
 
+    HistoryEvent::CREATE_WITH_T => [
+        'name' => 'Запись создана + перевод',
+    ],
+
+    HistoryEvent::CREATE_T => [
+        'name' => 'Перевод создан',
+    ],
+
     HistoryEvent::UPDATE => [
         'name' => 'Запись обновлена',
     ],

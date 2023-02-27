@@ -65,6 +65,8 @@ interface IModelRepository
      */
     public function find($modelOrId, $options = []);
 
+    public function findT($lang, $modelOrId, $options = []);
+
     /**
      * Выполняет поиск по заданным критериям, может генерировать исключение
      * @param array $options
@@ -120,11 +122,6 @@ interface IModelRepository
     public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model;
 
     /**
-     * Создает новую модель вместе со связанной моделью переводов
-     */
-    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true, bool $stopPropagation = false): Model;
-
-    /**
      * Создает новый перевод для модели
      */
     public function createT(string $lang, int|string $id, array $dataT): void;
@@ -133,11 +130,6 @@ interface IModelRepository
      * Обновляет поля модели и возвращает обновленную модель
      */
     public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model;
-
-    /**
-     * Обновляет поля модели вместе со связанной моделью переводов
-     */
-    public function updateWithT(string $lang, int|string|Model $modelOrId, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model;
 
     /**
      * Обновляет перевод для модели

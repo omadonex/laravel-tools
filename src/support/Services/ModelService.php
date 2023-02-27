@@ -26,23 +26,23 @@ abstract class ModelService
         return $model;
     }
 
+    public function createT(string $lang, array $dataT, int|string $id, string $class): void
+    {
+        $this->modelRepository->createT($lang, $id, $dataT);
+        $this->writeToHistory(app('acl')->id(), $id, $class, HistoryEvent::CREATE_T, [], ['__t' => ['__lang' => $lang, '__id' => $id] + $dataT]);
+    }
+
     public function createWithT(string $lang, array $data, array $dataT, $fresh = true, $stopPropagation = false): Model
     {
-        $model = $this->modelRepository->createWithT($lang, $data, $dataT, $fresh, $stopPropagation);
-        $this->writeToHistory(app('acl')->id(), $model->getKey(), get_class($model), HistoryEvent::CREATE_WITH_T, [], ['__common' => $data, '__t' => ['__lang' => $lang] + $dataT]);
+        $model = $this->create($data, $fresh, $stopPropagation);
+        $this->createT($lang, $dataT, $model->getKey(), get_class($model));
 
         return $model;
     }
 
-    public function createT(string $lang, array $dataT, int|string $id, string $class): void
+    public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
     {
-        $this->modelRepository->createT($lang, $id, $dataT);
-        $this->writeToHistory(app('acl')->id(), $id, $class, HistoryEvent::CREATE_T, [], ['__t' => ['__lang' => $lang] + $dataT]);
-    }
-
-    public function update(int $id, array $data, $returnModel = false, $stopPropagation = false): Model | bool
-    {
-        $model = $this->modelRepository->find($id);
+        $model = $this->modelRepository->find($modelOrId);
         $oldData = [];
         foreach ($data as $key => $value) {
             if ($value != $model->$key) {
@@ -51,9 +51,32 @@ abstract class ModelService
                 unset($data[$key]);
             }
         }
-        $this->writeToHistory(app('acl')->id(), $model, HistoryEvent::UPDATE, $oldData, $data);
+        $this->writeToHistory(app('acl')->id(), $model->getKey(), get_class($model), HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $data]);
 
-        return $this->modelRepository->update($id, $data, $returnModel, $stopPropagation);
+        return $this->modelRepository->update($modelOrId, $data, $returnModel, $stopPropagation);
+    }
+
+    public function updateT(string $lang, array $dataT, int|string $id, string $class): void
+    {
+        $model = $this->modelRepository->findT($lang, $id);
+        $oldData = [];
+        foreach ($dataT as $key => $value) {
+            if ($value != $model->$key) {
+                $oldData[$key] = $model->$key;
+            } else {
+                unset($dataT[$key]);
+            }
+        }
+        $this->writeToHistory(app('acl')->id(), $id, $class, HistoryEvent::UPDATE_T, ['__t' => ['__lang' => $lang, '__id' => $id] + $oldData], ['__t' => ['__lang' => $lang, '__id' => $id] + $dataT]);
+        $this->modelRepository->updateT($lang, $id, $dataT);
+    }
+
+    public function updateWithT(string $lang, int|string|Model $modelOrId, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model
+    {
+        $model = $this->update($modelOrId, $data, true, $stopPropagation);
+        $this->updateT($lang, $dataT, $modelOrId, get_class($model));
+
+        return $returnModel ? $model : true;
     }
 
     public function delete($id): void
