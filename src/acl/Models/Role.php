@@ -12,7 +12,7 @@ class Role extends Model
     use TranslateTrait, ProtectedGenerateTrait;
 
     protected $table = 'acl_role';
-    protected $fillable = ['is_staff', 'is_hidden', 'sort_index'];
+    protected $fillable = ['id', 'is_staff', 'is_hidden', 'sort_index'];
     public $incrementing = false;
     public $timestamps = false;
 

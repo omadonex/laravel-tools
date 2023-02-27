@@ -13,10 +13,10 @@ class UtilsDb
         $table->primary('id');
     }
 
-    public static function addTransFields($table, $primaryStr = false)
+    public static function addTransFields($table, $stringModelId = false)
     {
         $fieldName = ConstCustom::DB_FIELD_TRANS_MODEL_ID;
-        if ($primaryStr) {
+        if ($stringModelId) {
             $table->string($fieldName, ConstCustom::DB_FIELD_LEN_PRIMARY_STR)->index();
         } else {
             $table->unsignedInteger($fieldName)->index();

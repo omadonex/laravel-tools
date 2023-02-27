@@ -15,6 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('acl_role_translate', function (Blueprint $table) {
+            $table->id();
             UtilsDb::addTransFields($table, true);
             UtilsDb::addProtectedGenerateField($table);
 

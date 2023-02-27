@@ -22,4 +22,12 @@ return [
     HistoryEvent::DELETE => [
         'name' => 'Запись удалена',
     ],
+
+    HistoryEvent::DELETE_T => [
+        'name' => 'Перевод удален',
+    ],
+
+    HistoryEvent::DELETE_T_ALL => [
+        'name' => 'Все переводы удалены',
+    ],
 ];

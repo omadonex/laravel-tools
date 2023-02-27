@@ -21,6 +21,8 @@ interface IModelRepository
      */
     public function getModelClass();
 
+    public function getTranslateClass();
+
     /**
      * Возвращает Query builder для построения запросов
      * @return mixed
@@ -65,7 +67,7 @@ interface IModelRepository
      */
     public function find($modelOrId, $options = []);
 
-    public function findT($lang, $modelOrId, $options = []);
+    public function findT(int|string $modelId, string $lang): ?Model;
 
     /**
      * Выполняет поиск по заданным критериям, может генерировать исключение
@@ -124,17 +126,27 @@ interface IModelRepository
     /**
      * Создает новый перевод для модели
      */
-    public function createT(string $lang, int|string $id, array $dataT): void;
+    public function createT(int|string $modelId, string $lang, array $dataT): void;
 
     /**
      * Обновляет поля модели и возвращает обновленную модель
      */
-    public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model;
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model;
 
     /**
      * Обновляет перевод для модели
      */
-    public function updateT(string $lang, int|string $id, array $dataT): void;
+    public function updateT(int|string $modelId, string $lang, array $dataT): void;
+
+    /**
+     * Удаляет модель
+     */
+    public function delete(int|string|Model $moid): void;
+
+    /**
+     * Удаляет перевод
+     */
+    public function deleteT(int|string $modelId, ?string $lang): void;
 
     /**
      * Обновляет существущую либо создает новую модель
@@ -142,20 +154,6 @@ interface IModelRepository
      * @return mixed
      */
     public function updateOrCreate($data);
-
-    /**
-     * Удаляет модель
-     * @param $id
-     * @return mixed
-     */
-    public function destroy($id);
-
-    /**
-     * Выполняет попытку удаления модели, необходимо переопределять
-     * @param $id
-     * @return mixed
-     */
-    public function tryDestroy($id);
 
     /**
      * Включение

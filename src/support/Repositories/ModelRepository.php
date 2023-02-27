@@ -150,6 +150,11 @@ abstract class ModelRepository implements IModelRepository
         return $this->modelClass;
     }
 
+    public function getTranslateClass()
+    {
+        return (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
+    }
+
     public function query()
     {
         return $this->model->query();
@@ -219,21 +224,14 @@ abstract class ModelRepository implements IModelRepository
         return $this->doFind($modelOrId, $options);
     }
 
-    public function findT($lang, $modelOrId, $options = [])
+    public function findT(int|string $modelId, string $lang): ?Model
     {
-        if ($modelOrId instanceof Model) {
-            return $modelOrId;
-        }
-
-        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
-
-        $collection = call_user_func_array("{$classNameT}::where", [
+        return call_user_func_array("{$this->getTranslateClass()}::where", [
             [
-                'model_id' => $modelOrId,
-            ]
-        ])->get();
-
-        return $collection->where('lang', $lang)->first();
+                'model_id' => $modelId,
+                'lang' => $lang,
+            ],
+        ])->first();
     }
 
     public function search($options = [])
@@ -281,21 +279,19 @@ abstract class ModelRepository implements IModelRepository
         return $model;
     }
 
-    public function createT(string $lang, int|string $id, array $dataT): void
+    public function createT(int|string $modelId, string $lang, array $dataT): void
     {
-        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
-
-        call_user_func_array("{$classNameT}::create", [
+        call_user_func_array("{$this->getTranslateClass()}::create", [
             [
-                'model_id' => $id,
+                'model_id' => $modelId,
                 'lang' => $lang,
-            ] + $dataT
+            ] + $dataT,
         ]);
     }
 
-    public function update(int|string|Model $modelOrId, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
     {
-        $model = $this->find($modelOrId);
+        $model = $this->find($moid);
         $result = $model->update($data);
 
         if (!$stopPropagation && method_exists($this, 'callbackUpdated')) {
@@ -305,17 +301,36 @@ abstract class ModelRepository implements IModelRepository
         return $returnModel ? $model : $result;
     }
 
-    public function updateT(string $lang, int|string $id, array $dataT): void
+    public function updateT(int|string $modelId, string $lang, array $dataT): void
     {
-        $classNameT = (new \ReflectionClass($this->getModel()))->getName() . 'Translate';
-
-        call_user_func_array("{$classNameT}::updateOrCreate", [
+        call_user_func_array("{$this->getTranslateClass()}::where", [
             [
-                'model_id' => $id,
+                'model_id' => $modelId,
                 'lang' => $lang,
             ],
-            $dataT
-        ]);
+        ])->update($dataT);
+    }
+
+    public function delete(int|string|Model $moid): void
+    {
+        if ($moid instanceof Model) {
+            $moid->delete();
+        } else {
+            $this->getModel()->destroy($moid);
+        }
+
+        if (method_exists($this, 'callbackDestroyed')) {
+            $this->callbackDestroyed($moid);
+        }
+    }
+
+    public function deleteT(int|string $modelId, ?string $lang): void
+    {
+        call_user_func_array("{$this->getTranslateClass()}::where", [
+            [
+                'model_id' => $modelId,
+            ] + ($lang === null ? [] : ['lang' => $lang]),
+        ])->delete();
     }
 
     public function updateOrCreate($data)
@@ -326,19 +341,6 @@ abstract class ModelRepository implements IModelRepository
         }
 
         return $model;
-    }
-
-    public function destroy($id)
-    {
-        $this->getModel()->destroy($id);
-        if (method_exists($this, 'callbackDestroyed')) {
-            $this->callbackDestroyed($id);
-        }
-    }
-
-    public function tryDestroy($id)
-    {
-        $this->destroy($id);
     }
 
     public function enable($id)

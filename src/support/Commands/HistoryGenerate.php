@@ -68,6 +68,16 @@ class HistoryGenerate extends Command
                 ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
                 'name' => 'deleted',
             ],
+            [
+                'id' => HistoryEvent::DELETE_T,
+                ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
+                'name' => 'deleted_t',
+            ],
+            [
+                'id' => HistoryEvent::DELETE_T_ALL,
+                ConstCustom::DB_FIELD_PROTECTED_GENERATE => true,
+                'name' => 'deleted_t_all',
+            ],
         ];
 
         HistoryEvent::insert($data);

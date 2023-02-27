@@ -15,6 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('acl_permission_group_translate', function (Blueprint $table) {
+            $table->id();
             UtilsDb::addTransFields($table, true);
 
             $table->string('name');

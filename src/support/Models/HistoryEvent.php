@@ -17,4 +17,6 @@ class HistoryEvent extends Model
     const UPDATE = 3;
     const UPDATE_T = 4;
     const DELETE = 5;
+    const DELETE_T = 6;
+    const DELETE_T_ALL = 7;
 }
