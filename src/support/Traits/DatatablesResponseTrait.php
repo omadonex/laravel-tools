@@ -2,6 +2,9 @@
 
 namespace Omadonex\LaravelTools\Support\Traits;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 trait DatatablesResponseTrait
 {
     public function toDatatablesResponse(
@@ -61,8 +64,8 @@ trait DatatablesResponseTrait
         $str = 'filter_';
         $filter = [];
         foreach ($request->all() as $key => $value) {
-            if (substr($key, 0, strlen($str)) === $str) {
-                $filter[substr($key, strlen($str))] = $value;
+            if (str_contains($key, $str)) {
+                $filter[Arr::last(explode($str, $key))] = $value;
             }
         }
 
@@ -71,16 +74,16 @@ trait DatatablesResponseTrait
 
     public function getFilter($request, string $pageId): array
     {
-        $sessionFilter = session('filter', [])[$pageId] ?? [];
+        $sessionFilter = session('filter', [])[Str::of($pageId)->snake()->toString()] ?? [];
         $requestFilter = $this->evalFilter($request);
 
         return array_merge($sessionFilter, $requestFilter);
     }
 
-    public function clearFilter(string $pageId): void
+    public function clearFilter(string $pageId, string $tableId): void
     {
         $globalFilter = session('filter', []);
-        $globalFilter[$pageId] = [];
+        $globalFilter[Str::of($pageId)->snake()->toString()][$tableId] = [];
         session(['filter' => $globalFilter]);
     }
 
@@ -88,7 +91,7 @@ trait DatatablesResponseTrait
     {
         $globalFilter = session('filter', []);
         $filter = $this->evalFilter($request);
-        $globalFilter[$pageId] = $filter;
+        $globalFilter[Str::of($pageId)->snake()->toString()][$request->tableId] = $filter;
         session(['filter' => $globalFilter]);
 
         return $filter;
