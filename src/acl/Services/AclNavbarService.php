@@ -90,7 +90,7 @@ abstract class AclNavbarService
                         $status = 'active';
                     }
                 }
-                
+
                 if ($sub) {
                     $subHtml = self::walkMenuData($menuItem['sub'], $level + 1);
                     if (strpos($subHtml, 'active')) {
