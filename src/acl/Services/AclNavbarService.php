@@ -71,7 +71,7 @@ abstract class AclNavbarService
                     $route = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
                     //TODO omadonex: params for routes
                 }
-                if ($menuItem['route'] === $currentRouteName) {
+                if (str_contains($currentRouteName, preg_replace('/.index$/', '', $menuItem['route']))) {
                     $status = 'active';
                 }
                 if ($sub) {
