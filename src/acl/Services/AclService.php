@@ -58,9 +58,9 @@ class AclService implements IAclService
         return $this->user->getKey();
     }
 
-    public function roles(bool $onlyNames = false): array
+    public function roles(bool $onlyIds = false): array
     {
-        return $onlyNames ? $this->roleList->map->id->toArray() : $this->roleList->toArray();
+        return $onlyIds ? $this->roleList->map->id->toArray() : $this->roleList->toArray();
     }
 
     public function permissions(bool $onlyNames = false): array
