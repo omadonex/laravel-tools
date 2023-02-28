@@ -1,5 +1,5 @@
 @if (!isset($noLabel) || !$noLabel)
-    <label for="{{ $id }}" class="form-label">{{ $label }}</label>
+    <label for="{{ $id }}" class="form-label">@include('omx-form::bs52.partials.required'){{ $label }}</label>
 @endif
 <div class="input-group has-validation">
     <input type="password" id="{{ $id }}" name="{{ $name }}" class="form-control" autocomplete="off" data-toggle-password-input placeholder="{{ $placeholder }}"
