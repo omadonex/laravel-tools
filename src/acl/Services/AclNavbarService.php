@@ -71,9 +71,26 @@ abstract class AclNavbarService
                     $route = ($menuItem['static'] ?? false) ? $menuItem['route'] : route($menuItem['route']);
                     //TODO omadonex: params for routes
                 }
-                if (str_contains($currentRouteName, preg_replace('/.index$/', '', $menuItem['route']))) {
-                    $status = 'active';
+
+                $replacedRouteName = preg_replace('/.index$/', '', $menuItem['route']);
+                if (strpos($currentRouteName, $replacedRouteName) !== false) {
+                    $arrCurrent = explode('.', $currentRouteName);
+                    $arrReplaced = explode('.', $replacedRouteName);
+                    $same = true;
+                    $i = 0;
+                    while ($i < count($arrReplaced)) {
+                        if ($arrCurrent[$i] != $arrReplaced[$i]) {
+                            $same = false;
+                            break;
+                        }
+                        $i++;
+                    }
+
+                    if ($same) {
+                        $status = 'active';
+                    }
                 }
+                
                 if ($sub) {
                     $subHtml = self::walkMenuData($menuItem['sub'], $level + 1);
                     if (strpos($subHtml, 'active')) {
