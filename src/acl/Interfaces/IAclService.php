@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Acl\Interfaces;
 
+
 interface IAclService
 {
     const CHECK_TYPE_AND = 'and';
