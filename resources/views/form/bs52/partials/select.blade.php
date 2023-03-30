@@ -5,7 +5,7 @@
     $current = old($name) ?: (isset($value) ? $value : null);
     $options = [
         'placeholder' => $placeholder,
-        'allowEmptyOption' => true,
+        'allowEmptyOption' => $allowEmptyOption ?? true,
     ];
 
     if (!isset($search) || !$search) {
@@ -15,6 +15,10 @@
 
     if (isset($hideSelected)) {
         $options['hideSelected'] = $hideSelected;
+    }
+
+    if (isset($multiple)) {
+        $options['plugins'] = array_merge($options['plugins'] ?? [], ['remove_button']);
     }
 @endphp
 
