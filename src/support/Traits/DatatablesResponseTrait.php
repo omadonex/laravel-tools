@@ -11,7 +11,7 @@ trait DatatablesResponseTrait
         $request,
         $repository,
         $options,
-        $listMethod = 'list',
+        $listMethod = 'grid',
         $transformerClass = null,
         $transformerParams = [],
         $ignoredSearchColumns = ['actions']

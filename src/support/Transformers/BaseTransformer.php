@@ -36,11 +36,11 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makeLink(string $urlName, string $caption = null)
+    protected function makeLink(string $urlName, string $caption = null, string $keyName = null)
     {
-        return function ($value, $row) use ($urlName, $caption) {
-            $url = route($urlName, $value);
-            $text = $caption ?: $value;
+        return function ($value, $row) use ($urlName, $caption, $keyName) {
+            $url = route($urlName, $keyName ? $row[$keyName] : $value);
+            $text = $caption ?: ($keyName ? $row[$keyName] : $value);
 
             return "<a href=\"{$url}\">{$text}</a>";
         };
@@ -64,6 +64,13 @@ abstract class BaseTransformer
     {
         return function ($value, $row) {
             return empty($value) ? '&mdash;' : $value;
+        };
+    }
+
+    protected function setFromAnother(string $column)
+    {
+        return function ($value, $row) use ($column) {
+            return $row[$column];
         };
     }
 

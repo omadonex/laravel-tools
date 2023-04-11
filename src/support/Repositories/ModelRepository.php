@@ -258,6 +258,11 @@ abstract class ModelRepository implements IModelRepository
         return $this->toResource($collection, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], $realOptions['paginate']);
     }
 
+    public function grid(array $options = [])
+    {
+        return $this->list($options);
+    }
+
     public function agrCount($options = [])
     {
         $realOptions = $this->getRealOptions($options);

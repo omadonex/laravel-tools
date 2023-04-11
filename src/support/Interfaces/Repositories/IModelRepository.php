@@ -105,6 +105,8 @@ interface IModelRepository
      */
     public function list($options = []);
 
+    public function grid(array $options = []);
+
     /**
      * Агрегатная функция подсчета количества элементов
      * @param array $options
