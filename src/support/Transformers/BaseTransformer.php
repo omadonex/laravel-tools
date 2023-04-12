@@ -29,10 +29,10 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makeDateTime($format = 'd.m.Y H:i:s')
+    protected function makeDateTime($format = 'd.m.Y H:i:s', $timezone = 'Europe/Moscow')
     {
-        return function ($value, $row) use ($format) {
-            return Carbon::parse($value)->format($format);
+        return function ($value, $row) use ($format, $timezone) {
+            return Carbon::parse($value)->timezone($timezone)->format($format);
         };
     }
 
