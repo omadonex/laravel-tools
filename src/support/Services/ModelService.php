@@ -40,8 +40,8 @@ abstract class ModelService
 
     public function createWithT(string $lang, array $data, array $dataT, $fresh = true, $stopPropagation = false): Model
     {
-        $model = $this->create($data, $fresh, $stopPropagation, $history);
-        $this->createT($model->getKey(), $lang, $dataT, $history);
+        $model = $this->create($data, $fresh, $stopPropagation);
+        $this->createT($model->getKey(), $lang, $dataT);
 
         return $model;
     }
@@ -85,15 +85,17 @@ abstract class ModelService
             }
         }
 
-        $this->modelRepository->updateT($id, $lang, $dataT);
+        if (!empty($dataT)) {
+            $this->modelRepository->updateT($id, $lang, $dataT);
+        }
     }
 
     public function updateWithT(int|string|Model $moid, string $lang, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model
     {
         $id = $moid instanceof Model ? $moid->getKey() : $moid;
-        $this->updateT($id, $lang, $dataT, $history);
+        $this->updateT($id, $lang, $dataT);
 
-        return $this->update($moid, $data, $returnModel, $stopPropagation, $history);
+        return $this->update($moid, $data, $returnModel, $stopPropagation);
     }
 
     public function delete(int|string|Model $moid): int|string
