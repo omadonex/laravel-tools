@@ -58,7 +58,7 @@ abstract class ModelService
                     unset($data[$key]);
                 }
             }
-    
+
             if (!empty($data)) {
                 $this->writeToHistory(app('acl')->id(), $model->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $data]);
             }

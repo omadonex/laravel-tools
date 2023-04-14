@@ -9,7 +9,7 @@ use Omadonex\LaravelTools\Support\Models\History;
 
 trait HistoryServiceTrait
 {
-    public function writeToHistory($userId, $modelId, $modelClass, $eventId, $oldData, $newData, $dtFormat = 'd.m.Y H:i:s')
+    public function writeToHistory($userId, $modelId, $modelClass, $eventId, $oldData, $newData, $hiddenFields = ['password'], $dtFormat = 'd.m.Y H:i:s')
     {
         $historyModelClass = "{$modelClass}History";
         /** @var History $historyModel */
@@ -23,6 +23,10 @@ trait HistoryServiceTrait
                 if ($oldData[$specKey][$key] instanceof Carbon) {
                     $oldData[$specKey][$key] = $oldData[$specKey][$key]->format($dtFormat);
                 }
+
+                if (in_array($key, $hiddenFields)) {
+                    $oldData[$specKey][$key] = __('omx-support::history.hiddenFieldValue');
+                }
             }
         }
 
@@ -30,6 +34,10 @@ trait HistoryServiceTrait
             foreach ($data as $key => $value) {
                 if ($newData[$specKey][$key] instanceof Carbon) {
                     $newData[$specKey][$key] = $newData[$specKey][$key]->format($dtFormat);
+                }
+
+                if (in_array($key, $hiddenFields)) {
+                    $newData[$specKey][$key] = __('omx-support::history.hiddenFieldValue');
                 }
             }
         }
