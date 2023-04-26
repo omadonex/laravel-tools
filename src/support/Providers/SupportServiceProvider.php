@@ -21,7 +21,7 @@ class SupportServiceProvider extends ServiceProvider
         $this->loadViewsFrom("{$pathRoot}/resources/views/form", 'omx-form');
         $this->loadViewsFrom("{$pathRoot}/resources/views/modal", 'omx-modal');
         $this->loadViewsFrom("{$pathRoot}/resources/views/icon", 'omx-icon');
-//
+
 //        $this->publishes([
 //            "{$pathRoot}/config/modules.php" => config_path('modules.php'),
 //        ], 'config');

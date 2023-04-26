@@ -3,7 +3,6 @@
 namespace Omadonex\LaravelTools\Acl\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Omadonex\LaravelTools\Acl\Http\Resources\RoleResource;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;

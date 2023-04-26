@@ -3,6 +3,7 @@
 namespace Omadonex\LaravelTools\Support\Services;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Omadonex\LaravelTools\Support\Models\HistoryEvent;
 use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
 use Omadonex\LaravelTools\Support\Traits\HistoryServiceTrait;
