@@ -2,9 +2,7 @@
 
 namespace Omadonex\LaravelTools\Support\Traits;
 
-
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Omadonex\LaravelTools\Support\Models\History;
 
 trait HistoryServiceTrait

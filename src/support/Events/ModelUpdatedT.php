@@ -4,27 +4,30 @@ namespace Omadonex\LaravelTools\Support\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ModelUpdated
+class ModelUpdatedT
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Model $model;
-    public array $oldData;
-    public array $newData;
+    public int|string $modelId;
+    public string $modelClass;
+    public string $lang;
+    public array $oldDataT;
+    public array $newDataT;
     public int $userId;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Model $model, array $oldData, array $newData, int $userId)
+    public function __construct(int|string $modelId, string $modelClass, string $lang, array $oldDataT, array $newDataT, int $userId)
     {
-        $this->model = $model;
-        $this->oldData = $oldData;
-        $this->newData = $newData;
+        $this->modelId = $modelId;
+        $this->modelClass = $modelClass;
+        $this->lang = $lang;
+        $this->oldDataT = $oldDataT;
+        $this->newDataT = $newDataT;
         $this->userId = $userId;
     }
 

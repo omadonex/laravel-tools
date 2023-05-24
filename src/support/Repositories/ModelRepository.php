@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: omadonex
- * Date: 06.02.2018
- * Time: 21:34
- */
 
 namespace Omadonex\LaravelTools\Support\Repositories;
 
@@ -12,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxClassNotUsesTraitException;
-use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxMethodNotImplementedInClassException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeDisabledException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeEnabledException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSearchedException;
@@ -224,6 +217,23 @@ abstract class ModelRepository implements IModelRepository
         return $this->doFind($modelOrId, $options);
     }
 
+    public function getCurrData(int|string|Model $moid, array $keyList = []): array
+    {
+        $model = $this->find($moid);
+        if ($model === null) {
+            return [null, []];
+        }
+
+        $currData = empty($keyList) ? $model->getAttributes() : [];
+        if (!empty($keyList)) {
+            foreach ($keyList as $key) {
+                $currData[$key] = $model->$key;
+            }
+        }
+
+        return [$model, $currData];
+    }
+
     public function findT(int|string $modelId, string $lang): ?Model
     {
         return call_user_func_array("{$this->getTranslateClass()}::where", [
@@ -233,6 +243,30 @@ abstract class ModelRepository implements IModelRepository
             ],
         ])->first();
     }
+
+    public function getCurrDataT(int|string $modelId, string $lang, array $keyList = []): array
+    {
+        $model = call_user_func_array("{$this->getTranslateClass()}::where", [
+            [
+                'model_id' => $modelId,
+                'lang' => $lang,
+            ],
+        ])->first();
+
+        if ($model === null) {
+            return [null, []];
+        }
+
+        $currData = empty($keyList) ? $model->getAttributes() : [];
+        if (!empty($keyList)) {
+            foreach ($keyList as $key) {
+                $currData[$key] = $model->$key;
+            }
+        }
+
+        return [$model, $currData];
+    }
+
 
     public function search($options = [])
     {
@@ -270,15 +304,11 @@ abstract class ModelRepository implements IModelRepository
         return $this->makeQB($realOptions)->count();
     }
 
-    public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model
+    public function create(array $data, bool $fresh = true): Model
     {
         $model = $this->getModel()->create($data);
         if ($fresh) {
             $model = $model->fresh();
-        }
-
-        if (!$stopPropagation && method_exists($this, 'callbackCreated')) {
-            $this->callbackCreated($model);
         }
 
         return $model;
@@ -294,14 +324,10 @@ abstract class ModelRepository implements IModelRepository
         ]);
     }
 
-    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false): bool|Model
     {
         $model = $this->find($moid);
         $result = $model->update($data);
-
-        if (!$stopPropagation && method_exists($this, 'callbackUpdated')) {
-            $this->callbackUpdated($model);
-        }
 
         return $returnModel ? $model : $result;
     }
@@ -323,10 +349,6 @@ abstract class ModelRepository implements IModelRepository
         } else {
             $this->getModel()->destroy($moid);
         }
-
-        if (method_exists($this, 'callbackDestroyed')) {
-            $this->callbackDestroyed($moid);
-        }
     }
 
     public function deleteT(int|string $modelId, ?string $lang): void
@@ -340,12 +362,7 @@ abstract class ModelRepository implements IModelRepository
 
     public function updateOrCreate($data)
     {
-        $model = $this->getModel()->updateOrCreate($data);
-        if (method_exists($this, 'callbackUpdatedOrCreated')) {
-            $this->callbackUpdatedOrCreated($model);
-        }
-
-        return $model;
+        return $this->getModel()->updateOrCreate($data);
     }
 
     public function enable($id)
@@ -361,9 +378,6 @@ abstract class ModelRepository implements IModelRepository
         }
 
         $model->enable();
-        if (method_exists($this, 'callbackEnabled')) {
-            $this->callbackEnabled($model);
-        }
     }
 
     public function disable($id)
@@ -379,9 +393,6 @@ abstract class ModelRepository implements IModelRepository
         }
 
         $model->disable();
-        if (method_exists($this, 'callbackDisabled')) {
-            $this->callbackDisabled($model);
-        }
     }
 
     public function clear($force = false)

@@ -39,10 +39,10 @@ class DtoUserNames
     public static function parseFromUser($user): DtoUserNames
     {
         return new DtoUserNames(
-            $user->meta->first_name,
-            $user->meta->last_name,
-            $user->meta->opt_name,
-            $user->meta->display_name,
+            $user->first_name,
+            $user->last_name,
+            $user->opt_name,
+            $user->display_name,
             $user->username,
         );
     }

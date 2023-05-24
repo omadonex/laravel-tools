@@ -5,7 +5,7 @@ namespace Omadonex\LaravelTools\Acl\Http\Controllers\Auth;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Omadonex\LaravelTools\Acl\Http\Requests\Auth\RegisterRequest;
-use Omadonex\LaravelTools\Acl\Services\UserService;
+use Omadonex\LaravelTools\Acl\Services\Model\UserService;
 use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
 use Omadonex\LaravelTools\Support\Services\PageService;
 

@@ -2,14 +2,13 @@
 
 namespace Omadonex\LaravelTools\Acl\Models;
 
-use App\Tools\Avatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Omadonex\LaravelTools\Acl\Traits\AclTrait;
+use Omadonex\LaravelTools\Common\Tools\Avatar;
 use Omadonex\LaravelTools\Support\Traits\PersonNamesTrait;
 
 class User extends Authenticatable
@@ -52,17 +51,10 @@ class User extends Authenticatable
         'phone_verified_at' => 'datetime',
     ];
 
-    //Relations
-
-    public function meta(): HasOne
-    {
-        return $this->hasOne(UserMeta::class);
-    }
-
     //Functions
 
     public function getAvatar(): string
     {
-        return Avatar::get($this->meta->avatar);
+        return Avatar::get($this->avatar);
     }
 }

@@ -5,6 +5,7 @@ namespace Omadonex\LaravelTools\Support\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Omadonex\LaravelTools\Acl\Models\User;
 
 abstract class History extends Model
 {
@@ -20,8 +21,15 @@ abstract class History extends Model
         return [];
     }
 
-    public function historyEvent(): BelongsTo
+    // RELATIONS
+
+    public function event(): BelongsTo
     {
         return $this->belongsTo(HistoryEvent::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

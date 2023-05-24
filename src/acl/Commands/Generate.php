@@ -6,13 +6,13 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Nwidart\Modules\Facades\Module;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
+use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\PermissionGroup;
 use Omadonex\LaravelTools\Acl\Models\PermissionGroupTranslate;
 use Omadonex\LaravelTools\Acl\Models\PermissionTranslate;
-use Omadonex\LaravelTools\Acl\Models\RoleTranslate;
-use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\Role;
-use Omadonex\LaravelTools\Acl\Services\RoleService;
+use Omadonex\LaravelTools\Acl\Models\RoleTranslate;
+use Omadonex\LaravelTools\Acl\Services\Model\RoleService;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
 
 class Generate extends Command

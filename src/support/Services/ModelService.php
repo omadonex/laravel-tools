@@ -3,30 +3,38 @@
 namespace Omadonex\LaravelTools\Support\Services;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Omadonex\LaravelTools\Support\Models\HistoryEvent;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
+use Omadonex\LaravelTools\Support\Events\ModelCreated;
+use Omadonex\LaravelTools\Support\Events\ModelCreatedT;
+use Omadonex\LaravelTools\Support\Events\ModelDeleted;
+use Omadonex\LaravelTools\Support\Events\ModelDeletedT;
+use Omadonex\LaravelTools\Support\Events\ModelUpdated;
+use Omadonex\LaravelTools\Support\Events\ModelUpdatedT;
+use Omadonex\LaravelTools\Support\Interfaces\Repositories\IModelService;
 use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
 use Omadonex\LaravelTools\Support\Traits\HistoryServiceTrait;
 
-abstract class ModelService
+abstract class ModelService implements IModelService
 {
     use HistoryServiceTrait;
 
     protected ModelRepository $modelRepository;
-    protected bool $history;
+    protected IAclService $aclService;
+    protected ILocaleService $localeService;
 
-    public function __construct(ModelRepository $modelRepository, bool $history = true)
+    public function __construct(ModelRepository $modelRepository, IAclService $aclService, ILocaleService $localeService)
     {
         $this->modelRepository = $modelRepository;
-        $this->history = $history;
+        $this->aclService = $aclService;
+        $this->localeService = $localeService;
     }
 
-    public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model
+    public function create(array $data, bool $fresh = true): Model
     {
-        $model = $this->modelRepository->create($data, $fresh, $stopPropagation);
-        if ($this->history) {
-            $this->writeToHistory(app('acl')->id(), $model->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::CREATE, [], ['__common' => $data]);
-        }
+        $model = $this->modelRepository->create($data, $fresh);
+
+        event(new ModelCreated($model, $data, $this->aclService->id()));
 
         return $model;
     }
@@ -34,90 +42,65 @@ abstract class ModelService
     public function createT(int|string $modelId, string $lang, array $dataT): void
     {
         $this->modelRepository->createT($modelId, $lang, $dataT);
-        if ($this->history) {
-            $this->writeToHistory(app('acl')->id(), $modelId, $this->modelRepository->getModelClass(), HistoryEvent::CREATE_T, [], ['__t' => ['__lang' => $lang, '__id' => $modelId] + $dataT]);
-        }
+
+        event(new ModelCreatedT($modelId, $this->modelRepository->getModelClass(), $lang, $dataT, $this->aclService->id()));
     }
 
-    public function createWithT(string $lang, array $data, array $dataT, $fresh = true, $stopPropagation = false): Model
+    public function createWithT(string $lang, array $data, array $dataT, $fresh = true): Model
     {
-        $model = $this->create($data, $fresh, $stopPropagation);
+        $model = $this->create($data, $fresh);
         $this->createT($model->getKey(), $lang, $dataT);
 
         return $model;
     }
 
-    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false): bool|Model
     {
-        if ($this->history) {
-            $model = $this->modelRepository->find($moid);
-            $oldData = [];
-            foreach ($data as $key => $value) {
-                if ($value != $model->$key) {
-                    $oldData[$key] = $model->$key;
-                } else {
-                    unset($data[$key]);
-                }
-            }
+        list ($model, $oldData) = $this->modelRepository->getCurrData($moid, array_keys($data));
+        $result = $this->modelRepository->update($model, $data, $returnModel);
 
-            if (!empty($data)) {
-                $this->writeToHistory(app('acl')->id(), $model->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $data]);
-            }
-        }
-        
-        return $this->modelRepository->update($moid, $data, $returnModel, $stopPropagation);
+        event(new ModelUpdated($model, $oldData, $data, $this->aclService->id()));
+
+        return $result;
     }
 
-    public function updateT(int|string $id, string $lang, array $dataT): void
+    public function updateT(int|string $modelId, string $lang, array $dataT): void
     {
-        if ($this->history) {
-            $model = $this->modelRepository->findT($id, $lang);
-            $oldData = [];
-            foreach ($dataT as $key => $value) {
-                if ($value != $model->$key) {
-                    $oldData[$key] = $model->$key;
-                } else {
-                    unset($dataT[$key]);
-                }
-            }
-    
-            if (!empty($dataT)) {
-                $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getModelClass(), HistoryEvent::UPDATE_T, ['__t' => ['__lang' => $lang, '__id' => $id] + $oldData], ['__t' => ['__lang' => $lang, '__id' => $id] + $dataT]);
-            }
-        }
+        list ($model, $oldDataT) = $this->modelRepository->getCurrDataT($modelId, $lang, array_keys($dataT));
+        $this->modelRepository->updateT($modelId, $lang, $dataT);
 
-        if (!empty($dataT)) {
-            $this->modelRepository->updateT($id, $lang, $dataT);
-        }
+        event(new ModelUpdatedT($modelId, $this->modelRepository->getModelClass(), $lang, $oldDataT, $dataT, $this->aclService->id()));
     }
 
-    public function updateWithT(int|string|Model $moid, string $lang, array $data, array $dataT, bool $returnModel = true, bool $stopPropagation = false): bool|Model
+    public function updateWithT(int|string|Model $moid, string $lang, array $data, array $dataT, bool $returnModel = true): bool|Model
     {
         $id = $moid instanceof Model ? $moid->getKey() : $moid;
         $this->updateT($id, $lang, $dataT);
 
-        return $this->update($moid, $data, $returnModel, $stopPropagation);
+        return $this->update($moid, $data, $returnModel);
     }
 
     public function delete(int|string|Model $moid): int|string
     {
-        $model = $this->modelRepository->find($moid);
+        list ($model, $data) = $this->modelRepository->getCurrData($moid);
         $id = $model->getKey();
 
         $this->checkDelete($model);
         $this->modelRepository->delete($model);
-        if ($this->history) {
-            $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getModelClass(), HistoryEvent::DELETE, [], []);
-        }
+
+        event(new ModelDeleted($id, $this->modelRepository->getModelClass(), $data, $this->aclService->id()));
 
         return $id;
     }
 
-    public function deleteT(int|string $id, ?string $lang): void
+    public function deleteT(int|string $modelId, ?string $lang): void
     {
-        $this->modelRepository->deleteT($id, $lang);
-        if ($this->history) {
-            $this->writeToHistory(app('acl')->id(), $id, $this->modelRepository->getModelClass(), $lang === null ? HistoryEvent::DELETE_T_ALL : HistoryEvent::DELETE_T, [], []);
+        $langList = $lang ? [$lang] : $this->localeService->getLangList();
+        foreach ($langList as $key) {
+            list ($model, $data) = $this->modelRepository->getCurrDataT($modelId, $key);
+            $this->modelRepository->deleteT($modelId, $key);
+
+            event(new ModelDeletedT($modelId, $this->modelRepository->getModelClass(), $lang, $data, $this->aclService->id()));
         }
     }
 
@@ -127,5 +110,8 @@ abstract class ModelService
         $this->deleteT($id, $lang);
     }
 
-    abstract public function checkDelete(Model $model): void;
+    public function checkDelete(Model $model): void
+    {
+        // Implement staff in descendants if need
+    }
 }

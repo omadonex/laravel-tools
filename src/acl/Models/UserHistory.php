@@ -10,6 +10,8 @@ class UserHistory extends History
 {
     protected $table = 'user_history';
 
+    public const HIDDEN_FIELDS = ['password'];
+
     public static function historyCasts(): array
     {
         return [
@@ -23,15 +25,8 @@ class UserHistory extends History
         ];
     }
 
-    // RELATIONS
-
-    public function userRecord(): BelongsTo
+    public function model(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id', 'model_id');
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

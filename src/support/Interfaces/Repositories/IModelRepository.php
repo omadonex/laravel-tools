@@ -123,7 +123,7 @@ interface IModelRepository
     /**
      * Создает новую модель по введенным данным и возвращает ее
      */
-    public function create(array $data, bool $fresh = true, bool $stopPropagation = false): Model;
+    public function create(array $data, bool $fresh = true): Model;
 
     /**
      * Создает новый перевод для модели
@@ -133,7 +133,7 @@ interface IModelRepository
     /**
      * Обновляет поля модели и возвращает обновленную модель
      */
-    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $stopPropagation = false): bool|Model;
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false): bool|Model;
 
     /**
      * Обновляет перевод для модели

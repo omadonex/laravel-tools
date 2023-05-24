@@ -2,12 +2,15 @@
 
 namespace Omadonex\LaravelTools\Acl\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
+use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxUserException;
+use Omadonex\LaravelTools\Support\Models\HistoryEvent;
 
 class AclService implements IAclService
 {
@@ -423,5 +426,39 @@ class AclService implements IAclService
         $this->roles = $currRoles;
 
         return $result;
+    }
+
+    public function attachRole(int|string|Model $moid, array|string $roleId): void
+    {
+        $moid = $this->modelRepository->find($moid);
+        if (app('acl')->checkRoleForUser($moid, $roleId, IAclService::CHECK_TYPE_AND, true)) {
+            OmxUserException::throw(OmxUserException::ERR_CODE_1001);
+        }
+
+        $this->aclRepository->addRole($moid, $roleId);
+        if (!is_array($roleId)) {
+            $roleId = [$roleId];
+        }
+
+        $historyData = [];
+        foreach ($roleId as $id) {
+            $historyData['role_id'] = $id;
+            $this->writeToHistory(app('acl')->id(), $moid->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, [], ['__common' => $historyData]);
+        }
+    }
+
+    public function detachRole(int|string|Model $moid, array|string $roleId): void
+    {
+        $moid = $this->modelRepository->find($moid);
+        $this->aclRepository->removeRole($moid, $roleId);
+        if (!is_array($roleId)) {
+            $roleId = [$roleId];
+        }
+
+        $historyData = [];
+        foreach ($roleId as $id) {
+            $historyData['role_id'] = $id;
+            $this->writeToHistory(app('acl')->id(), $moid->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, ['__common' => $historyData], []);
+        }
     }
 }

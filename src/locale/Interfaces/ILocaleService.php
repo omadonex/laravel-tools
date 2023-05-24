@@ -77,4 +77,12 @@ interface ILocaleService
      * Generates translation array that consists of all localization files
      */
     public function getTotalData(string $locale = null): array;
+
+    public function getLangList(): array;
+
+    public function getLangWholeList(): array;
+
+    public function getCountryWholeList(): array;
+
+    public function getCurrencyWholeList(): array;
 }

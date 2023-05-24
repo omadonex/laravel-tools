@@ -11,7 +11,7 @@ class RoleHistory extends History
 
     // RELATIONS
 
-    public function role(): BelongsTo
+    public function model(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'id', 'model_id');
     }

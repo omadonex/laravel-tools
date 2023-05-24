@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_meta', function (Blueprint $table) {
-            $table->unsignedInteger('user_id');
+        Schema::table('users', function (Blueprint $table) {
             $table->string('display_name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('opt_name')->nullable();
             $table->string('avatar')->nullable();
-
-            $table->primary('user_id');
         });
     }
 
@@ -32,6 +29,12 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_meta');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('display_name');
+            $table->dropColumn('first_name');
+            $table->dropColumn('last_name');
+            $table->dropColumn('opt_name');
+            $table->dropColumn('avatar');
+        });
     }
 };

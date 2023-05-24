@@ -16,11 +16,11 @@ class RoleRepository extends ModelRepository
         parent::__construct($role, RoleResource::class);
     }
 
-    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true, bool $stopPropagation = false): Model
+    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true): Model
     {
         $data['id'] = Uuid::uuid4()->toString();
 
-        return parent::createWithT($lang, $data, $dataT, $fresh, $stopPropagation);
+        return parent::createWithT($lang, $data, $dataT, $fresh);
     }
 
     public function pluckUnusedRolesNames(array $exceptRoleIdList = [IRole::USER], ?string $emptyOptionName): array
