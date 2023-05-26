@@ -24,10 +24,10 @@ class UtilsUserLabel
     public static function selectSql(string $columnName): string
     {
         return "
-            um.first_name as {$columnName}_u_fname,
-            um.last_name as {$columnName}_u_lname,
-            um.opt_name as {$columnName}_u_oname,
-            um.display_name as {$columnName}_u_display,
+            u.first_name as {$columnName}_u_fname,
+            u.last_name as {$columnName}_u_lname,
+            u.opt_name as {$columnName}_u_oname,
+            u.display_name as {$columnName}_u_display,
             u.username as {$columnName}_u_username,
             u.id as {$columnName}_label
         ";

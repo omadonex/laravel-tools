@@ -7,7 +7,7 @@ use Omadonex\LaravelTools\Support\Models\History;
 
 trait HistoryServiceTrait
 {
-    public function writeToHistory($userId, $modelId, $modelClass, $eventId, $oldData, $newData, $hiddenFields = ['password'], $dtFormat = 'd.m.Y H:i:s')
+    public function writeToHistory($userId, $modelId, $modelClass, $eventId, $oldData, $newData, $dtFormat = 'd.m.Y H:i:s')
     {
         $historyModelClass = "{$modelClass}History";
         /** @var History $historyModel */
@@ -15,6 +15,8 @@ trait HistoryServiceTrait
         $historyModel->model_id = $modelId;
         $historyModel->user_id = $userId;
         $historyModel->history_event_id = $eventId;
+
+        $hiddenFields = defined("{$historyModelClass}::HIDDEN_FIELDS") ? $historyModel::HIDDEN_FIELDS : [];
 
         foreach ($oldData as $specKey => $data) {
             foreach ($data as $key => $value) {

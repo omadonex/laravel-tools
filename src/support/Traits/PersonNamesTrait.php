@@ -16,30 +16,22 @@ trait PersonNamesTrait
     }
 
     /**
-     * Имя пользователя (usernam)
+     * Имя пользователя (username)
      * @param string $value
      * @return string
      */
     public function getUsernameAttribute(string $value): string
     {
-        if (Uuid::isValid($value)) {
-            return $this->defaultName;
-        }
-
-        return $value;
+        return Uuid::isValid($value) ? $this->defaultName : $value;
     }
 
     /**
      * Отображаемое имя (как указал пользователь)
      * @return string
      */
-    public function getDisplayNameAttribute(): string
+    public function getDisplayNameAttribute($value): string
     {
-        if ($this->meta->display_name) {
-            return $this->meta->display_name;
-        }
-
-        return $this->username;
+        return $value ?: $this->username;
     }
 
     /**
@@ -48,9 +40,7 @@ trait PersonNamesTrait
      */
     public function getFullNameAttribute(): string
     {
-        $str = trim($this->meta->last_name . ' ' . $this->meta->first_name . ' ' . $this->meta->opt_name);
-
-        return $str ?: '';
+        return trim($this->last_name . ' ' . $this->first_name . ' ' . $this->opt_name) ?: '';
     }
 
     /**
@@ -59,9 +49,7 @@ trait PersonNamesTrait
      */
     public function getShortNameAttribute(): string
     {
-        $str = trim($this->meta->first_name . ' ' . $this->meta->last_name);
-
-        return $str ?: '';
+        return trim($this->first_name . ' ' . $this->last_name) ?: '';
     }
 
     /**
@@ -70,9 +58,7 @@ trait PersonNamesTrait
      */
     public function getOfficialNameAttribute(): string
     {
-        $str = trim($this->meta->first_name . ' ' . $this->meta->opt_name);
-
-        return $str ?: '';
+        return trim($this->first_name . ' ' . $this->opt_name) ?: '';
     }
 
     /**
@@ -82,14 +68,13 @@ trait PersonNamesTrait
     public function getInitialsNameAttribute(): string
     {
         $initials = '';
-        if ($this->meta->first_name) {
-            $initials .= mb_substr($this->meta->first_name, 0, 1) . '.';
+        if ($this->first_name) {
+            $initials .= mb_substr($this->first_name, 0, 1) . '.';
         }
-        if ($this->meta->opt_name) {
-            $initials .= mb_substr($this->meta->opt_name, 0, 1) . '.';
+        if ($this->opt_name) {
+            $initials .= mb_substr($this->opt_name, 0, 1) . '.';
         }
-        $str = trim($this->meta->last_name . ' ' . $initials);
 
-        return $str ?: '';
+        return trim($this->last_name . ' ' . $initials) ?: '';
     }
 }

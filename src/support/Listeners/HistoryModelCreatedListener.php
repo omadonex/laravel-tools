@@ -25,7 +25,7 @@ class HistoryModelCreatedListener
      */
     public function handle(ModelCreated $event): void
     {
-        if ($event->model->hasHistory ?? false) {
+        if ($event->model->historyEnabled ?? false) {
             $this->writeToHistory($event->userId, $event->model->getKey(), get_class($event->model), HistoryEvent::CREATE, [], ['__common' => $event->data]);
         }
     }

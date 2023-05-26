@@ -25,7 +25,7 @@ class HistoryModelCreatedTListener
      */
     public function handle(ModelCreatedT $event): void
     {
-        if ($event->model->hasHistory ?? false) {
+        if ($event->model->historyEnabled ?? false) {
             $this->writeToHistory($event->userId, $event->modelId, $event->modelClass, HistoryEvent::CREATE_T, [], ['__t' => ['__lang' => $event->lang, '__id' => $event->modelId] + $event->dataT]);
         }
     }

@@ -34,8 +34,10 @@
         "laravel": {
             "providers": [
                 "Omadonex\\LaravelTools\\Acl\\Providers\\AclServiceProvider",
+                "Omadonex\\LaravelTools\\Acl\\Providers\\AclEventServiceProvider",
                 "Omadonex\\LaravelTools\\Locale\\Providers\\LocaleServiceProvider",
-                "Omadonex\\LaravelTools\\Support\\Providers\\SupportServiceProvider"
+                "Omadonex\\LaravelTools\\Support\\Providers\\SupportServiceProvider",
+                "Omadonex\\LaravelTools\\Support\\Providers\\SupportEventServiceProvider"
             ]
         }
     },

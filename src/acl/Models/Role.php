@@ -22,6 +22,7 @@ class Role extends Model
         'is_hidden' => 'boolean',
     ];
 
+    public bool $historyEnabled = true;
     public $availableRelations = ['translates', 'permissions'];
 
     public function permissions()

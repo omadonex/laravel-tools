@@ -29,6 +29,11 @@ interface IAclService
     public const CONSOLE_USER_ID = 2;
     public const CONSOLE_USER_NAME = 'console';
 
+    public const RESERVED_USER_IDS = [
+        self::SYSTEM_USER_ID,
+        self::CONSOLE_USER_ID,
+    ];
+
     public function id(): ?int;
 
     public function check(array|string $permission, string $type = self::CHECK_TYPE_AND): bool;

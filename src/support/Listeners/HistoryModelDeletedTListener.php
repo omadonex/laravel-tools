@@ -25,7 +25,7 @@ class HistoryModelDeletedTListener
      */
     public function handle(ModelDeletedT $event): void
     {
-        if ($event->model->hasHistory ?? false) {
+        if ($event->model->historyEnabled ?? false) {
             $this->writeToHistory($event->userId, $event->modelId, $event->modelClass, HistoryEvent::DELETE_T, [], []);
         }
     }
