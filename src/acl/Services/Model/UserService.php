@@ -5,6 +5,8 @@ namespace Omadonex\LaravelTools\Acl\Services\Model;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Omadonex\LaravelTools\Acl\Events\UserRegistered;
+use Omadonex\LaravelTools\Acl\Events\UserRoleAttached;
+use Omadonex\LaravelTools\Acl\Events\UserRoleDetached;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Repositories\UserRepository;
 use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
@@ -94,5 +96,35 @@ class UserService extends ModelService
         event(new UserRegistered($user));
 
         return $user;
+   }
+
+    public function attachRole(int|string|Model $moid, array|string $roleId): void
+    {
+        $moid = $this->modelRepository->find($moid);
+        if ($this->aclService->checkRoleForUser($moid, $roleId, IAclService::CHECK_TYPE_AND, true)) {
+            OmxUserException::throw(OmxUserException::ERR_CODE_1001);
+        }
+
+        $this->aclService->attachRole($roleId, $moid);
+        if (!is_array($roleId)) {
+            $roleId = [$roleId];
+        }
+
+        foreach ($roleId as $id) {
+            event(new UserRoleAttached($moid, $id, $this->aclService->id()));
+        }
+    }
+
+    public function detachRole(int|string|Model $moid, array|string $roleId): void
+    {
+        $moid = $this->modelRepository->find($moid);
+        $this->aclService->detachRole($roleId, $moid);
+        if (!is_array($roleId)) {
+            $roleId = [$roleId];
+        }
+
+        foreach ($roleId as $id) {
+            event(new UserRoleDetached($moid, $id, $this->aclService->id()));
+        }
     }
 }

@@ -2,23 +2,24 @@
 
 namespace Omadonex\LaravelTools\Acl\Services;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
-use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxUserException;
-use Omadonex\LaravelTools\Support\Models\HistoryEvent;
+use Omadonex\LaravelTools\Acl\Models\User;
+use Omadonex\LaravelTools\Acl\Repositories\AclRepository;
 
 class AclService implements IAclService
 {
+    protected AclRepository $aclRepository;
+
     protected $mode;
     protected bool $deepMode;
     protected array $routeMap;
 
-    protected $user;
+    protected ?User $user;
     protected Collection $roleList;
     protected Collection $permissionList;
 
@@ -26,6 +27,7 @@ class AclService implements IAclService
 
     public function __construct(array $moduleArr = [])
     {
+        $this->aclRepository = new AclRepository;
         $this->mode = config('omx.acl.acl.mode', self::MODE_DENY);
         $this->deepMode = config('omx.acl.acl.deepMode', true);
         $this->routeMap = $this->generateRouteMap($moduleArr);
@@ -47,7 +49,7 @@ class AclService implements IAclService
         return (bool) $this->user;
     }
 
-    public function user()
+    public function user(): User
     {
         return $this->user;
     }
@@ -55,7 +57,7 @@ class AclService implements IAclService
     public function id(): ?int
     {
         if (!$this->user) {
-            return null;
+            return app()->runningInConsole() ? self::CONSOLE_USER_ID : self::SYSTEM_USER_ID;
         }
 
         return $this->user->getKey();
@@ -66,9 +68,9 @@ class AclService implements IAclService
         return $onlyIds ? $this->roleList->map->id->toArray() : $this->roleList->toArray();
     }
 
-    public function permissions(bool $onlyNames = false): array
+    public function permissions(bool $onlyIds = false): array
     {
-        return $onlyNames ? $this->permissionList->map->id->toArray() : $this->permissionList->toArray();
+        return $onlyIds ? $this->permissionList->map->id->toArray() : $this->permissionList->toArray();
     }
 
     public function isRoot(): bool
@@ -182,17 +184,17 @@ class AclService implements IAclService
         return $this->check($permission, $type);
     }
 
-    public function checkForUser($user, array|string $permission, string $type = self::CHECK_TYPE_AND): bool
+    public function checkForUser(User $user, array|string $permission, string $type = self::CHECK_TYPE_AND): bool
     {
         return $this->runForUser($user, 'check', [$permission, $type]);
     }
 
-    public function checkRoleForUser($user, array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool
+    public function checkRoleForUser(User $user, array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool
     {
         return $this->runForUser($user, 'checkRole', [$role, $type, $strict]);
     }
 
-    public function checkRouteForUser($user, string $routeName): bool
+    public function checkRouteForUser(User $user, string $routeName): bool
     {
         return $this->runForUser($user, 'checkRoute', [$routeName]);
     }
@@ -216,7 +218,7 @@ class AclService implements IAclService
         return $value->assign_starting_at < $nowTs && $value->assign_expires_at > $nowTs;
     }
 
-    public function setUser($user): void
+    public function setUser(User $user): void
     {
         $this->user = $user;
 
@@ -412,7 +414,7 @@ class AclService implements IAclService
         return false;
     }
 
-    private function runForUser($user, $func, $params)
+    private function runForUser(User $user, $func, $params)
     {
         $currUser = $this->user;
         $currPermissions = $this->permissionList;
@@ -428,37 +430,13 @@ class AclService implements IAclService
         return $result;
     }
 
-    public function attachRole(int|string|Model $moid, array|string $roleId): void
+    public function attachRole(array|string $role, User $user = null): void
     {
-        $moid = $this->modelRepository->find($moid);
-        if (app('acl')->checkRoleForUser($moid, $roleId, IAclService::CHECK_TYPE_AND, true)) {
-            OmxUserException::throw(OmxUserException::ERR_CODE_1001);
-        }
-
-        $this->aclRepository->addRole($moid, $roleId);
-        if (!is_array($roleId)) {
-            $roleId = [$roleId];
-        }
-
-        $historyData = [];
-        foreach ($roleId as $id) {
-            $historyData['role_id'] = $id;
-            $this->writeToHistory(app('acl')->id(), $moid->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, [], ['__common' => $historyData]);
-        }
+        $this->aclRepository->addRole($user ?: $this->user, $role);
     }
 
-    public function detachRole(int|string|Model $moid, array|string $roleId): void
+    public function detachRole(array|string $role, User $user = null): void
     {
-        $moid = $this->modelRepository->find($moid);
-        $this->aclRepository->removeRole($moid, $roleId);
-        if (!is_array($roleId)) {
-            $roleId = [$roleId];
-        }
-
-        $historyData = [];
-        foreach ($roleId as $id) {
-            $historyData['role_id'] = $id;
-            $this->writeToHistory(app('acl')->id(), $moid->getKey(), $this->modelRepository->getModelClass(), HistoryEvent::UPDATE, ['__common' => $historyData], []);
-        }
+        $this->aclRepository->removeRole($user ?: $this->user, $role);
     }
 }

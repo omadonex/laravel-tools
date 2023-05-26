@@ -2,10 +2,11 @@
 
 namespace Omadonex\LaravelTools\Acl\Repositories;
 
+use Omadonex\LaravelTools\Acl\Interfaces\IAclRepository;
 use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\Role;
 
-class AclRepository
+class AclRepository implements IAclRepository
 {
     public function addRole($user, array|string $role): void
     {
@@ -59,5 +60,4 @@ class AclRepository
 
         return Role::with($relations)->get()->toArray();
     }
-
 }
