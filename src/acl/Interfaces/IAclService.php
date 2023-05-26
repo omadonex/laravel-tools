@@ -25,7 +25,9 @@ interface IAclService
     public const ASSIGN_TYPE_USER = 3;
 
     public const SYSTEM_USER_ID = 1;
+    public const SYSTEM_USER_NAME = 'system';
     public const CONSOLE_USER_ID = 2;
+    public const CONSOLE_USER_NAME = 'console';
 
     public function id(): ?int;
 

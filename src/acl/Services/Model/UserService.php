@@ -21,12 +21,12 @@ class UserService extends ModelService
         parent::__construct($userRepository, $aclService, $localeService);
     }
 
-    private function makePassword(string $password): string
+    public function makePassword(string $password): string
     {
         return Hash::make($password);
     }
 
-    private function makeAvatar($avatar): string
+    public function makeAvatar($avatar): string
     {
         return $avatar->move("storage/img/avatars", Uuid::uuid4()->toString());
     }

@@ -5,6 +5,7 @@ namespace Omadonex\LaravelTools\Acl\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Nwidart\Modules\Facades\Module;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\PermissionGroup;
@@ -12,8 +13,11 @@ use Omadonex\LaravelTools\Acl\Models\PermissionGroupTranslate;
 use Omadonex\LaravelTools\Acl\Models\PermissionTranslate;
 use Omadonex\LaravelTools\Acl\Models\Role;
 use Omadonex\LaravelTools\Acl\Models\RoleTranslate;
+use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Acl\Services\Model\RoleService;
+use Omadonex\LaravelTools\Acl\Services\Model\UserService;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
+use Ramsey\Uuid\Uuid;
 
 class Generate extends Command
 {
@@ -26,6 +30,7 @@ class Generate extends Command
     protected $signature = 'omx:acl:generate';
 
     private RoleService $roleService;
+    private UserService $userService;
 
     /**
      * The console command description.
@@ -34,10 +39,11 @@ class Generate extends Command
      */
     protected $description = 'Generate all data for acl based on config files';
 
-    public function __construct(RoleService $roleService)
+    public function __construct(RoleService $roleService, UserService $userService)
     {
         parent::__construct();
         $this->roleService = $roleService;
+        $this->userService = $userService;
     }
 
     /**
@@ -56,6 +62,8 @@ class Generate extends Command
             return ;
         }
 
+        User::whereIn('id', [IAclService::SYSTEM_USER_ID, IAclService::CONSOLE_USER_ID])->delete();
+
         Role::protectedGenerate()->delete();
         RoleTranslate::protectedGenerate()->delete();
         Permission::truncate();
@@ -64,6 +72,19 @@ class Generate extends Command
         PermissionGroupTranslate::truncate();
 
         \DB::table('acl_pivot_permission_role')->where(ConstCustom::DB_FIELD_PROTECTED_GENERATE, true)->delete();
+
+        Model::unguard();
+        $system = User::create([
+            'id' => IAclService::SYSTEM_USER_ID,
+            'username' => IAclService::SYSTEM_USER_NAME,
+            'password' => $this->userService->makePassword(Uuid::uuid4()->toString()),
+        ]);
+        $console = User::create([
+            'id' => IAclService::CONSOLE_USER_ID,
+            'username' => IAclService::CONSOLE_USER_NAME,
+            'password' => $this->userService->makePassword(Uuid::uuid4()->toString()),
+        ]);
+        Model::reguard();
 
         $aclEntryList = [
             [
