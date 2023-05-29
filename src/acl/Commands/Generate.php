@@ -62,7 +62,8 @@ class Generate extends Command
             return ;
         }
 
-        User::whereIn('id', [IAclService::SYSTEM_USER_ID, IAclService::CONSOLE_USER_ID])->delete();
+        User::whereIn('id', IAclService::RESERVED_USER_IDS)->delete();
+        \DB::table('acl_pivot_role_user')->whereIn('user_id', IAclService::RESERVED_USER_IDS)->delete();
 
         Role::protectedGenerate()->delete();
         RoleTranslate::protectedGenerate()->delete();
@@ -72,19 +73,6 @@ class Generate extends Command
         PermissionGroupTranslate::truncate();
 
         \DB::table('acl_pivot_permission_role')->where(ConstCustom::DB_FIELD_PROTECTED_GENERATE, true)->delete();
-
-        Model::unguard();
-        $system = User::create([
-            'id' => IAclService::SYSTEM_USER_ID,
-            'username' => IAclService::SYSTEM_USER_NAME,
-            'password' => $this->userService->makePassword(Uuid::uuid4()->toString()),
-        ]);
-        $console = User::create([
-            'id' => IAclService::CONSOLE_USER_ID,
-            'username' => IAclService::CONSOLE_USER_NAME,
-            'password' => $this->userService->makePassword(Uuid::uuid4()->toString()),
-        ]);
-        Model::reguard();
 
         $aclEntryList = [
             [
@@ -132,6 +120,8 @@ class Generate extends Command
         \DB::table('acl_pivot_role_user')->whereNotIn('role_id', $roleIdList)->delete();
 
         Model::reguard();
+
+        $this->createUsers();
     }
 
     /**
@@ -249,5 +239,22 @@ class Generate extends Command
                 ]);
             }
         }
+    }
+
+    private function createUsers()
+    {
+        $console = $this->userService->createForce(IAclService::CONSOLE_USER_ID, [
+            'username' => IAclService::CONSOLE_USER_NAME,
+            'password' => Uuid::uuid4()->toString(),
+        ]);
+        $system = $this->userService->createForce(IAclService::SYSTEM_USER_ID, [
+            'username' => IAclService::SYSTEM_USER_NAME,
+            'password' => Uuid::uuid4()->toString(),
+        ]);
+        $root = $this->userService->createForce(IAclService::ROOT_USER_ID, [
+            'username' => IAclService::ROOT_USER_NAME,
+            'password' => IAclService::ROOT_USER_DEFAULT_PASSWORD,
+        ]);
+        $this->userService->attachRole($root, IRole::ROOT);
     }
 }

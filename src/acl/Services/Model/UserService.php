@@ -35,8 +35,8 @@ class UserService extends ModelService
     {
         $userData = [
             'username' => $data['username'],
-            'email' => $data['email'],
             'password' => $this->makePassword($data['password']),
+            'email' => $data['email'] ?? null,
             'phone' => $data['phone'] ?? null,
             'display_name' => $data['display_name'] ?? null,
             'first_name' => $data['first_name'] ?? null,
@@ -44,12 +44,26 @@ class UserService extends ModelService
             'opt_name' => $data['opt_name'] ?? null,
         ];
 
+        if (array_key_exists('id', $data)) {
+            $userData['id'] = $data['id'];
+        }
+
         $avatar = $data['avatar'] ?? null;
         if ($avatar !== null) {
             $userData['avatar'] = $this->makeAvatar($avatar);
         }
 
         return parent::create($userData, $fresh);
+    }
+
+    public function createForce(int $userId, array $data, bool $fresh = true): Model
+    {
+        Model::unguard();
+        $data['id'] = $userId;
+        $user = $this->create($data, $fresh);
+        Model::reguard();
+
+        return $user;
     }
 
     public function update(int|string|Model $moid, array $data, bool $returnModel = false): bool|Model

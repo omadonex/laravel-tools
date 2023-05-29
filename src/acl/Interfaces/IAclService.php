@@ -24,14 +24,18 @@ interface IAclService
     public const ASSIGN_TYPE_ROOT = 2;
     public const ASSIGN_TYPE_USER = 3;
 
-    public const SYSTEM_USER_ID = 1;
-    public const SYSTEM_USER_NAME = 'system';
-    public const CONSOLE_USER_ID = 2;
+    public const CONSOLE_USER_ID = 1;
     public const CONSOLE_USER_NAME = 'console';
+    public const SYSTEM_USER_ID = 2;
+    public const SYSTEM_USER_NAME = 'system';
+    public const ROOT_USER_ID = 3;
+    public const ROOT_USER_NAME = 'root';
+    public const ROOT_USER_DEFAULT_PASSWORD = '123123123';
 
     public const RESERVED_USER_IDS = [
         self::SYSTEM_USER_ID,
         self::CONSOLE_USER_ID,
+        self::ROOT_USER_ID,
     ];
 
     public function id(): ?int;

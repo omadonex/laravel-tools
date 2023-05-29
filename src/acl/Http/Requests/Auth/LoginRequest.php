@@ -47,7 +47,6 @@ class LoginRequest extends FormRequest
     public function authenticate()
     {
         $this->ensureIsNotRateLimited();
-
         $login = $this->login;
         if (Validator::make(['login' => $this->login], ['login' => 'email'])->passes()) {
             $field = 'email';
