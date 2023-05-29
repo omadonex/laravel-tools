@@ -62,9 +62,6 @@ class Generate extends Command
             return ;
         }
 
-        User::whereIn('id', IAclService::RESERVED_USER_IDS)->delete();
-        \DB::table('acl_pivot_role_user')->whereIn('user_id', IAclService::RESERVED_USER_IDS)->delete();
-
         Role::protectedGenerate()->delete();
         RoleTranslate::protectedGenerate()->delete();
         Permission::truncate();
@@ -243,6 +240,9 @@ class Generate extends Command
 
     private function createUsers()
     {
+        User::whereIn('id', IAclService::RESERVED_USER_IDS)->delete();
+        \DB::table('acl_pivot_role_user')->whereIn('user_id', IAclService::RESERVED_USER_IDS)->delete();
+
         $console = $this->userService->createForce(IAclService::CONSOLE_USER_ID, [
             'username' => IAclService::CONSOLE_USER_NAME,
             'password' => Uuid::uuid4()->toString(),
