@@ -5,7 +5,7 @@ namespace Omadonex\LaravelTools\Support\Services;
 use Illuminate\Support\Str;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 
-class PageService
+class PageService extends OmxService
 {
     const AUTH_LOGIN = 'auth_login';
     const AUTH_REGISTER = 'auth_register';

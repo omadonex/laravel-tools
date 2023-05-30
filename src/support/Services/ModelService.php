@@ -15,7 +15,7 @@ use Omadonex\LaravelTools\Support\Interfaces\Repositories\IModelService;
 use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
 use Omadonex\LaravelTools\Support\Traits\HistoryServiceTrait;
 
-abstract class ModelService implements IModelService
+abstract class ModelService extends OmxService implements IModelService
 {
     use HistoryServiceTrait;
 
@@ -34,7 +34,7 @@ abstract class ModelService implements IModelService
     {
         $model = $this->modelRepository->create($data, $fresh);
 
-        event(new ModelCreated($model, $data, $this->aclService->id()));
+        event(new ModelCreated($model->getKey(), $this->modelRepository->getModelClass(), $this->aclService->id(), $data, $model));
 
         return $model;
     }
@@ -43,7 +43,7 @@ abstract class ModelService implements IModelService
     {
         $this->modelRepository->createT($modelId, $lang, $dataT);
 
-        event(new ModelCreatedT($modelId, $this->modelRepository->getModelClass(), $lang, $dataT, $this->aclService->id()));
+        event(new ModelCreatedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $dataT, $lang));
     }
 
     public function createWithT(string $lang, array $data, array $dataT, $fresh = true): Model
@@ -59,7 +59,7 @@ abstract class ModelService implements IModelService
         list ($model, $oldData) = $this->modelRepository->getCurrData($moid, array_keys($data));
         $result = $this->modelRepository->update($model, $data, $returnModel);
 
-        event(new ModelUpdated($model, $oldData, $data, $this->aclService->id()));
+        event(new ModelUpdated($model->getKey(), $this->modelRepository->getModelClass(), $this->aclService->id(), $oldData, $data, $model));
 
         return $result;
     }
@@ -69,7 +69,7 @@ abstract class ModelService implements IModelService
         list ($model, $oldDataT) = $this->modelRepository->getCurrDataT($modelId, $lang, array_keys($dataT));
         $this->modelRepository->updateT($modelId, $lang, $dataT);
 
-        event(new ModelUpdatedT($modelId, $this->modelRepository->getModelClass(), $lang, $oldDataT, $dataT, $this->aclService->id()));
+        event(new ModelUpdatedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $oldDataT, $dataT, $lang));
     }
 
     public function updateWithT(int|string|Model $moid, string $lang, array $data, array $dataT, bool $returnModel = true): bool|Model
@@ -88,7 +88,7 @@ abstract class ModelService implements IModelService
         $this->checkDelete($model);
         $this->modelRepository->delete($model);
 
-        event(new ModelDeleted($id, $this->modelRepository->getModelClass(), $data, $this->aclService->id()));
+        event(new ModelDeleted($id, $this->modelRepository->getModelClass(), $this->aclService->id(), $data));
 
         return $id;
     }
@@ -100,7 +100,7 @@ abstract class ModelService implements IModelService
             list ($model, $data) = $this->modelRepository->getCurrDataT($modelId, $key);
             $this->modelRepository->deleteT($modelId, $key);
 
-            event(new ModelDeletedT($modelId, $this->modelRepository->getModelClass(), $lang, $data, $this->aclService->id()));
+            event(new ModelDeletedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $data, $key));
         }
     }
 

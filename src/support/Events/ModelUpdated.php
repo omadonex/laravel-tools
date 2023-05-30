@@ -12,20 +12,24 @@ class ModelUpdated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Model $model;
+    public int|string $modelId;
+    public string $modelClass;
+    public int $userId;
     public array $oldData;
     public array $newData;
-    public int $userId;
+    public Model $model;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Model $model, array $oldData, array $newData, int $userId)
+    public function __construct(int|string $modelId, string $modelClass, int $userId, array $oldData, array $newData, Model $model)
     {
-        $this->model = $model;
+        $this->modelId = $modelId;
+        $this->modelClass = $modelClass;
+        $this->userId = $userId;
         $this->oldData = $oldData;
         $this->newData = $newData;
-        $this->userId = $userId;
+        $this->model = $model;
     }
 
     /**

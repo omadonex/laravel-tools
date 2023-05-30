@@ -17,6 +17,8 @@ class OmxUserException extends Exception
     public const ERR_CODE_1002 = 1002;
     /** Указан неверный пароль */
     public const ERR_CODE_1003 = 1003;
+    /** Нельзя удалять зарезервированные роли */
+    public const ERR_CODE_1004 = 1004;
 
     public static function throw(int $code, ?Throwable $previous = null): void
     {

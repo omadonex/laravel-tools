@@ -6,24 +6,23 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Omadonex\LaravelTools\Acl\Models\User;
 
 class UserRoleDetached
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public User $user;
-    public string $roleId;
+    public int|string $modelId;
     public int $userId;
+    public string $roleId;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(User $user, string $roleId, int $userId)
+    public function __construct(int|string $modelId, int $userId, string $roleId)
     {
-        $this->user = $user;
-        $this->roleId = $roleId;
+        $this->modelId = $modelId;
         $this->userId = $userId;
+        $this->roleId = $roleId;
     }
 
     /**

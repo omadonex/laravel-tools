@@ -4,8 +4,9 @@ namespace Omadonex\LaravelTools\Acl\Services;
 
 use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Support\Services\OmxService;
 
-abstract class AclNavbarService
+abstract class AclNavbarService extends OmxService
 {
     protected AclService $aclService;
     protected array $data;

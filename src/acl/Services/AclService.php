@@ -10,8 +10,9 @@ use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
 use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Acl\Repositories\AclRepository;
+use Omadonex\LaravelTools\Support\Services\OmxService;
 
-class AclService implements IAclService
+class AclService extends OmxService implements IAclService
 {
     protected AclRepository $aclRepository;
 

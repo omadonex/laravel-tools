@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Acl\Services\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Omadonex\LaravelTools\Acl\Events\UserPassChanged;
 use Omadonex\LaravelTools\Acl\Events\UserRegistered;
 use Omadonex\LaravelTools\Acl\Events\UserRoleAttached;
 use Omadonex\LaravelTools\Acl\Events\UserRoleDetached;
@@ -94,6 +95,8 @@ class UserService extends ModelService
         $this->update($moid, [
             'password' => $password,
         ]);
+
+        event(new UserPassChanged($moid instanceof Model ? $moid->getKey() : $moid, $this->aclService->id()));
     }
 
     public function setAvatar(int|string|Model $moid, $avatar): void
@@ -107,7 +110,7 @@ class UserService extends ModelService
     {
         $user = $this->create($data);
 
-        event(new UserRegistered($user));
+        event(new UserRegistered($user->getKey()));
 
         return $user;
    }
@@ -125,7 +128,7 @@ class UserService extends ModelService
         }
 
         foreach ($roleId as $id) {
-            event(new UserRoleAttached($moid, $id, $this->aclService->id()));
+            event(new UserRoleAttached($moid->getKey(), $this->aclService->id(), $id));
         }
     }
 
@@ -138,7 +141,7 @@ class UserService extends ModelService
         }
 
         foreach ($roleId as $id) {
-            event(new UserRoleDetached($moid, $id, $this->aclService->id()));
+            event(new UserRoleDetached($moid->getKey(), $this->aclService->id(), $id));
         }
     }
 }

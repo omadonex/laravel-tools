@@ -1,32 +1,26 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Events;
+namespace Omadonex\LaravelTools\Acl\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ModelCreatedT
+class UserPassChanged
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public int|string $modelId;
-    public string $modelClass;
     public int $userId;
-    public array $dataT;
-    public string $lang;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int|string $modelId, string $modelClass, int $userId, array $dataT, string $lang)
+    public function __construct(int|string $modelId, int $userId)
     {
         $this->modelId = $modelId;
-        $this->modelClass = $modelClass;
         $this->userId = $userId;
-        $this->dataT = $dataT;
-        $this->lang = $lang;
     }
 
     /**

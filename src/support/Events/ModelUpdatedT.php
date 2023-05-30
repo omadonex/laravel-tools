@@ -13,22 +13,22 @@ class ModelUpdatedT
 
     public int|string $modelId;
     public string $modelClass;
-    public string $lang;
+    public int $userId;
     public array $oldDataT;
     public array $newDataT;
-    public int $userId;
+    public string $lang;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int|string $modelId, string $modelClass, string $lang, array $oldDataT, array $newDataT, int $userId)
+    public function __construct(int|string $modelId, string $modelClass, int $userId, array $oldDataT, array $newDataT, string $lang)
     {
         $this->modelId = $modelId;
         $this->modelClass = $modelClass;
-        $this->lang = $lang;
+        $this->userId = $userId;
         $this->oldDataT = $oldDataT;
         $this->newDataT = $newDataT;
-        $this->userId = $userId;
+        $this->lang = $lang;
     }
 
     /**

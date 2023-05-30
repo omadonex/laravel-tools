@@ -4,8 +4,9 @@ namespace Omadonex\LaravelTools\Locale\Services;
 
 use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
+use Omadonex\LaravelTools\Support\Services\OmxService;
 
-class LocaleService implements ILocaleService
+class LocaleService extends OmxService implements ILocaleService
 {
     private array $moduleList;
 

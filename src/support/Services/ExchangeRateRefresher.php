@@ -4,7 +4,7 @@ namespace Omadonex\LaravelTools\Support\Services;
 
 use Illuminate\Support\Facades\Http;
 
-class ExchangeRateRefresher
+class ExchangeRateRefresher extends OmxService
 {
     // зеркало ЦРБ. Так как сам ЦРБ отвечает 1 раз через десять.  https://www.cbr-xml-daily.ru/
     protected string $serviceUrl = 'https://www.cbr-xml-daily.ru/daily.xml';

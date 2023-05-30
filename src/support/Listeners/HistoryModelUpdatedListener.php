@@ -37,7 +37,7 @@ class HistoryModelUpdatedListener
             }
 
             if (!empty($oldData) && !empty($newData)) {
-                $this->writeToHistory($event->userId, $event->model->getKey(), get_class($event->model), HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $newData]);
+                $this->writeToHistory($event->userId, $event->modelId, $event->modelClass, HistoryEvent::UPDATE, ['__common' => $oldData], ['__common' => $newData]);
             }
         }
     }

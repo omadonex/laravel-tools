@@ -12,18 +12,22 @@ class ModelCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Model $model;
-    public array $data;
+    public int|string $modelId;
+    public string $modelClass;
     public int $userId;
+    public array $data;
+    public Model $model;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Model $model, array $data, int $userId)
+    public function __construct(int|string $modelId, string $modelClass, int $userId, array $data, Model $model)
     {
-        $this->model = $model;
-        $this->data = $data;
+        $this->modelId = $modelId;
+        $this->modelClass = $modelClass;
         $this->userId = $userId;
+        $this->data = $data;
+        $this->model = $model;
     }
 
     /**

@@ -13,18 +13,18 @@ class ModelDeleted
 
     public int|string $modelId;
     public string $modelClass;
-    public array $data;
     public int $userId;
+    public array $data;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int|string $modelId, string $modelClass, array $data, int $userId)
+    public function __construct(int|string $modelId, string $modelClass, int $userId, array $data)
     {
         $this->modelId = $modelId;
-        $this-> modelClass = $modelClass;
-        $this->data = $data;
+        $this->modelClass = $modelClass;
         $this->userId = $userId;
+        $this->data = $data;
     }
 
     /**

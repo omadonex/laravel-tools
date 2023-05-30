@@ -14,14 +14,14 @@ class UserRegistered
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
+    public int|string $modelId;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($user)
+    public function __construct(int|string $modelId)
     {
-        $this->user = $user;
+        $this->modelId = $modelId;
     }
 
     /**
