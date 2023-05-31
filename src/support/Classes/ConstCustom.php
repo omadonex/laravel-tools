@@ -31,8 +31,8 @@ class ConstCustom
     const DB_FIELD_UNSAFE_SEEDING = 'omx_unsafe_seeding';
 
     const DB_FIELD_LEN_LANG = 15;
-    const DB_FIELD_LEN_STR_KEY = 36;
-    const DB_FIELD_LEN_PRIMARY_STR = 36;
+    const DB_FIELD_LEN_STR_KEY = 64;
+    const DB_FIELD_LEN_PRIMARY_STR = 64;
     const DB_FIELD_LEN_TOKEN_API = 64;
     const DB_FIELD_LEN_TOKEN_ACTIVATION = 64;
 

@@ -195,10 +195,14 @@ class UtilsCustom
         return $name;
     }
 
-    //TODO omadonex: Косямба, только для двух слов
-    public static function camelToDashed(string $pageId): string
+    public static function camelToDashed(string $str): string
     {
-        return strtolower(preg_replace('/([^A-Z-])([A-Z])/', '$1-$2', $pageId));
+        return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $str));
+    }
+
+    public static function camelToUnderscore(string $str): string
+    {
+        return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1_', $str));
     }
 
     public static function deepScandir($path, $recursive = true, $nameModifierCallback = null, $ignore = [], $subfolder = null)

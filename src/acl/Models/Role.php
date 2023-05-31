@@ -23,6 +23,7 @@ class Role extends Model
     ];
 
     public bool $historyEnabled = true;
+    public const MODEL_SHOW_URL = 'admin.acl.role.show';
     public $availableRelations = ['translates', 'permissions'];
 
     public function permissions()
