@@ -9,6 +9,10 @@ class UtilsUserLabel
 {
     public static function getFromResource($resource, string $column): string
     {
+        if ($resource->$column === null) {
+            return '';
+        }
+
         $userIdPersonNames = new ToolsPersonNames(DtoUserNames::parseFromResource($resource, $column));
 
         return $userIdPersonNames->getFullName();

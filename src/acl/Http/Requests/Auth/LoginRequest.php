@@ -37,13 +37,6 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * Attempt to authenticate the request's credentials.
-     *
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function authenticate()
     {
         $this->ensureIsNotRateLimited();
@@ -66,6 +59,8 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        return [$field, $login];
     }
 
     /**

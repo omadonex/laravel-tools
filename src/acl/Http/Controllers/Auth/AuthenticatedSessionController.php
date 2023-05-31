@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Omadonex\LaravelTools\Acl\Http\Controllers\Auth;
 
+use Omadonex\LaravelTools\Acl\Events\UserLoggedIn;
 use Omadonex\LaravelTools\Acl\Http\Requests\Auth\LoginRequest;
 use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -21,9 +22,11 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        list($field, $login) = $request->authenticate();
 
         $request->session()->regenerate();
+
+        event(new UserLoggedIn(1));
 
         return redirect()->intended('/');
     }
