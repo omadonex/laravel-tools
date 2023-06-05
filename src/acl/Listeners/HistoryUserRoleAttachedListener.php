@@ -5,6 +5,7 @@ namespace Omadonex\LaravelTools\Acl\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Omadonex\LaravelTools\Acl\Events\UserRoleAttached;
+use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Support\Models\HistoryEvent;
 use Omadonex\LaravelTools\Support\Traits\HistoryServiceTrait;
 
@@ -26,7 +27,7 @@ class HistoryUserRoleAttachedListener
     public function handle(UserRoleAttached $event): void
     {
         if ($event->user->historyEnabled ?? false) {
-            $this->writeToHistory($event->userId, $event->user->getKey(), get_class($event->user), HistoryEvent::UPDATE, [], ['__common' => ['role_id' => $event->roleId]]);
+            $this->writeToHistory($event->userId, $event->modelId, User::class, HistoryEvent::UPDATE, [], ['__common' => ['role_id' => $event->roleId]]);
         }
     }
 }
