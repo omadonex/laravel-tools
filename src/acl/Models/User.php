@@ -17,6 +17,9 @@ class User extends Authenticatable
     use SoftDeletes;
     use PersonNamesTrait;
 
+    public const MODEL_SHOW_URL = 'admin.acl.user.show';
+    public const HISTORY_ENABLED = true;
+
     protected $fillable = [
         'username',
         'email',
@@ -34,9 +37,7 @@ class User extends Authenticatable
         'phone_verified_at' => 'datetime',
     ];
 
-    public const MODEL_SHOW_URL = 'admin.acl.user.show';
 
-    public bool $historyEnabled = true;
 
     public function getAvatar(): string
     {

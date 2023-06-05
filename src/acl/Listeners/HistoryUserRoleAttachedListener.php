@@ -26,7 +26,7 @@ class HistoryUserRoleAttachedListener
      */
     public function handle(UserRoleAttached $event): void
     {
-        if ($event->user->historyEnabled ?? false) {
+        if (User::HISTORY_ENABLED ?? false) {
             $this->writeToHistory($event->userId, $event->modelId, User::class, HistoryEvent::UPDATE, [], ['__common' => ['role_id' => $event->roleId]]);
         }
     }

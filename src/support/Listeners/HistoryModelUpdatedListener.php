@@ -25,7 +25,7 @@ class HistoryModelUpdatedListener
      */
     public function handle(ModelUpdated $event): void
     {
-        if ($event->model->historyEnabled ?? false) {
+        if ($event->modelClass::HISTORY_ENABLED ?? false) {
             $keyList = array_keys($event->newData);
             $oldData = $event->oldData;
             $newData = $event->newData;

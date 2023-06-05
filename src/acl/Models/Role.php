@@ -9,7 +9,11 @@ use Omadonex\LaravelTools\Locale\Traits\TranslateTrait;
 
 class Role extends Model
 {
-    use TranslateTrait, ProtectedGenerateTrait;
+    use TranslateTrait;
+    use ProtectedGenerateTrait;
+
+    public const MODEL_SHOW_URL = 'admin.acl.role.show';
+    public const HISTORY_ENABLED = true;
 
     protected $table = 'acl_role';
     protected $fillable = ['id', 'is_staff', 'is_hidden', 'sort_index'];
@@ -22,8 +26,6 @@ class Role extends Model
         'is_hidden' => 'boolean',
     ];
 
-    public bool $historyEnabled = true;
-    public const MODEL_SHOW_URL = 'admin.acl.role.show';
     public $availableRelations = ['translates', 'permissions'];
 
     public function permissions()
