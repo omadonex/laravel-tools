@@ -18,13 +18,13 @@ class RoleService extends ModelService
         parent::__construct($roleRepository, $aclService, $localeService);
     }
 
-    public function create(array $data, bool $fresh = true): Model
+    public function create(array $data, bool $fresh = true, bool $event = true): Model
     {
         if (empty($data['id'])) {
             $data['id'] = Uuid::uuid4()->toString();
         }
 
-        return parent::create($data, $fresh);
+        return parent::create($data, $fresh, $event);
     }
 
     public function checkDelete(Model $model): void

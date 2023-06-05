@@ -2,4 +2,5 @@
 
 return [
     'hiddenFieldValue' => 'Hidden',
+    'simpleFieldValue' => 'Updated',
 ];

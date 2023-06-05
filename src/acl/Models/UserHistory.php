@@ -11,6 +11,7 @@ class UserHistory extends History
     protected $table = 'user_history';
 
     public const HIDDEN_FIELDS = ['password'];
+    public const SIMPLE_FIELDS = ['avatar'];
 
     public static function historyCasts(): array
     {

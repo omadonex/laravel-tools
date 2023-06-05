@@ -17,6 +17,7 @@ trait HistoryServiceTrait
         $historyModel->history_event_id = $eventId;
 
         $hiddenFields = defined("{$historyModelClass}::HIDDEN_FIELDS") ? $historyModel::HIDDEN_FIELDS : [];
+        $simpleFields = defined("{$historyModelClass}::SIMPLE_FIELDS") ? $historyModel::SIMPLE_FIELDS : [];
 
         foreach ($oldData as $specKey => $data) {
             foreach ($data as $key => $value) {
@@ -26,6 +27,10 @@ trait HistoryServiceTrait
 
                 if (in_array($key, $hiddenFields)) {
                     $oldData[$specKey][$key] = __('omx-support::history.hiddenFieldValue');
+                }
+
+                if (in_array($key, $simpleFields)) {
+                    $oldData[$specKey][$key] = __('omx-support::history.simpleFieldValue');
                 }
             }
         }
@@ -38,6 +43,10 @@ trait HistoryServiceTrait
 
                 if (in_array($key, $hiddenFields)) {
                     $newData[$specKey][$key] = __('omx-support::history.hiddenFieldValue');
+                }
+
+                if (in_array($key, $simpleFields)) {
+                    $newData[$specKey][$key] = __('omx-support::history.simpleFieldValue');
                 }
             }
         }

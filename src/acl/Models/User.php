@@ -23,8 +23,14 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'email',
+        'first_name',
+        'last_name',
+        'opt_name',
+        'display_name',
+        'phone_code',
         'phone',
         'password',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -36,8 +42,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
     ];
-
-
 
     public function getAvatar(): string
     {

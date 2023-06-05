@@ -30,57 +30,65 @@ abstract class ModelService extends OmxService implements IModelService
         $this->localeService = $localeService;
     }
 
-    public function create(array $data, bool $fresh = true): Model
+    public function create(array $data, bool $fresh = true, bool $event = true): Model
     {
         $model = $this->modelRepository->create($data, $fresh);
 
-        event(new ModelCreated($model->getKey(), $this->modelRepository->getModelClass(), $this->aclService->id(), $data, $model));
+        if ($event) {
+            event(new ModelCreated($model->getKey(), $this->modelRepository->getModelClass(), $this->aclService->id(), $data, $model));
+        }
 
         return $model;
     }
 
-    public function createT(int|string $modelId, string $lang, array $dataT): void
+    public function createT(int|string $modelId, string $lang, array $dataT, bool $event = true): void
     {
         $this->modelRepository->createT($modelId, $lang, $dataT);
 
-        event(new ModelCreatedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $dataT, $lang));
+        if ($event) {
+            event(new ModelCreatedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $dataT, $lang));
+        }
     }
 
-    public function createWithT(string $lang, array $data, array $dataT, $fresh = true): Model
+    public function createWithT(string $lang, array $data, array $dataT, $fresh = true, bool $event = true): Model
     {
-        $model = $this->create($data, $fresh);
-        $this->createT($model->getKey(), $lang, $dataT);
+        $model = $this->create($data, $fresh, $event);
+        $this->createT($model->getKey(), $lang, $dataT, $event);
 
         return $model;
     }
 
-    public function update(int|string|Model $moid, array $data, bool $returnModel = false): bool|Model
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $event = true): bool|Model
     {
         list ($model, $oldData) = $this->modelRepository->getCurrData($moid, array_keys($data));
         $result = $this->modelRepository->update($model, $data, $returnModel);
 
-        event(new ModelUpdated($model->getKey(), $this->modelRepository->getModelClass(), $this->aclService->id(), $oldData, $data, $model));
+        if ($event) {
+            event(new ModelUpdated($model->getKey(), $this->modelRepository->getModelClass(), $this->aclService->id(), $oldData, $data, $model));
+        }
 
         return $result;
     }
 
-    public function updateT(int|string $modelId, string $lang, array $dataT): void
+    public function updateT(int|string $modelId, string $lang, array $dataT, bool $event = true): void
     {
         list ($model, $oldDataT) = $this->modelRepository->getCurrDataT($modelId, $lang, array_keys($dataT));
         $this->modelRepository->updateT($modelId, $lang, $dataT);
 
-        event(new ModelUpdatedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $oldDataT, $dataT, $lang));
+        if ($event) {
+            event(new ModelUpdatedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $oldDataT, $dataT, $lang));
+        }
     }
 
-    public function updateWithT(int|string|Model $moid, string $lang, array $data, array $dataT, bool $returnModel = true): bool|Model
+    public function updateWithT(int|string|Model $moid, string $lang, array $data, array $dataT, bool $returnModel = true, bool $event = true): bool|Model
     {
         $id = $moid instanceof Model ? $moid->getKey() : $moid;
-        $this->updateT($id, $lang, $dataT);
+        $this->updateT($id, $lang, $dataT, $event);
 
-        return $this->update($moid, $data, $returnModel);
+        return $this->update($moid, $data, $returnModel, $event);
     }
 
-    public function delete(int|string|Model $moid): int|string
+    public function delete(int|string|Model $moid, bool $event = true): int|string
     {
         list ($model, $data) = $this->modelRepository->getCurrData($moid);
         $id = $model->getKey();
@@ -88,26 +96,30 @@ abstract class ModelService extends OmxService implements IModelService
         $this->checkDelete($model);
         $this->modelRepository->delete($model);
 
-        event(new ModelDeleted($id, $this->modelRepository->getModelClass(), $this->aclService->id(), $data));
+        if ($event) {
+            event(new ModelDeleted($id, $this->modelRepository->getModelClass(), $this->aclService->id(), $data));
+        }
 
         return $id;
     }
 
-    public function deleteT(int|string $modelId, ?string $lang): void
+    public function deleteT(int|string $modelId, ?string $lang, bool $event = true): void
     {
         $langList = $lang ? [$lang] : $this->localeService->getLangList();
         foreach ($langList as $key) {
             list ($model, $data) = $this->modelRepository->getCurrDataT($modelId, $key);
             $this->modelRepository->deleteT($modelId, $key);
 
-            event(new ModelDeletedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $data, $key));
+            if ($event) {
+                event(new ModelDeletedT($modelId, $this->modelRepository->getModelClass(), $this->aclService->id(), $data, $key));
+            }
         }
     }
 
-    public function deleteWithT(int|string|Model $moid, ?string $lang = null): void
+    public function deleteWithT(int|string|Model $moid, ?string $lang = null, bool $event = true): void
     {
-        $id = $this->delete($moid);
-        $this->deleteT($id, $lang);
+        $id = $this->delete($moid, $event);
+        $this->deleteT($id, $lang, $event);
     }
 
     public function checkDelete(Model $model): void

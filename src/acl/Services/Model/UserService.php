@@ -29,10 +29,13 @@ class UserService extends ModelService
 
     public function makeAvatar($avatar): string
     {
-        return $avatar->move("storage/img/avatars", Uuid::uuid4()->toString());
+        $id = Uuid::uuid4()->toString();
+        $avatar->storeAs('public/avatars', $id);
+
+        return "/storage/avatars/{$id}";
     }
 
-    public function create(array $data, bool $fresh = true): Model
+    public function create(array $data, bool $fresh = true, bool $event = true): Model
     {
         $userData = [
             'username' => $data['username'],
@@ -54,20 +57,20 @@ class UserService extends ModelService
             $userData['avatar'] = $this->makeAvatar($avatar);
         }
 
-        return parent::create($userData, $fresh);
+        return parent::create($userData, $fresh, $event);
     }
 
-    public function createForce(int $userId, array $data, bool $fresh = true): Model
+    public function createForce(int $userId, array $data, bool $fresh = true, bool $event = true): Model
     {
         Model::unguard();
         $data['id'] = $userId;
-        $user = $this->create($data, $fresh);
+        $user = $this->create($data, $fresh, $event);
         Model::reguard();
 
         return $user;
     }
 
-    public function update(int|string|Model $moid, array $data, bool $returnModel = false): bool|Model
+    public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $event = true): bool|Model
     {
         $userData = [];
         foreach ($data as $key => $value) {
@@ -80,7 +83,7 @@ class UserService extends ModelService
             }
         }
 
-        return parent::update($moid, $userData, $returnModel);
+        return parent::update($moid, $userData, $returnModel, $event);
     }
 
     public function checkDelete(Model $model): void

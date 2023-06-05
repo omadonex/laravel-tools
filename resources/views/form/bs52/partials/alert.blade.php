@@ -1,8 +1,10 @@
-@if ($errors->any())
+@if ($errors->hasBag($formId))
     <div data-jst-alert class="alert alert-danger">
         <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            @foreach ($errors->getBag($formId)->getMessages() as $key => $errorItem)
+                @foreach($errorItem as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
             @endforeach
         </ul>
     </div>
