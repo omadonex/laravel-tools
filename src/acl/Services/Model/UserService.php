@@ -106,6 +106,16 @@ class UserService extends ModelService
         ]);
     }
 
+    public function changePassword(int|string|Model $moid, string $passwordCurrent, string $passwordNew): void
+    {
+        $moid = $this->modelRepository->find($moid);
+        if (!Hash::check($passwordCurrent, $moid->password)) {
+            OmxUserException::throw(OmxUserException::ERR_CODE_1003);
+        }
+
+        $this->setPassword($moid, $passwordNew);
+    }
+
     public function register(array $data): Model
     {
         $user = $this->create($data);
