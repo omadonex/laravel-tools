@@ -25,7 +25,7 @@ class HistoryModelUpdatedTListener
      */
     public function handle(ModelUpdatedT $event): void
     {
-        if ($event->modelClass::HISTORY_ENABLED ?? false) {
+        if (defined("{$event->modelClass}::HISTORY_ENABLED") ? $event->modelClass::HISTORY_ENABLED : false) {
             $keyList = array_keys($event->newDataT);
             $oldDataT = $event->oldDataT;
             $newDataT = $event->newDataT;
