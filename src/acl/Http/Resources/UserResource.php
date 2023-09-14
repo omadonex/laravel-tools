@@ -21,8 +21,11 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at,
             'phone' => $this->phone,
             'phone_verified_at' => $this->phone_verified_at,
-
-            'meta' => new UserMetaResource($this->whenLoaded('meta')),
+            'display_name' => $this->display_name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'opt_name' => $this->opt_name,
+            'avatar' => $this->avatar,
         ];
     }
 }
