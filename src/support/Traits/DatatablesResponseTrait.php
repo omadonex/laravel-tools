@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Support\Traits;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 
 trait DatatablesResponseTrait
 {
@@ -20,14 +21,14 @@ trait DatatablesResponseTrait
         $start = $request->start ?? 0;
         $length = $request->length ?? 0;
 
-        $columns = array_filter(
-            array_map(function ($item) {
-                return $item['name'];
-            }, $request->all()['columns']),
+        $columns = array_map(function ($item) {
+            return $item['name'];
+        }, array_filter(
+            $request->all()['columns'],
             function ($item) use ($ignoredSearchColumns) {
-                return !in_array($item, $ignoredSearchColumns);
+                return UtilsCustom::strictStrToBool($item['searchable']) && !in_array($item['name'], $ignoredSearchColumns);
             }
-        );
+        ));
 
         if ($request->search['value']) {
             $options['search'] = ['columns' => $columns, 'value' => $request->search['value']];

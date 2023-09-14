@@ -268,4 +268,9 @@ class UtilsCustom
             (isset($parts['query']) ? "?{$parts['query']}" : '') .
             (isset($parts['fragment']) ? "#{$parts['fragment']}" : '');
     }
+
+    public static function strictStrToBool(string $str): bool
+    {
+        return $str === 'true';
+    }
 }
