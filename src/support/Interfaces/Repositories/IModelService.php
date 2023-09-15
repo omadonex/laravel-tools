@@ -3,9 +3,12 @@
 namespace Omadonex\LaravelTools\Support\Interfaces\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
 
 interface IModelService
 {
+    public function repository(): ModelRepository;
+
     public function create(array $data, bool $fresh = true, bool $event = true): Model;
 
     public function createT(int|string $modelId, string $lang, array $dataT, bool $event = true): void;

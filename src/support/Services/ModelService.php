@@ -30,6 +30,11 @@ abstract class ModelService extends OmxService implements IModelService
         $this->localeService = $localeService;
     }
 
+    public function repository(): ModelRepository
+    {
+        return $this->modelRepository;
+    }
+
     public function create(array $data, bool $fresh = true, bool $event = true): Model
     {
         $model = $this->modelRepository->create($data, $fresh);
