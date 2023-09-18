@@ -123,13 +123,17 @@ class AclService extends OmxService implements IAclService
             return false;
         }
 
+        if (!is_array($role)) {
+            $role = [$role];
+        }
+
+        if (array_intersect($role, [IRole::ROOT])) {
+            return $this->isRoot();
+        }
+
         //Not strict check and User is ROOT or ADMIN - assumes has role
         if (!$strict && ($this->isRoot() || $this->isAdmin())) {
             return true;
-        }
-
-        if (!is_array($role)) {
-            $role = [$role];
         }
 
         if ($type === self::CHECK_TYPE_AND) {
