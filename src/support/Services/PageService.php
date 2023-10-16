@@ -2,13 +2,33 @@
 
 namespace Omadonex\LaravelTools\Support\Services;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
+use Omadonex\LaravelTools\Support\ModelView\ModelView;
+use Omadonex\LaravelTools\Support\Repositories\ColumnSetRepository;
+use Omadonex\LaravelTools\Support\Traits\GlobalFilterTrait;
 
 class PageService extends OmxService
 {
-    const AUTH_LOGIN = 'auth_login';
-    const AUTH_REGISTER = 'auth_register';
+    use GlobalFilterTrait;
+
+    public const AUTH_LOGIN = 'auth_login';
+    public const AUTH_REGISTER = 'auth_register';
+
+    protected const BREADCRUMB_HISTORY = 'История изменений';
+    protected const BREADCRUMB_SHOW = 'Карточка записи (ID: ?)';
+
+    protected IAclService $aclService;
+    protected ColumnSetRepository $columnSetRepository;
+
+    public function __construct(IAclService $aclService, ColumnSetRepository $columnSetRepository)
+    {
+        $this->aclService = $aclService;
+        $this->columnSetRepository = $columnSetRepository;
+    }
 
     protected static array $pages = [
         self::AUTH_LOGIN => [
@@ -19,32 +39,26 @@ class PageService extends OmxService
         ],
     ];
 
-    public static function getUniqueId(string $viewPath): string
+    public static function data(string $pageIndex): array
     {
-        return Str::of($viewPath)
-            ->explode('.')
-            ->map(fn ($part) => Str::ucfirst($part))
-            ->implode('');
+        return static::$pages[$pageIndex];
     }
 
-    public static function data(string $pageId): array
+    public static function title(string $pageIndex): string
     {
-        return static::$pages[$pageId];
+        return self::data($pageIndex)['title'] ?? '';
     }
 
-    public static function title(string $pageId): string
+    public static function icon(string $pageIndex): string
     {
-        return self::data($pageId)['title'] ?? '';
+        return self::data($pageIndex)['icon'];
     }
 
-    public static function icon(string $pageId): string
+    public static function route(string $pageIndex, string $resourceSubPage = ''): string
     {
-        return self::data($pageId)['icon'];
-    }
+        $finalPageIndex = $pageIndex . ($resourceSubPage ? "_{$resourceSubPage}" : '');
 
-    public static function route(string $pageId): string
-    {
-        return route(UtilsCustom::camelToDashed(str_replace('_', '.', $pageId)));
+        return route(UtilsCustom::camelToDashed(str_replace('_', '.', $finalPageIndex)));
     }
 
     public static function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = ''): array
@@ -58,34 +72,123 @@ class PageService extends OmxService
 
         return array_merge([
             'name' => $data['title'],
-            'route' => $data['navbarRouteName'],
+            'route' => ($data['resource'] ?? false) ? "{$data['basePath']}.index" : $data['route'],
         ], $icon, $role ? ['role' => $role] : [], $badge ? ['badge' => $badge] : []);
     }
 
-    protected function getTableId(string $pageId): string
+    protected function getPageId(string $pageIndex, string $resourceSubPage = ''): string
     {
-        $viewName = str_replace('_', '.', $pageId);
-        $nameList = explode('.', $viewName);
-        $pageName = count($nameList) > 1 ? ucfirst($nameList[count($nameList) - 2]) : '';
-
-        return self::getUniqueId($viewName).'__table'.$pageName;
+        return Str::of($pageIndex)
+            ->explode('_')
+            ->map(fn ($part) => Str::ucfirst($part))
+            ->implode('')
+            . ($resourceSubPage ? Str::ucfirst($resourceSubPage) : '');
     }
 
-    public function view(string $pageId, array $data = [])
+    protected function getViewName(string $pageIndex, string $resourceSubPage = '')
     {
-        $viewName = str_replace('_', '.', $pageId);
-        $pageData = self::data($pageId);
-        $model    = $data['model'] ?? null;
-        $tableId  = $this->getTableId($pageId);
+        switch ($resourceSubPage) {
+            case 'index': return 'partials.resource.index.template';
+            case 'show': return 'partials.resource.show.template';
+            case 'history': return 'partials.resource.history.template';
+            default: return str_replace('_', '.', $pageIndex) . ($resourceSubPage ? ".{$resourceSubPage}" : '');
+        }
+    }
 
-        return view($viewName, array_merge($data, [
+    protected function getTableList(string $pageIndex, string $resourceSubPage = ''): array
+    {
+        $pageId = $this->getPageId($pageIndex, $resourceSubPage);
+
+
+        if (in_array($resourceSubPage, ['show', 'history'])) {
+            $table = self::data($pageIndex)['tableList']['index'][0];
+            if ($resourceSubPage === 'show') {
+                return ["{$pageId}__tableModelHistory" => $table['title']];
+            }
+
+            return ["{$pageId}__tableHistory" => $table['title']];
+        }
+
+        $tables = self::data($pageIndex)['tableList'][$resourceSubPage] ?? [];
+        $tableList = [];
+        foreach ($tables as $index => $table)
+        {
+            $tableList["{$pageId}__table{$index}"] = $table['title'];
+        }
+
+        return $tableList;
+    }
+
+    protected function getBreadcrumbs(string $pageIndex, array $pageData, string $resourceSubPage = ''): array
+    {
+        if ($pageData['resource'] ?? false) {
+            if ($resourceSubPage !== 'index') {
+                return [
+                    [$pageIndex, 'index'],
+                ];
+            }
+        }
+
+        return $pageData['breadcrumbs'] ?? [];
+    }
+
+    protected function getBreadcrumb(array $pageData, ?Model $model, string $resourceSubPage = ''): string
+    {
+        if ($pageData['resource'] ?? false) {
+            if ($resourceSubPage === 'history') {
+                return self::BREADCRUMB_HISTORY;
+            }
+
+            if ($resourceSubPage === 'show') {
+                return str_replace('?', $model ? $model->getKey() : null, self::BREADCRUMB_SHOW);
+            }
+        }
+
+        return str_replace('?', $model ? $model->getKey() : null, $pageData['breadcrumb'] ?? $pageData['title']);
+    }
+
+    private function getModelView(array $pageData): ?ModelView
+    {
+        if ($pageData['resource'] ?? false) {
+            return new $pageData['modelView'];
+        }
+
+        return null;
+    }
+
+    private function getViewData(string $pageIndex, string $resourceSubPage = '', array $data = [])
+    {
+        $user = $this->aclService->user();
+        $pageId = $this->getPageId($pageIndex, $resourceSubPage);
+        $pageData = self::data($pageIndex);
+        $tableList = $this->getTableList($pageIndex, $resourceSubPage);
+        $defaultTableId = count($tableList) > 0 ? array_keys($tableList)[0] : '';
+        $model = $data['model'] ?? null;
+
+        return array_merge($data, [
+            'user' => $user,
+            'basePath' => $pageData['basePath'],
+            'view' => $this->getModelView($pageData),
+            'resourceSubPage' => $resourceSubPage,
+            'pageId' => $pageId,
             'pageIdBack' => $pageId,
-            'pageId' => self::getUniqueId($viewName),
-            'tableId' => $tableId,
             'pageTitle' => $pageData['title'],
             'pageIcon' => $pageData['icon'] ?? null,
-            'pageBreadcrumbs' => $pageData['breadcrumbs'] ?? [],
-            'pageBreadcrumb' => str_replace('?', $model ? $model->getKey() : null, $pageData['breadcrumb'] ?? $pageData['title']),
-        ]));
+            'pageBreadcrumbs' => $this->getBreadcrumbs($pageIndex, $pageData, $resourceSubPage),
+            'pageBreadcrumb' => $this->getBreadcrumb($pageData, $model, $resourceSubPage),
+            'tableList' => $tableList,
+            'tableId' => $defaultTableId,
+            'tableTitle' => $tableList[$defaultTableId],
+            'tableColumnSettingList' => $this->columnSetRepository->getList($user ? $user->getKey() : 0, $pageId, $defaultTableId),
+            'modalTitleList' => $pageData['modalTitleList'] ?? [],
+        ]);
+    }
+
+    public function view(Request $request, string $pageIndex, string $resourceSubPage = '', array $data = [])
+    {
+        $viewName = $this->getViewName($pageIndex, $resourceSubPage);
+        $data['filter'] = $this->getFilter($request, $pageIndex, $resourceSubPage);
+
+        return view($viewName, $this->getViewData($pageIndex, $resourceSubPage, $data));
     }
 }

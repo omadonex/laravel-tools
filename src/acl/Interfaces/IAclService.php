@@ -70,7 +70,7 @@ interface IAclService
 
     public function roles(bool $onlyIds = false): array;
 
-    public function user(): User;
+    public function user(): ?User;
 
     public function attachRole(array|string $role, User $user = null): void;
 

@@ -50,7 +50,7 @@ class AclService extends OmxService implements IAclService
         return (bool) $this->user;
     }
 
-    public function user(): User
+    public function user(): ?User
     {
         return $this->user;
     }
