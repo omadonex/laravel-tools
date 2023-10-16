@@ -31,6 +31,11 @@ abstract class ModelView
         return $this->columns[$column]['style'] ?? '';
     }
 
+    public function getType(string $column): string
+    {
+        return $this->columns[$column]['type'] ?? 'string';
+    }
+
     public function getLabels(array $columns = []): array
     {
         $columns = array_keys($this->getColumnsData($columns));
@@ -98,7 +103,7 @@ abstract class ModelView
         return function (array $params = []) {
             $userRepository = app(UserRepository::class);
 
-            return $userRepository->pluck(trans('placeholders.filter_user_id'));
+            return $userRepository->pluck(trans('placeholders.filter_user_id'), 'username');
         };
     }
 

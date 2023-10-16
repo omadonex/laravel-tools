@@ -87,12 +87,15 @@ class PageService extends OmxService
 
     protected function getViewName(string $pageIndex, string $resourceSubPage = '')
     {
-        switch ($resourceSubPage) {
-            case 'index': return 'partials.resource.index.template';
-            case 'show': return 'partials.resource.show.template';
-            case 'history': return 'partials.resource.history.template';
-            default: return str_replace('_', '.', $pageIndex) . ($resourceSubPage ? ".{$resourceSubPage}" : '');
+        if ($resourceSubPage && !in_array($resourceSubPage, self::data($pageIndex)['customView'] ?? [])) {
+            switch ($resourceSubPage) {
+                case 'index': return 'partials.resource.index.template';
+                case 'show': return 'partials.resource.show.template';
+                case 'history': return 'partials.resource.history.template';
+            }
         }
+
+        return str_replace('_', '.', $pageIndex) . ($resourceSubPage ? ".{$resourceSubPage}" : '');
     }
 
     protected function getTableList(string $pageIndex, string $resourceSubPage = ''): array
@@ -167,6 +170,7 @@ class PageService extends OmxService
 
         return array_merge($data, [
             'user' => $user,
+            'deniedModList' => $pageData['denied'] ?? [],
             'basePath' => $pageData['basePath'],
             'view' => $this->getModelView($pageData),
             'resourceSubPage' => $resourceSubPage,
@@ -180,7 +184,8 @@ class PageService extends OmxService
             'tableId' => $defaultTableId,
             'tableTitle' => $tableList[$defaultTableId],
             'tableColumnSettingList' => $this->columnSetRepository->getList($user ? $user->getKey() : 0, $pageId, $defaultTableId),
-            'modalTitleList' => $pageData['modalTitleList'] ?? [],
+            'modalTitleList' => $pageData['modal']['title'] ?? [],
+            'modalWidthList' => $pageData['modal']['width'] ?? [],
         ]);
     }
 
