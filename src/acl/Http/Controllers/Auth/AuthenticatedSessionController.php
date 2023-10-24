@@ -15,9 +15,9 @@ use Omadonex\LaravelTools\Support\Services\PageService;
 class AuthenticatedSessionController extends Controller
 {
 
-    public function create(PageService $pageService)
+    public function create(Request $request, PageService $pageService)
     {
-        return $pageService->view(PageService::AUTH_LOGIN);
+        return $pageService->view($request, PageService::AUTH_LOGIN);
     }
 
     public function store(LoginRequest $request): RedirectResponse

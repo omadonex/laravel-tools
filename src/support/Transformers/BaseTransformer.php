@@ -40,8 +40,8 @@ abstract class BaseTransformer
     protected function makeLink(string $urlName, string $caption = null, string $keyName = null)
     {
         return function ($value, $row) use ($urlName, $caption, $keyName) {
-            $url = route($urlName, $keyName ? $row[$keyName] : $value);
-            $text = $caption ?: ($keyName ? $row[$keyName] : $value);
+            $url = route($urlName, $keyName ? $row->$keyName : $value);
+            $text = $caption ?: $value;
 
             return "<a href=\"{$url}\">{$text}</a>";
         };

@@ -17,6 +17,9 @@ trait DatatablesResponseTrait
         $transformerParams = [],
         $ignoredSearchColumns = ['actions']
     ) {
+        $requestData = $request->all();
+        $options['filter'] = $this->updateFilter($requestData, $requestData['pageId'], $requestData['tableId']);
+
         $paginate = $request->length ?? false;
         $start = $request->start ?? 0;
         $length = $request->length ?? 0;
@@ -29,6 +32,20 @@ trait DatatablesResponseTrait
                 return UtilsCustom::strictStrToBool($item['searchable']) && !in_array($item['name'], $ignoredSearchColumns);
             }
         ));
+
+        $params = array_map(function ($item) {
+            return str_replace('params_', '', $item);
+        }, array_filter(array_keys($request->all()), function ($item) {
+            return strpos($item, 'params_') === 0;
+        }));
+
+        foreach ($params as $param) {
+            $p = "params_{$param}";
+            $value = $request->$p;
+            $options['closures'][] = function ($query) use ($param, $value)  {
+                return $query->where($param, $value);
+            };
+        }
 
         if ($request->search['value']) {
             $options['search'] = ['columns' => $columns, 'value' => $request->search['value']];

@@ -13,7 +13,72 @@ abstract class ModelView
     const FILTER_NONE = 'none';
 
     protected array $columns = [];
+    protected array $columnsAppend = [];
+    protected array $columnsPrepend = [];
+    protected array $columnsSpecific = [];
+
     protected bool $hasActions = true;
+    protected bool $hasPrependEmpty = false;
+    protected array $ignoreList = [];
+
+    public function setIgnoreList(array $ignoreList): void
+    {
+        $this->ignoreList = $ignoreList;
+    }
+
+    public function appendColumns(array $columnsData = []): void
+    {
+        $this->columnsAppend = $columnsData;
+    }
+
+    public function prependColumns(array $columnsData = []): void
+    {
+        $this->columnsPrepend = $columnsData;
+    }
+
+    public function specificColumns(array $data = []): void
+    {
+        $this->columnsSpecific = $data;
+    }
+
+    public function getColumns(array $columnsNames = []): array
+    {
+        $columnsList = array_merge(
+            $this->columnsPrepend,
+            $this->columns,
+            $this->columnsAppend,
+        );
+
+        $columnsFinalList = [];
+        foreach ($columnsList as $key => $value) {
+            if (!in_array($key, $this->ignoreList)) {
+                $columnsFinalList[$key] = $value;
+            }
+        }
+
+        if (!$columnsNames) {
+            return $columnsFinalList;
+        }
+
+        $columnsFilteredList = [];
+        foreach ($columnsNames as $columnName) {
+            $columnsFilteredList[$columnName] = $columnsFinalList[$columnName];
+        }
+
+        return $columnsFilteredList;
+    }
+
+    public function getLabels(array $columnsNames = []): array
+    {
+        $columns = array_keys($this->getColumns($columnsNames));
+
+        $labelsData = [];
+        foreach ($columns as $column) {
+            $labelsData[$column] = $this->getLabel($column);
+        }
+
+        return $labelsData;
+    }
 
     public function getLabel(string $column, bool $includeIcon = false): string
     {
@@ -23,7 +88,7 @@ abstract class ModelView
             $icon = $this->isSearchable($column) ? getIconHtml('streamline.regular.search-1', 12, Color::SECONDARY) : '';
         }
 
-        return $icon . __("validation.attributes.{$column}");
+        return $icon . ($column == 'empty' ? '' : __("validation.attributes.{$column}"));
     }
 
     public function getStyle(string $column): string
@@ -36,16 +101,24 @@ abstract class ModelView
         return $this->columns[$column]['type'] ?? 'string';
     }
 
-    public function getLabels(array $columns = []): array
+    public function getRelationData(string $column): array
     {
-        $columns = array_keys($this->getColumnsData($columns));
+        return $this->columns[$column]['relation'];
+    }
 
-        $labelsData = [];
-        foreach ($columns as $column) {
-            $labelsData[$column] = $this->getLabel($column);
-        }
+    public function getTranslateData(string $column): array
+    {
+        return $this->columns[$column]['translate'];
+    }
 
-        return $labelsData;
+    public function getKeyData(string $column): array
+    {
+        return $this->columns[$column]['key'];
+    }
+
+    public function getMoneyData(string $column): array
+    {
+        return $this->columns[$column]['money'];
     }
 
     public function filterCallbackList(string $column): \Closure
@@ -55,23 +128,14 @@ abstract class ModelView
         };
     }
 
-    public function getColumnsData(array $columns = []): array
-    {
-        if (!$columns) {
-            return $this->columns;
-        }
-
-        $columnsData = [];
-        foreach ($columns as $column) {
-            $columnsData[$column] = $this->columns[$column];
-        }
-
-        return $columnsData;
-    }
-
     public function hasActions(): bool
     {
         return $this->hasActions;
+    }
+
+    public function hasPrependEmpty(): bool
+    {
+        return $this->hasPrependEmpty;
     }
 
     public function isFilterInput(string $column): bool
@@ -98,12 +162,10 @@ abstract class ModelView
         return $this->columns[$column]['searchable'] ?? true;
     }
 
-    protected function userListFilterCallback(): \Closure
+    protected function userListFilterCallback(UserRepository $userRepository): \Closure
     {
-        return function (array $params = []) {
-            $userRepository = app(UserRepository::class);
-
-            return $userRepository->pluck(trans('placeholders.filter_user_id'), 'username');
+        return function (array $params = []) use ($userRepository) {
+            return $userRepository->pluckExt(trans('placeholders.filter_user_id'));
         };
     }
 
@@ -117,10 +179,22 @@ abstract class ModelView
         $this->hasActions = $hasActions;
     }
 
-    public function removeColumns(array $columns): void
+    public function setHasPrependEmpty(bool $hasPrependEmpty): void
     {
-        foreach ($columns as $column) {
-            unset($this->columns[$column]);
-        }
+        $this->hasPrependEmpty = $hasPrependEmpty;
+    }
+
+    public function getSpecificColumns(): array
+    {
+        return $this->columnsSpecific;
+    }
+
+    public function columnsInfo(array $filter, string $tableId): array
+    {
+        $filterColumns = data_get($filter, [$tableId, 'columns']);
+        $columnsData = $this->getColumns(empty($filterColumns) ? [] : json_decode($filterColumns));
+        $columnsNames = array_keys($columnsData);
+
+        return [$columnsData, $columnsNames];
     }
 }

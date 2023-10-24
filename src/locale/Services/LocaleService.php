@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Locale\Services;
 
+use Omadonex\LaravelTools\Locale\Classes\Utils\UtilsCurrencySign;
 use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 use Omadonex\LaravelTools\Support\Services\OmxService;
@@ -111,6 +112,7 @@ class LocaleService extends OmxService implements ILocaleService
             $list[] = [
                 'currency' => $currency,
                 'name' => __("omx-locale::currency.{$currency}", [], $locale),
+                'sign' => UtilsCurrencySign::get($currency),
             ];
         }
 

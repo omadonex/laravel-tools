@@ -404,8 +404,8 @@ abstract class ModelRepository implements IModelRepository
         }
     }
 
-    public function pluck(?string $emptyOptionName = null, string $name = 'name', string $id = 'id'): array
+    public function pluckExt(string $emptyOptionName = null, int|string $emptyOptionValue = '', string $name = 'name', string $id = 'id'): array
     {
-        return ($emptyOptionName !== null ? ['' => $emptyOptionName] : []) + $this->model::pluck($name, $id)->toArray();
+        return ($emptyOptionName !== null ? [$emptyOptionValue => $emptyOptionName] : []) + $this->model::pluck($name, $id)->toArray();
     }
 }
