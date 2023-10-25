@@ -3,6 +3,7 @@
 namespace Omadonex\LaravelTools\Acl\Http\Controllers\Auth;
 
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Omadonex\LaravelTools\Acl\Http\Requests\Auth\RegisterRequest;
 use Omadonex\LaravelTools\Acl\Services\Model\UserService;
@@ -12,9 +13,9 @@ use Omadonex\LaravelTools\Support\Services\PageService;
 class RegisteredUserController extends Controller
 {
 
-    public function create(PageService $pageService)
+    public function create(Request $request, PageService $pageService)
     {
-        return $pageService->view(PageService::AUTH_REGISTER);
+        return $pageService->view($request, PageService::AUTH__REGISTER);
     }
 
     public function store(RegisterRequest $request, UserService $userService)

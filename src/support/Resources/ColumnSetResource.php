@@ -17,8 +17,10 @@ class ColumnSetResource extends JsonResource
         return [
             'id'       => $this->id,
             'name'     => $this->name,
-            'columns'  => $this->columns,
+            'user_id'  => $this->user_id,
+            'page_id'  => $this->page_id,
             'table_id' => $this->table_id,
+            'columns'  => $this->columns,
         ];
     }
 }

@@ -15,8 +15,8 @@ class PageService extends OmxService
 {
     use GlobalFilterTrait;
 
-    public const AUTH_LOGIN = 'auth_login';
-    public const AUTH_REGISTER = 'auth_register';
+    public const AUTH__LOGIN = 'Auth_Login';
+    public const AUTH__REGISTER = 'Auth_Register';
 
     protected const BREADCRUMB_HISTORY = 'История изменений';
     protected const BREADCRUMB_SHOW = 'Карточка записи (ID: ?)';
@@ -31,17 +31,17 @@ class PageService extends OmxService
     }
 
     protected static array $pages = [
-        self::AUTH_LOGIN => [
+        self::AUTH__LOGIN => [
             'title' => 'Вход',
         ],
-        self::AUTH_REGISTER => [
+        self::AUTH__REGISTER => [
             'title' => 'Регистрация',
         ],
     ];
 
     public static function data(string $pageIndex): array
     {
-        return static::$pages[$pageIndex];
+        return static::$pages[$pageIndex] ?? [];
     }
 
     public static function title(string $pageIndex): string
@@ -78,11 +78,7 @@ class PageService extends OmxService
 
     public function getPageId(string $pageIndex, string $sub = ''): string
     {
-        return Str::of($pageIndex)
-            ->explode('_')
-            ->map(fn ($part) => Str::ucfirst($part))
-            ->implode('')
-            . ($sub ? Str::ucfirst($sub) : '');
+        return $pageIndex . ($sub ? '_' . Str::ucfirst($sub) : '');
     }
 
     protected function getViewName(string $pageIndex, string $sub = '')
@@ -95,10 +91,13 @@ class PageService extends OmxService
             }
         }
 
-        $name = implode('.', array_map(function ($item) {
-            return implode('-', array_map(function ($subItem) {
-                return strtolower($subItem);
-            }, preg_split('/(?=[A-Z])/', $item)));
+        $name = implode('.', array_map(function ($part) {
+            $splitted = preg_split('/(?=[A-Z])/', $part);
+            $splittedLower = array_map(function ($item) {
+                return strtolower($item);
+            }, $splitted);
+
+            return implode('-', array_filter($splittedLower));
         }, explode('_', $pageIndex)));
 
         return $name . ($sub ? ".{$sub}" : '');
@@ -178,7 +177,7 @@ class PageService extends OmxService
         if ($pageData['tableList'] ?? []) {
             $tableList = [];
             foreach ($pageData['tableList'] as $tableKey => $modeList) {
-                $tableId = "{$pageId}__table" . ucfirst($tableKey);
+                $tableId = "{$pageId}__Table" . ucfirst($tableKey);
                 $tableList[] = [
                     'index' => $tableKey,
                     'id' => $tableId,

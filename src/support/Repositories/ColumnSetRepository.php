@@ -2,7 +2,9 @@
 
 namespace Omadonex\LaravelTools\Support\Repositories;
 
+use Illuminate\Support\Facades\DB;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsFilter;
+use Omadonex\LaravelTools\Support\Classes\Utils\UtilsUserLabel;
 use Omadonex\LaravelTools\Support\Models\ColumnSet;
 use Omadonex\LaravelTools\Support\Resources\ColumnSetResource;
 
@@ -35,5 +37,26 @@ class ColumnSetRepository extends ModelRepository
             ->pluck('name', 'columns')
             ->toArray()
         ;
+    }
+
+    public function grid($options = [])
+    {
+        $userSql = UtilsUserLabel::selectSql('user_id');
+
+        $sql = /* @lang MySQL */ "
+            SELECT
+                cs.id,
+                cs.name,                
+                cs.user_id,
+                cs.page_id,
+                cs.table_id,
+                cs.columns,
+                {$userSql}
+            FROM
+                support_column_set AS cs                
+                left join users as u on u.id = cs.user_id
+        ";
+
+        return $this->list($options, DB::table(DB::raw("({$sql}) as temp")));
     }
 }

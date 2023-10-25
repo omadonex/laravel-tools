@@ -17,16 +17,16 @@ class AuthenticatedSessionController extends Controller
 
     public function create(Request $request, PageService $pageService)
     {
-        return $pageService->view($request, PageService::AUTH_LOGIN);
+        return $pageService->view($request, PageService::AUTH__LOGIN);
     }
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        list($field, $login) = $request->authenticate();
+        list($field, $login, $user) = $request->authenticate();
 
         $request->session()->regenerate();
-
-        event(new UserLoggedIn(1));
+        
+        event(new UserLoggedIn($user->getKey()));
 
         return redirect()->intended('/');
     }
