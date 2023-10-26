@@ -2,10 +2,6 @@
 
 namespace Omadonex\LaravelTools\Support\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
-
 trait GlobalFilterTrait
 {
     public function getFilterGlobal(): array
@@ -66,9 +62,9 @@ trait GlobalFilterTrait
         if (!$pageId) {
             $filterGlobal = [];
         } elseif (!$tableId) {
-            $filterGlobal[$pageId] = [];
+            unset($filterGlobal[$pageId]);
         } else {
-            $filterGlobal[$pageId][$tableId] = [];
+            unset($filterGlobal[$pageId][$tableId]);
         }
 
         session(['filter' => $filterGlobal]);
