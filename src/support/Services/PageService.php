@@ -15,6 +15,7 @@ class PageService extends OmxService
 {
     use GlobalFilterTrait;
 
+    public const ROOT__TOOLS__ACL_ROUTE = 'Root_Tools_AclRoute';
     public const AUTH__LOGIN = 'Auth_Login';
     public const AUTH__REGISTER = 'Auth_Register';
 
