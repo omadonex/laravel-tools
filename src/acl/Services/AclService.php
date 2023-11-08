@@ -5,6 +5,7 @@ namespace Omadonex\LaravelTools\Acl\Services;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclRepository;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
@@ -443,5 +444,10 @@ class AclService extends OmxService implements IAclService
     public function detachRole(array|string $role, User $user = null): void
     {
         $this->aclRepository->removeRole($user ?: $this->user, $role);
+    }
+
+    public function repository(): IAclRepository
+    {
+        return $this->aclRepository;
     }
 }

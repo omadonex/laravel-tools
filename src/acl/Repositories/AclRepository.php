@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Acl\Repositories;
 
+use Illuminate\Support\Collection;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclRepository;
 use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\Role;
@@ -50,7 +51,7 @@ class AclRepository implements IAclRepository
      * @param bool $permissions
      * @return array
      */
-    public function getAllRoleList(bool $permissions = true): array
+    public function getAllRoleList(bool $permissions = true): Collection
     {
         $relations = ['translates'];
         if ($permissions) {
@@ -58,6 +59,6 @@ class AclRepository implements IAclRepository
             $relations[] = 'permissions.translates';
         }
 
-        return Role::with($relations)->get()->toArray();
+        return Role::with($relations)->get();
     }
 }

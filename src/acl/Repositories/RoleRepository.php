@@ -2,12 +2,11 @@
 
 namespace Omadonex\LaravelTools\Acl\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Omadonex\LaravelTools\Acl\Http\Resources\RoleResource;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
 use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
-use Ramsey\Uuid\Uuid;
 
 class RoleRepository extends ModelRepository
 {
@@ -16,14 +15,7 @@ class RoleRepository extends ModelRepository
         parent::__construct($role, RoleResource::class);
     }
 
-    public function createWithT(string $lang, array $data, array $dataT, bool $fresh = true): Model
-    {
-        $data['id'] = Uuid::uuid4()->toString();
-
-        return parent::createWithT($lang, $data, $dataT, $fresh);
-    }
-
-    public function pluckUnusedRolesNames(array $exceptRoleIdList = [IRole::USER], ?string $emptyOptionName): array
+    public function pluckUnusedRolesNames(?string $emptyOptionName, array $exceptRoleIdList = [IRole::USER]): array
     {
         $roles = $this->list(['closures' => [
             function ($query) use ($exceptRoleIdList) {
@@ -37,5 +29,20 @@ class RoleRepository extends ModelRepository
         }
 
         return ($emptyOptionName !== null ? ['' => $emptyOptionName] : []) + $collection->toArray();
+    }
+
+    /**
+     * @param bool $permissions
+     * @return array
+     */
+    public function getList( bool $permissions = true): Collection
+    {
+        $relations = ['translates'];
+        if ($permissions) {
+            $relations[] = 'permissions';
+            $relations[] = 'permissions.translates';
+        }
+
+        return Role::with($relations)->get();
     }
 }

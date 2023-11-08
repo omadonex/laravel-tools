@@ -3,6 +3,8 @@
 namespace Omadonex\LaravelTools\Acl\Interfaces;
 
 
+use Illuminate\Support\Collection;
+
 interface IAclRepository
 {
     public function addRole($user, array|string $role): void;
@@ -19,5 +21,5 @@ interface IAclRepository
 
     public function getAllPermissionList(): array;
 
-    public function getAllRoleList(bool $permissions = true): array;
+    public function getAllRoleList(bool $permissions = true): Collection;
 }

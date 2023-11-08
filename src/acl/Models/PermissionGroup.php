@@ -3,6 +3,8 @@
 namespace Omadonex\LaravelTools\Acl\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Omadonex\LaravelTools\Locale\Traits\TranslateTrait;
 
 class PermissionGroup extends Model
@@ -19,5 +21,17 @@ class PermissionGroup extends Model
     public function permissions()
     {
         return $this->hasMany(Permission::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(PermissionGroup::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this
+            ->hasMany(PermissionGroup::class, 'parent_id');
+            //->with(['children', 'permissions']);
     }
 }

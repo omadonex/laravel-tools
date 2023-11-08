@@ -75,4 +75,6 @@ interface IAclService
     public function attachRole(array|string $role, User $user = null): void;
 
     public function detachRole(array|string $role, User $user = null): void;
+
+    public function repository(): IAclRepository;
 }

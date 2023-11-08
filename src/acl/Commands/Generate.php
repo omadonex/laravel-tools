@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Nwidart\Modules\Facades\Module;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Acl\Interfaces\IPermissionGroup;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Permission;
 use Omadonex\LaravelTools\Acl\Models\PermissionGroup;
@@ -27,7 +28,8 @@ class Generate extends Command
      *
      * @var string
      */
-    protected $signature = 'omx:acl:generate';
+    protected $signature = 'omx:acl:generate 
+        {--users : Also create default users}';
 
     private RoleService $roleService;
     private UserService $userService;
@@ -76,7 +78,7 @@ class Generate extends Command
                 'configRole' => base_path('config/omx/acl/role.php'),
                 'configPermission' => base_path('config/omx/acl/permission.php'),
                 'langPath' => lang_path('vendor/omx-acl'),
-                'module' => 'app',
+                'module' => 'App',
             ],
         ];
 
@@ -88,7 +90,7 @@ class Generate extends Command
                     'configRole' => "{$configPath}/role.php",
                     'configPermission' => "{$configPath}/permission.php",
                     'langPath' => $module->getExtraPath('Config/acl/lang'),
-                    'module' => $module->getLowerName(),
+                    'module' => $module->getName(),
                 ];
             }
         }
@@ -118,7 +120,9 @@ class Generate extends Command
 
         Model::reguard();
 
-        $this->createUsers();
+        if ($this->option('users')) {
+            $this->createUsers();
+        }
     }
 
     /**
@@ -132,7 +136,7 @@ class Generate extends Command
     {
         $createdList = [];
 
-        if ($module === 'app') {
+        if ($module === 'App') {
             $data[IRole::ROOT] = ['is_staff' => false, 'is_hidden' => true, 'sort_index' => -3];
             $data[IRole::ADMIN] = ['is_staff' => true, 'is_hidden' => false, 'sort_index' => -2];
             $data[IRole::USER] = ['is_staff' => false, 'is_hidden' => false, 'sort_index' => -1];
@@ -185,6 +189,7 @@ class Generate extends Command
         }
 
         $permissionGroupSortIndex = 1;
+        $permissionSortIndex = 1;
         foreach ($data as $key => $value) {
             if (is_string($value)) {
                 $permissionId = $value;
@@ -192,7 +197,9 @@ class Generate extends Command
                 Permission::create([
                     'id' => $permissionId,
                     'permission_group_id' => $permissionGroupId,
+                    'sort_index' => $permissionSortIndex,
                 ]);
+                $permissionSortIndex++;
 
                 foreach ($langKeyList as $lang) {
                     $langFile = "{$langPath}/{$lang}/permission.php";
