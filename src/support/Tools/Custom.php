@@ -14,4 +14,13 @@ class Custom
             2 => 'Да',
         ];
     }
+
+    public static function toYesNoValue(?int $value): ?int
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return $value + 1;
+    }
 }

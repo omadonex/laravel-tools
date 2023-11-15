@@ -47,10 +47,10 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makePrice(bool $useCurrency = true, string $currencyColumn = 'currency')
+    protected function makePrice(bool $useCurrency = true, string $currencyColumn = 'currency', int $digits = 2)
     {
-        return function ($value, $row) use ($useCurrency, $currencyColumn) {
-            $str = number_format((float)$value, 2, ',', ' ');
+        return function ($value, $row) use ($useCurrency, $currencyColumn, $digits) {
+            $str = number_format((float)$value, $digits, ',', ' ');
             if ($useCurrency) {
                 $str .= ' ' . UtilsCurrencySign::get($row->$currencyColumn);
             }

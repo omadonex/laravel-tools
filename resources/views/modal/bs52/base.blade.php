@@ -38,6 +38,9 @@
                         </button>
                         @yield("{$modalId}-footer")
                         <button id="{{ $modalId }}__btn_submit" type="button" class="btn {{ $submitContext }} {{ $btnSize }}">
+                            @isset($submitIcon)
+                                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $submitIcon !!}</span>
+                            @endisset
                             @if (isset($spinner))
                                 <span id="{{ $modalId }}__btn_submit_spinner" style="{{ $spinnerStyle }}" class="{{ $spinner }} {{ $spinnerSize }} float-end d-none" role="status" aria-hidden="true"></span>
                             @endif

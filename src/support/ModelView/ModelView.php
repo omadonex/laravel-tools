@@ -12,6 +12,11 @@ abstract class ModelView
     const FILTER_SELECT = 'select';
     const FILTER_NONE = 'none';
 
+    const TYPE_INT = 'int';
+    const TYPE_STRING = 'string';
+    const TYPE_CALLBACK = 'callback';
+    const TYPE_DT = 'dt';
+
     protected array $columns = [];
     protected array $columnsAppend = [];
     protected array $columnsPrepend = [];
@@ -119,6 +124,11 @@ abstract class ModelView
     public function getMoneyData(string $column): array
     {
         return $this->columns[$column]['money'];
+    }
+
+    public function getCallbackData(string $column): array
+    {
+        return $this->columns[$column]['callback'];
     }
 
     public function filterCallbackList(string $column): \Closure
