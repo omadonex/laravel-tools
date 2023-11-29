@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Support\Transformers;
 
+use App\Tools\Caption;
 use Carbon\Carbon;
 use Omadonex\LaravelTools\Locale\Classes\Utils\UtilsCurrencySign;
 
@@ -47,9 +48,13 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makePrice(bool $useCurrency = true, string $currencyColumn = 'currency', int $digits = 2)
+    protected function makeMoney(bool $useCurrency = true, bool $useEmptyCaption = false, string $currencyColumn = 'currency', int $digits = 2)
     {
-        return function ($value, $row) use ($useCurrency, $currencyColumn, $digits) {
+        return function ($value, $row) use ($useCurrency, $useEmptyCaption, $currencyColumn, $digits) {
+            if ($useEmptyCaption && $value === null) {
+                return Caption::EMPTY;
+            }
+
             $str = number_format((float)$value, $digits, ',', ' ');
             if ($useCurrency) {
                 $str .= ' ' . UtilsCurrencySign::get($row->$currencyColumn);

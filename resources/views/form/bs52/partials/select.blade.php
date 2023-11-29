@@ -37,7 +37,7 @@
     @isset($noValidate) data-jst-no-validate="true" @else @isset($validate) data-jst-validate="{{ $validate }}" @endisset @endisset
 >
     @foreach($list as $key => $item)
-        <option @if (isset($multiple) ? in_array($key, $value ?? []) : $key == $current) selected @endif value="{{ $key }}">{{ $item }}</option>
+        <option @if (isset($multiple) ? in_array($key, $value ?? []) : $key == $current) selected @endif value="{{ $key }}">{!! $item !!}</option>
     @endforeach
 </select>
 <div data-jst-field="{{ $name }}" class="invalid-feedback">{{ $errors->first($name) }}</div>
