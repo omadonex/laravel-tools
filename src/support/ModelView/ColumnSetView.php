@@ -2,7 +2,7 @@
 
 namespace Omadonex\LaravelTools\Support\ModelView;
 
-use App\Repositories\Model\Admin\Acl\UserRepository;
+use Omadonex\LaravelTools\Support\Tools\Lists;
 
 class ColumnSetView extends ModelView
 {
@@ -17,10 +17,8 @@ class ColumnSetView extends ModelView
 
     public function filterCallbackList(string $column): \Closure
     {
-        $data = [
-            'user_id_label' => $this->userListFilterCallback(app(UserRepository::class)),
-        ];
-
-        return $data[$column];
+        return [
+            'user_id_label' => Lists::get('user', closure: true),
+        ][$column];
     }
 }

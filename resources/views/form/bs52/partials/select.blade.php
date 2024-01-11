@@ -34,6 +34,11 @@
     autocomplete="off"
     data-select="{{ json_encode($options) }}"
     data-jst-field="{{ $name }}"
+    @isset($data)
+        @foreach($data as $key => $value)
+            data-{{ $key }}="{{ $value }}"
+        @endforeach
+    @endisset
     @isset($noValidate) data-jst-no-validate="true" @else @isset($validate) data-jst-validate="{{ $validate }}" @endisset @endisset
 >
     @foreach($list as $key => $item)

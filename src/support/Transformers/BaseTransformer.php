@@ -8,6 +8,7 @@ use Omadonex\LaravelTools\Locale\Classes\Utils\UtilsCurrencySign;
 
 abstract class BaseTransformer
 {
+    const CROPPED_STRING_LENGTH = 175;
     protected $params;
     protected $response;
     protected $originalData;
@@ -38,13 +39,14 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makeLink(string $urlName, string $caption = null, string $keyName = null)
+    protected function makeLink(string $urlName, string $caption = null, string $keyName = null, int $croppedLength = null)
     {
-        return function ($value, $row) use ($urlName, $caption, $keyName) {
+        return function ($value, $row) use ($urlName, $caption, $keyName, $croppedLength) {
             $url = route($urlName, $keyName ? $row->$keyName : $value);
             $text = $caption ?: $value;
+            $croppedText = $croppedLength ? mb_substr($text, 0, $croppedLength) . '...' : $text;
 
-            return "<a href=\"{$url}\">{$text}</a>";
+            return "<a href=\"{$url}\" title='{$text}'>{$croppedText}</a>";
         };
     }
 
@@ -77,6 +79,16 @@ abstract class BaseTransformer
             return empty($value) ? '&mdash;' : $value;
         };
     }
+
+    protected function makeCropped($croppedLength = self::CROPPED_STRING_LENGTH)
+    {
+        return function ($value, $row) use ($croppedLength) {
+            $croppedText = mb_substr($value, 0, $croppedLength) . '...';
+
+            return "<span title='{$value}'>{$croppedText}</span>";
+        };
+    }
+
 
     protected function setFromAnother(string $column)
     {

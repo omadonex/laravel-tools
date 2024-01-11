@@ -46,7 +46,7 @@ abstract class ModelView
         $this->columnsSpecific = $data;
     }
 
-    public function getColumns(array $columnsNames = []): array
+    public function getColumns(array $columnsNames = [], bool $notIncluded = false): array
     {
         $columnsList = array_merge(
             $this->columnsPrepend,
@@ -66,16 +66,24 @@ abstract class ModelView
         }
 
         $columnsFilteredList = [];
-        foreach ($columnsNames as $columnName) {
-            $columnsFilteredList[$columnName] = $columnsFinalList[$columnName];
+        if ($notIncluded) {
+            foreach ($columnsFinalList as $key => $value) {
+                if (!in_array($key, $columnsNames)) {
+                    $columnsFilteredList[$key] = $columnsFinalList[$key];
+                }
+            }
+        } else {
+            foreach ($columnsNames as $columnName) {
+                $columnsFilteredList[$columnName] = $columnsFinalList[$columnName];
+            }
         }
 
         return $columnsFilteredList;
     }
 
-    public function getLabels(array $columnsNames = []): array
+    public function getLabels(array $columnsNames = [], bool $notIncluded = false): array
     {
-        $columns = array_keys($this->getColumns($columnsNames));
+        $columns = array_keys($this->getColumns($columnsNames, $notIncluded));
 
         $labelsData = [];
         foreach ($columns as $column) {

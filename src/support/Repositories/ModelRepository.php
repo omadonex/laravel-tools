@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Support\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxClassNotUsesTraitException;
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelCanNotBeDisabledException;
@@ -404,8 +405,8 @@ abstract class ModelRepository implements IModelRepository
         }
     }
 
-    public function pluckExt(string $emptyOptionName = null, int|string $emptyOptionValue = '', string $name = 'name', string $id = 'id'): array
+    public function pluck(string $name = 'name', string $id = 'id'): Collection
     {
-        return ($emptyOptionName !== null ? [$emptyOptionValue => $emptyOptionName] : []) + $this->model::pluck($name, $id)->toArray();
+        return $this->model::pluck($name, $id);
     }
 }

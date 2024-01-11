@@ -42,6 +42,7 @@ class UserService extends ModelService
             'password' => $this->makePassword($data['password']),
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'] ?? null,
+            'phone_code' => 7,
             'display_name' => $data['display_name'] ?? null,
             'first_name' => $data['first_name'] ?? null,
             'last_name' => $data['last_name'] ?? null,
@@ -82,6 +83,7 @@ class UserService extends ModelService
                 $userData[$key] = $value;
             }
         }
+        $userData['phone_code'] = 7;
 
         return parent::update($moid, $userData, $returnModel, $event);
     }
