@@ -1,6 +1,6 @@
 <?php
 
-use Omadonex\LaravelSupport\Classes\ConstCustom;
+use Omadonex\LaravelTools\Support\Classes\ConstCustom;
 
 return [
     'OmxUnexpectedException' => [
