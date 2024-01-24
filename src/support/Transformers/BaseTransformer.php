@@ -44,7 +44,12 @@ abstract class BaseTransformer
         return function ($value, $row) use ($urlName, $caption, $keyName, $croppedLength) {
             $url = route($urlName, $keyName ? $row->$keyName : $value);
             $text = $caption ?: $value;
-            $croppedText = $croppedLength ? mb_substr($text, 0, $croppedLength) . '...' : $text;
+
+            if (!$croppedLength || mb_strlen($text) <= $croppedLength) {
+                $croppedText = $text;
+            } else {
+                $croppedText = mb_substr($text, 0, $croppedLength) . '...';
+            }
 
             return "<a href=\"{$url}\" title='{$text}'>{$croppedText}</a>";
         };
@@ -66,6 +71,13 @@ abstract class BaseTransformer
         };
     }
 
+    protected function makeFloat(int $digits = 2)
+    {
+        return function ($value, $row) use ($digits) {
+            return number_format((float)$value, $digits, ',', ' ');
+        };
+    }
+
     protected function makePercent()
     {
         return function ($value, $row) {
@@ -83,7 +95,7 @@ abstract class BaseTransformer
     protected function makeCropped($croppedLength = self::CROPPED_STRING_LENGTH)
     {
         return function ($value, $row) use ($croppedLength) {
-            $croppedText = mb_substr($value, 0, $croppedLength) . '...';
+            $croppedText = (mb_strlen($value) <= $croppedLength) ? $value : (mb_substr($value, 0, $croppedLength) . '...');
 
             return "<span title='{$value}'>{$croppedText}</span>";
         };

@@ -46,7 +46,7 @@ abstract class ModelView
         $this->columnsSpecific = $data;
     }
 
-    public function getColumns(array $columnsNames = [], bool $notIncluded = false): array
+    public function getColumns(array $columnsNames = [], bool $notIncluded = false, bool $showHidden = false): array
     {
         $columnsList = array_merge(
             $this->columnsPrepend,
@@ -56,7 +56,7 @@ abstract class ModelView
 
         $columnsFinalList = [];
         foreach ($columnsList as $key => $value) {
-            if (!in_array($key, $this->ignoreList)) {
+            if (!in_array($key, $this->ignoreList) && ($showHidden || !($value['hidden'] ?? false))) {
                 $columnsFinalList[$key] = $value;
             }
         }
@@ -81,9 +81,9 @@ abstract class ModelView
         return $columnsFilteredList;
     }
 
-    public function getLabels(array $columnsNames = [], bool $notIncluded = false): array
+    public function getLabels(array $columnsNames = [], bool $notIncluded = false, bool $showHidden = false): array
     {
-        $columns = array_keys($this->getColumns($columnsNames, $notIncluded));
+        $columns = array_keys($this->getColumns($columnsNames, $notIncluded, $showHidden));
 
         $labelsData = [];
         foreach ($columns as $column) {
