@@ -207,10 +207,14 @@ abstract class ModelView
         return $this->columnsSpecific;
     }
 
-    public function columnsInfo(array $filter, string $tableId): array
+    public function columnsInfo(array $filter, string $tableId, array $columnsNames = [], bool $notIncluded = false, bool $showHidden = false): array
     {
         $filterColumns = data_get($filter, [$tableId, 'columns']);
-        $columnsData = $this->getColumns(empty($filterColumns) ? [] : json_decode($filterColumns));
+        if (empty($filterColumns)) {
+            $columnsData = $this->getColumns($columnsNames, $notIncluded, $showHidden);
+        } else {
+            $columnsData = $this->getColumns(json_decode($filterColumns));
+        }
         $columnsNames = array_keys($columnsData);
 
         return [$columnsData, $columnsNames];
