@@ -60,7 +60,7 @@ abstract class BaseTransformer
         };
     }
 
-    protected function makeMoney(bool $useCurrency = true, bool $useEmptyCaption = false, string $currencyColumn = 'currency', int $digits = 2)
+    protected function makeMoney(bool|string $useCurrency = true, bool $useEmptyCaption = false, string $currencyColumn = 'currency', int $digits = 2)
     {
         return function ($value, $row) use ($useCurrency, $useEmptyCaption, $currencyColumn, $digits) {
             if ($useEmptyCaption && $value === null) {
@@ -69,7 +69,7 @@ abstract class BaseTransformer
 
             $str = number_format((float)$value, $digits, ',', ' ');
             if ($useCurrency) {
-                $str .= ' ' . UtilsCurrencySign::get($row->$currencyColumn);
+                $str .= ' ' . UtilsCurrencySign::get($useCurrency === true ? $row->$currencyColumn : $useCurrency);
             }
 
             return $str;
