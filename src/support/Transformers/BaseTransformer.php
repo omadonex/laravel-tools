@@ -42,7 +42,12 @@ abstract class BaseTransformer
     protected function makeLink(string $urlName, string $caption = null, string $keyName = null, int $croppedLength = null)
     {
         return function ($value, $row) use ($urlName, $caption, $keyName, $croppedLength) {
-            $url = route($urlName, $keyName ? $row->$keyName : $value);
+            $id = $keyName ? $row->$keyName : $value;
+            if (!$id) {
+                return $this->makeIfEmpty()($value, $row);
+            }
+
+            $url = route($urlName, $id);
             $text = $caption ?: $value;
 
             if (!$croppedLength || mb_strlen($text) <= $croppedLength) {
