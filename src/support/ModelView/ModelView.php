@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Support\ModelView;
 
 
 use Omadonex\LaravelTools\Acl\Repositories\UserRepository;
+use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 use Omadonex\LaravelTools\Support\Tools\Color;
 
 abstract class ModelView
@@ -17,10 +18,13 @@ abstract class ModelView
     const TYPE_CALLBACK = 'callback';
     const TYPE_DT = 'dt';
 
+    protected int $viewColumnsCount = 1;
+    
     protected array $columns = [];
     protected array $columnsAppend = [];
     protected array $columnsPrepend = [];
     protected array $columnsSpecific = [];
+    protected array $columnsImport = [];
 
     protected bool $hasActions = true;
     protected bool $hasPrependEmpty = false;
@@ -146,6 +150,13 @@ abstract class ModelView
         };
     }
 
+    public function importCallbackList(string $column): \Closure
+    {
+        return function (array $params = []) {
+            return [];
+        };
+    }
+
     public function hasActions(): bool
     {
         return $this->hasActions;
@@ -218,5 +229,44 @@ abstract class ModelView
         $columnsNames = array_keys($columnsData);
 
         return [$columnsData, $columnsNames];
+    }
+    
+    public function getViewColunnsCount(): int
+    {
+        return $this->viewColumnsCount;
+    }
+
+    public function getColumnsImport(): array
+    {
+        return $this->columnsImport;
+    }
+
+    public function getImportRandomValue(string $column): mixed
+    {
+        $importData = $this->getColumnsImport()[$column];
+        $type = $importData['type'];
+        $list = $importData['list'] ?? false;
+
+        if ($list) {
+            $values = array_keys($this->importCallbackList($column)());
+            $index = random_int(0, count($values) - 1);
+
+            return $values[$index];
+        }
+
+        switch ($type) {
+            case 'int':
+                return random_int(0, 10000);
+            case 'money':
+                return number_format((mt_rand() / mt_getrandmax()) * random_int(1, 10000000), 2, ',', '');
+            case 'float':
+                return (mt_rand() / mt_getrandmax()) * random_int(1, 1000);
+            case 'string':
+                return UtilsCustom::random_str(random_int(5, 30));
+            case 'percent':
+                return number_format((mt_rand() / mt_getrandmax()) * random_int(1, 100), 2, ',');
+        }
+
+        return null;
     }
 }

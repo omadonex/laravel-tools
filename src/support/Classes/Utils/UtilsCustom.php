@@ -273,4 +273,20 @@ class UtilsCustom
     {
         return $str === 'true';
     }
+
+    public static function excelColumn($index): string
+    {
+        $alphabet = range('A', 'Z');
+        $letters = [];
+
+        $res = $index;
+        do {
+            array_unshift($letters, $res % 26);
+            $res = intdiv($res, 26);
+        } while ($res !== 0);
+
+        return implode('', array_map(function ($item) use ($alphabet) {
+            return $alphabet[$item];
+        }, $letters));
+    }
 }

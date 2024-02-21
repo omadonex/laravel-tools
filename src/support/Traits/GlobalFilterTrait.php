@@ -23,6 +23,21 @@ trait GlobalFilterTrait
         return $filterPage[$tableId] ?? [];
     }
 
+    public function enreachFilter(array $filter, array $requestData): array
+    {
+        $params = array_map(function ($item) {
+            return str_replace('params_', '', $item);
+        }, array_filter(array_keys($requestData), function ($item) {
+            return strpos($item, 'params_') === 0;
+        }));
+
+        foreach ($params as $param) {
+            $filter[$param] = $requestData["params_{$param}"];
+        }
+
+        return $filter;
+    }
+
     public function updateFilter(array $requestData, string $pageId, string $tableId, bool $keepOld = false): array
     {
         $filterGlobal = $this->getFilterGlobal();

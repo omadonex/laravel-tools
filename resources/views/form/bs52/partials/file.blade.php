@@ -2,7 +2,7 @@
        <label for="{{ $id }}" class="form-label">@include('omx-form::bs52.partials.required'){{ $label }}</label>
 @endif
 <input type="file" id="{{ $id }}" name="{{ $name }}"
-       class="form-control {{ $class }} {{ count($errors->get($name)) ? 'is-invalid' : '' }}"
+       class="form-control {{ $class ?? '' }} {{ count($errors->get($name)) ? 'is-invalid' : '' }}"
        @if (isset($placeholder)) placeholder="{{ $placeholder }}" @endif
        data-jst-field="{{ $name }}"
        @isset($noValidate) data-jst-no-validate="true" @else @isset($validate) data-jst-validate="{{ $validate }}" @endisset @endisset

@@ -47,6 +47,7 @@ abstract class ModelRepository implements IModelRepository
             'filter' => null,
             'search' => null,
             'closures' => [],
+            'noExec' => false,
         ];
 
         $realOptions = [];
@@ -287,8 +288,12 @@ abstract class ModelRepository implements IModelRepository
     public function list($options = [], $qb = null)
     {
         $realOptions = $this->getRealOptions($options);
+        $newQb = $this->makeQB($realOptions, $qb);
 
-        $collection = $this->getPaginatedResult($this->makeQB($realOptions, $qb), $realOptions['paginate'], $realOptions['page']);
+        if ($realOptions['noExec']) {
+            return $newQb;
+        }
+        $collection = $this->getPaginatedResult($newQb, $realOptions['paginate'], $realOptions['page']);
 
         return $this->toResource($collection, $realOptions['resource'], $realOptions['resourceClass'], $realOptions['resourceParams'], $realOptions['paginate']);
     }

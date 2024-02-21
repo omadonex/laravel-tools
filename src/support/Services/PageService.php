@@ -89,6 +89,7 @@ class PageService extends OmxService
                 case 'index': return 'partials.resource.index.template';
                 case 'show': return 'partials.resource.show.template';
                 case 'history': return 'partials.resource.history.template';
+                case 'import': return 'partials.resource.import.template';
             }
         }
 
