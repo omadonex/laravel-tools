@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Omadonex\LaravelTools\Acl\Traits\AclTrait;
 use Omadonex\LaravelTools\Common\Tools\Avatar;
 use Omadonex\LaravelTools\Support\Traits\PersonNamesTrait;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, AclTrait;
+    use HasFactory, Notifiable;
+    use AclTrait;
     use SoftDeletes;
     use PersonNamesTrait;
 
