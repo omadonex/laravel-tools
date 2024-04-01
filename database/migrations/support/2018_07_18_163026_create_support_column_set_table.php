@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('column_set');
+        Schema::dropIfExists('support_column_set');
     }
 };
