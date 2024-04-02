@@ -5,6 +5,7 @@ namespace Omadonex\LaravelTools\Acl\Providers;
 use Illuminate\Support\ServiceProvider;
 use Omadonex\LaravelTools\Acl\Commands\Generate;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Acl\Services\AclService;
 
 class AclServiceProvider extends ServiceProvider
 {
@@ -48,6 +49,10 @@ class AclServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(IAclService::class, function () {
+            return new AclService;
+        });
+
         $this->app->alias(IAclService::class, 'acl');
     }
 }
