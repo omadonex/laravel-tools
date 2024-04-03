@@ -26,6 +26,7 @@ class AclServiceProvider extends ServiceProvider
 
         $this->publishes([
             "{$pathRoot}/config/acl/acl.php" => config_path('omx/acl/acl.php'),
+            "{$pathRoot}/config/acl/auth.php" => config_path('omx/acl/auth.php'),
             "{$pathRoot}/config/acl/role.php" => config_path('omx/acl/role.php'),
             "{$pathRoot}/config/acl/permission.php" => config_path('omx/acl/permission.php'),
             "{$pathRoot}/config/acl/route.php" => config_path('omx/acl/route.php'),
@@ -49,6 +50,9 @@ class AclServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $pathRoot = realpath(__DIR__.'/../../..');
+        $this->mergeConfigFrom("{$pathRoot}/config/acl/auth.php", 'omx.acl.auth');
+
         $this->app->singleton(IAclService::class, function () {
             return new AclService;
         });
