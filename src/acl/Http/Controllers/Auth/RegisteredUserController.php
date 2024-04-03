@@ -2,7 +2,6 @@
 
 namespace Omadonex\LaravelTools\Acl\Http\Controllers\Auth;
 
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Omadonex\LaravelTools\Acl\Http\Requests\Auth\RegisterRequest;
@@ -20,12 +19,8 @@ class RegisteredUserController extends Controller
 
     public function store(RegisterRequest $request, UserService $userService)
     {
-        try {
-            $user = $userService->register($request->validated());
-            Auth::login($user);
-        } catch (Exception $e) {
-            $this->catchAndThrowException($e);
-        }
+        $user = $userService->register($request->validated());
+        Auth::login($user);
 
         return redirect('/');
     }
