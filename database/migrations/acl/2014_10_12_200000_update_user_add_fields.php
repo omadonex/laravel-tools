@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('opt_name')->nullable();
             $table->string('avatar')->nullable();
+            $table->softDeletes();
 
             $table->unique(['phone_code', 'phone'], 'phone_unique');
         });
