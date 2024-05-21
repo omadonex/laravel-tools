@@ -15,10 +15,6 @@ class Acl {
      * @return mixed
      */
     public function handle($request, Closure $next) {
-        if (!$request->user()) {
-            abort(Response::HTTP_UNAUTHORIZED);
-        }
-
         $routeName = $request->route()->getName();
         $user = $request->user();
 

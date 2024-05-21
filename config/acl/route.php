@@ -11,7 +11,11 @@ return [
     IAclService::SECTION_ALLOWED => [
     ],
 
+    //Требуется роль для доступа (для ROOT | ADMIN все открыто)
+    IAclService::SECTION_PROTECTED_ROLE => [
+    ],
+
     //Требуется разрешение для доступа (для ROOT | ADMIN все открыто)
-    IAclService::SECTION_PROTECTED => [
+    IAclService::SECTION_PROTECTED_PERMISSION => [
     ],
 ];

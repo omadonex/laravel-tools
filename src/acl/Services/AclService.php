@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Acl\Services;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclRepository;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
@@ -48,7 +49,7 @@ class AclService extends OmxService implements IAclService
 
     public function isLoggedIn(): bool
     {
-        return (bool) $this->user;
+        return !Auth::guest();
     }
 
     public function user(): ?User
@@ -150,11 +151,6 @@ class AclService extends OmxService implements IAclService
 
     public function checkRoute(string $routeName): bool
     {
-        //User not logged in - assumes no access
-        if (!$this->isLoggedIn()) {
-            return false;
-        }
-
         //User is ROOT - assumes has access
         if ($this->isRoot()) {
             return true;
@@ -172,22 +168,34 @@ class AclService extends OmxService implements IAclService
             return true;
         }
 
-        //Ищем в группе роутов с разрешениями
-        $permission = $this->searchInSection($routeName, self::SECTION_PROTECTED);
+        //Ищем в группе защищенных роутов (ROLE)
+        $accessData = $this->searchInSection($routeName, self::SECTION_PROTECTED_ROLE);
+        if ($accessData !== false) {
+            if (is_array($accessData)) {
+                $type = $accessData['type'] ?? self::CHECK_TYPE_AND;
+                $accessData = $accessData['access'];
+            } else {
+                $type = self::CHECK_TYPE_AND;
+            }
+
+            return $this->checkRole($accessData, $type);
+        }
+
+        //Ищем в группе защищенных роутов (PERMISSION)
+        $accessData = $this->searchInSection($routeName, self::SECTION_PROTECTED_PERMISSION);
+        if ($accessData !== false) {
+            if (is_array($accessData)) {
+                $type = $accessData['type'] ?? self::CHECK_TYPE_AND;
+                $accessData = $accessData['access'];
+            } else {
+                $type = self::CHECK_TYPE_AND;
+            }
+
+            return $this->check($accessData, $type);
+        }
+
         //Если не нашли (роут не указан нигде, значит действуем по настройке режима Acl)
-        if ($permission === false) {
-            return $this->mode === self::MODE_ALLOW;
-        }
-
-        //Проверяем либо группу разрешений, либо одно разрешение
-        if (is_array($permission)) {
-            $type = $permission['type'] ?? self::CHECK_TYPE_AND;
-            $permission = $permission['permission'];
-        } else {
-            $type = self::CHECK_TYPE_AND;
-        }
-
-        return $this->check($permission, $type);
+        return $this->mode === self::MODE_ALLOW;
     }
 
     public function checkForUser(User $user, array|string $permission, string $type = self::CHECK_TYPE_AND): bool
@@ -224,36 +232,38 @@ class AclService extends OmxService implements IAclService
         return $value->assign_starting_at < $nowTs && $value->assign_expires_at > $nowTs;
     }
 
-    public function setUser(User $user): void
+    public function setUser(?User $user): void
     {
         $this->user = $user;
 
-        $relations = ['roles'];
-        if ($this->isDeepMode()) {
-            $relations[] = 'roles.permissions';
-            $relations[] = 'permissions';
-        }
-        $user->load($relations);
-
-        $nowTs = Carbon::now()->timestamp;
-        $this->roleList = $user->roles->filter(function ($value, $key) use ($nowTs) {
-            return $this->checkAssignDates($value, $nowTs);
-        });
-
-        if (!$this->roleList->count()) {
-            $this->roleList->push(Role::find(IRole::USER));
-        }
-
-        if ($this->isDeepMode()) {
-            foreach ($this->roleList as $role) {
-                $this->permissionList = $this->permissionList->concat($role->permissions);
+        if ($user) {
+            $relations = ['roles'];
+            if ($this->isDeepMode()) {
+                $relations[] = 'roles.permissions';
+                $relations[] = 'permissions';
             }
-            //Персонально назначенные пользователю привилегии могут иметь срок истечения
-            $userPermissionList = $user->permissions->filter(function ($value, $key) use ($nowTs) {
+            $user->load($relations);
+
+            $nowTs = Carbon::now()->timestamp;
+            $this->roleList = $user->roles->filter(function ($value, $key) use ($nowTs) {
                 return $this->checkAssignDates($value, $nowTs);
             });
-            $this->permissionList = $this->permissionList->concat($userPermissionList);
-            $this->permissionList = $this->permissionList->unique->id->values();
+
+            if (!$this->roleList->count()) {
+                $this->roleList->push(Role::find(IRole::USER));
+            }
+
+            if ($this->isDeepMode()) {
+                foreach ($this->roleList as $role) {
+                    $this->permissionList = $this->permissionList->concat($role->permissions);
+                }
+                //Персонально назначенные пользователю привилегии могут иметь срок истечения
+                $userPermissionList = $user->permissions->filter(function ($value, $key) use ($nowTs) {
+                    return $this->checkAssignDates($value, $nowTs);
+                });
+                $this->permissionList = $this->permissionList->concat($userPermissionList);
+                $this->permissionList = $this->permissionList->unique->id->values();
+            }
         }
     }
 
@@ -263,7 +273,8 @@ class AclService extends OmxService implements IAclService
         $routesData = [
             IAclService::SECTION_DENIED => [],
             IAclService::SECTION_ALLOWED => [],
-            IAclService::SECTION_PROTECTED => [],
+            IAclService::SECTION_PROTECTED_ROLE => [],
+            IAclService::SECTION_PROTECTED_PERMISSION => [],
             IAclService::SECTION_UNSAFE => [],
         ];
 
@@ -303,23 +314,36 @@ class AclService extends OmxService implements IAclService
                 continue;
             }
 
-            //Ищем в группе роутов с разрешениями
-            $permission = $this->searchInSection($routeName, IAclService::SECTION_PROTECTED);
-            if ($permission === false) {
-                $routesData[IAclService::SECTION_UNSAFE][] = [
+            //Ищем в группе защищенных роутов (ROLE)
+            $accessData = $this->searchInSection($routeName, IAclService::SECTION_PROTECTED_ROLE);
+            if ($accessData !== false) {
+                $routesData[IAclService::SECTION_PROTECTED_ROLE][] = [
                     'name' => $routeName,
                     'path' => $routePath,
-                    'action' => $route->getActionName(),
+                    'accessData' => $accessData,
                     'methods' => $routeMethods
                 ];
-            } else {
-                $routesData[IAclService::SECTION_PROTECTED][] = [
-                    'name' => $routeName,
-                    'path' => $routePath,
-                    'permissionData' => $permission,
-                    'methods' => $routeMethods
-                ];
+                continue;
             }
+
+            //Ищем в группе защищенных роутов (PERMISSION)
+            $accessData = $this->searchInSection($routeName, IAclService::SECTION_PROTECTED_PERMISSION);
+            if ($accessData !== false) {
+                $routesData[IAclService::SECTION_PROTECTED_PERMISSION][] = [
+                    'name' => $routeName,
+                    'path' => $routePath,
+                    'accessData' => $accessData,
+                    'methods' => $routeMethods
+                ];
+                continue;
+            }
+
+            $routesData[IAclService::SECTION_UNSAFE][] = [
+                'name' => $routeName,
+                'path' => $routePath,
+                'action' => $route->getActionName(),
+                'methods' => $routeMethods
+            ];
         }
 
         $comparator = function ($a, $b) {
@@ -332,7 +356,8 @@ class AclService extends OmxService implements IAclService
 
         usort($routesData[self::SECTION_DENIED], $comparator);
         usort($routesData[self::SECTION_ALLOWED], $comparator);
-        usort($routesData[self::SECTION_PROTECTED], $comparator);
+        usort($routesData[self::SECTION_PROTECTED_ROLE], $comparator);
+        usort($routesData[self::SECTION_PROTECTED_PERMISSION], $comparator);
         usort($routesData[self::SECTION_UNSAFE], $comparator);
 
         return $routesData;
@@ -350,7 +375,8 @@ class AclService extends OmxService implements IAclService
         foreach ([
             IAclService::SECTION_DENIED,
             IAclService::SECTION_ALLOWED,
-            IAclService::SECTION_PROTECTED,
+            IAclService::SECTION_PROTECTED_ROLE,
+            IAclService::SECTION_PROTECTED_PERMISSION,
         ] as $section) {
             $routeMap[$section] = [];
             foreach ($routeMapEntryList as $entry) {
@@ -369,7 +395,7 @@ class AclService extends OmxService implements IAclService
         $routes = $this->routeMap[$section];
 
         //Т.к. в группах deny и allow роуты указаны без ключей, просто перебором, то по группе определяем тип поиска
-        if ($section === self::SECTION_PROTECTED) {
+        if (in_array($section, [self::SECTION_PROTECTED_ROLE, self::SECTION_PROTECTED_PERMISSION])) {
             if (array_key_exists($routeName, $routes)) {
                 return $routes[$routeName];
             }
@@ -380,7 +406,7 @@ class AclService extends OmxService implements IAclService
         }
 
         //Ищем в группе роутов через wildcard
-        return $this->findWildcard($routeName, $routes, $section === self::SECTION_PROTECTED);
+        return $this->findWildcard($routeName, $routes, in_array($section, [self::SECTION_PROTECTED_ROLE, self::SECTION_PROTECTED_PERMISSION]));
     }
 
     /**
@@ -430,8 +456,8 @@ class AclService extends OmxService implements IAclService
         $result = call_user_func_array([$this, $func], $params);
 
         $this->user = $currUser;
-        $this->permissions = $currPermissions;
-        $this->roles = $currRoles;
+        $this->permissionList = $currPermissions;
+        $this->roleList = $currRoles;
 
         return $result;
     }

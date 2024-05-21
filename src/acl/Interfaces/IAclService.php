@@ -15,7 +15,8 @@ interface IAclService
 
     public const SECTION_ALLOWED = 'allowed';
     public const SECTION_DENIED = 'denied';
-    public const SECTION_PROTECTED = 'protected';
+    public const SECTION_PROTECTED_ROLE = 'protected_role';
+    public const SECTION_PROTECTED_PERMISSION = 'protected_permission';
     public const SECTION_UNSAFE = 'unsafe';
 
     public const PARENT_PERMISSION_GROUP_ID= 'app';
@@ -64,7 +65,7 @@ interface IAclService
 
     public function isLoggedIn(): bool;
 
-    public function setUser(User $user): void;
+    public function setUser(?User $user): void;
 
     public function permissions(bool $onlyIds = false): array;
 

@@ -30,13 +30,16 @@ class AclServiceProvider extends ServiceProvider
             "{$pathRoot}/config/acl/role.php" => config_path('omx/acl/role.php'),
             "{$pathRoot}/config/acl/permission.php" => config_path('omx/acl/permission.php'),
             "{$pathRoot}/config/acl/route.php" => config_path('omx/acl/route.php'),
-            "{$pathRoot}/src/acl/Routes/auth.php" => base_path('routes/omx/auth.php'),
         ], 'config');
 
         $this->publishes([
             "{$pathRoot}/resources/lang/acl" => lang_path('vendor/omx-acl'),
-            "{$pathRoot}/resources/views/acl" => resource_path('views/vendor/omx-acl'),
         ], 'translations');
+
+        $this->publishes([
+            "{$pathRoot}/resources/views/acl" => resource_path('views/vendor/omx-acl'),
+            "{$pathRoot}/src/acl/Routes/auth.php" => base_path('routes/omx/auth.php'),
+        ]);
 
         $this->commands([
             Generate::class,
