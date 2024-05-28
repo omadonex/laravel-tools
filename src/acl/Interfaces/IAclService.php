@@ -55,6 +55,8 @@ interface IAclService
 
     public function getRoutesData(): array;
 
+    public function hasAdminAccess(): bool;
+
     public function isAdmin(): bool;
 
     public function isRoot(): bool;

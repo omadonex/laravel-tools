@@ -91,6 +91,11 @@ class AclService extends OmxService implements IAclService
         return $this->roleList->count() === 1 && $this->roleList->first()->id === IRole::USER;
     }
 
+    public function hasAdminAccess(): bool
+    {
+        return $this->checkRole(IRole::ADMIN);
+    }
+
     public function check(array|string $permission, string $type = self::CHECK_TYPE_AND): bool
     {
         //User not logged in - assumes no permission
@@ -289,7 +294,7 @@ class AclService extends OmxService implements IAclService
                     'name' => $routeName,
                     'path' => $routePath,
                     'action' => $route->getActionName(),
-                    'methods' => $routeMethods
+                    'methods' => $routeMethods,
                 ];
                 continue;
             }
@@ -299,7 +304,7 @@ class AclService extends OmxService implements IAclService
                 $routesData[IAclService::SECTION_DENIED][] = [
                     'name' => $routeName,
                     'path' => $routePath,
-                    'methods' => $routeMethods
+                    'methods' => $routeMethods,
                 ];
                 continue;
             }
@@ -309,7 +314,7 @@ class AclService extends OmxService implements IAclService
                 $routesData[IAclService::SECTION_ALLOWED][] = [
                     'name' => $routeName,
                     'path' => $routePath,
-                    'methods' => $routeMethods
+                    'methods' => $routeMethods,
                 ];
                 continue;
             }
@@ -321,7 +326,7 @@ class AclService extends OmxService implements IAclService
                     'name' => $routeName,
                     'path' => $routePath,
                     'accessData' => $accessData,
-                    'methods' => $routeMethods
+                    'methods' => $routeMethods,
                 ];
                 continue;
             }
@@ -333,7 +338,7 @@ class AclService extends OmxService implements IAclService
                     'name' => $routeName,
                     'path' => $routePath,
                     'accessData' => $accessData,
-                    'methods' => $routeMethods
+                    'methods' => $routeMethods,
                 ];
                 continue;
             }
@@ -342,7 +347,7 @@ class AclService extends OmxService implements IAclService
                 'name' => $routeName,
                 'path' => $routePath,
                 'action' => $route->getActionName(),
-                'methods' => $routeMethods
+                'methods' => $routeMethods,
             ];
         }
 
