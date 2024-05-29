@@ -41,17 +41,11 @@ interface IAclService
 
     public function id(): ?int;
 
-    public function check(array|string $permission, string $type = self::CHECK_TYPE_AND): bool;
+    public function check(array|string $permission, string $type = self::CHECK_TYPE_AND, ?User $user = null): bool;
 
-    public function checkRole(array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool;
+    public function checkRole(array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false, ?User $user = null): bool;
 
-    public function checkRoute(string $routeName): bool;
-
-    public function checkForUser(User $user, array|string $permission, string $type = self::CHECK_TYPE_AND): bool;
-
-    public function checkRoleForUser(User $user, array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool;
-
-    public function checkRouteForUser(User $user, string $routeName): bool;
+    public function checkRoute(string $routeName, ?User $user = null): bool;
 
     public function getRoutesData(): array;
 

@@ -4,7 +4,6 @@ namespace Omadonex\LaravelTools\Acl\Services;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclRepository;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
@@ -26,8 +25,6 @@ class AclService extends OmxService implements IAclService
     protected Collection $roleList;
     protected Collection $permissionList;
 
-    protected array $relationArr;
-
     public function __construct(array $moduleArr = [])
     {
         $this->aclRepository = new AclRepository;
@@ -38,8 +35,6 @@ class AclService extends OmxService implements IAclService
         $this->user = null;
         $this->roleList = collect();
         $this->permissionList = collect();
-
-        $this->relationArr = [];
     }
 
     public function isDeepMode(): bool
@@ -49,7 +44,7 @@ class AclService extends OmxService implements IAclService
 
     public function isLoggedIn(): bool
     {
-        return !Auth::guest();
+        return (bool) $this->user;
     }
 
     public function user(): ?User
@@ -76,200 +71,86 @@ class AclService extends OmxService implements IAclService
         return $onlyIds ? $this->permissionList->map->id->toArray() : $this->permissionList->toArray();
     }
 
-    public function isRoot(): bool
+    public function isRoot(?User $user = null): bool
     {
-        return $this->roleList->count() === 1 && $this->roleList->first()->id === IRole::ROOT;
+        list ($roleList, $permissionList) = $this->getRawData($user);
+
+        return $this->rawDataCheckRole($roleList, IRole::ROOT, strict: true);
     }
 
-    public function isAdmin(): bool
+    public function isAdmin(?User $user = null): bool
     {
-        return $this->roleList->count() === 1 && $this->roleList->first()->id === IRole::ADMIN;
+        list ($roleList, $permissionList) = $this->getRawData($user);
+
+        return $this->rawDataCheckRole($roleList, IRole::ADMIN, strict: true);
     }
 
-    public function isUser(): bool
+    public function isUser(?User $user = null): bool
     {
-        return $this->roleList->count() === 1 && $this->roleList->first()->id === IRole::USER;
+        list ($roleList, $permissionList) = $this->getRawData($user);
+
+        return $this->rawDataCheckRole($roleList, IRole::USER, strict: true);
     }
 
-    public function hasAdminAccess(): bool
+    public function hasAdminAccess(?User $user = null): bool
     {
-        return $this->checkRole(IRole::ADMIN);
+        list ($roleList, $permissionList) = $this->getRawData($user);
+
+        return $this->rawDataCheckRole($roleList, IRole::ADMIN);
     }
 
-    public function check(array|string $permission, string $type = self::CHECK_TYPE_AND): bool
+    public function attachRole(array|string $role, ?User $user = null): void
     {
-        //User not logged in - assumes no permission
-        if (!$this->isLoggedIn()) {
-            return false;
+        $user = $user ?: $this->user;
+        if ($user) {
+            $this->aclRepository->addRole($user, $role);
         }
-
-        //User is ROOT or ADMIN - assumes has permission
-        if ($this->isRoot() || $this->isAdmin()) {
-            return true;
-        }
-
-        if (!is_array($permission)) {
-            $permission = [$permission];
-        }
-
-        if ($type === self::CHECK_TYPE_AND) {
-            return !array_diff($permission, $this->permissionList->toArray());
-        }
-
-        if ($type === self::CHECK_TYPE_OR) {
-            return (bool)array_intersect($permission, $this->permissionList->toArray());
-        }
-
-        return false;
     }
 
-    public function checkRole(array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool
+    public function detachRole(array|string $role, ?User $user = null): void
     {
-        //User not logged in - assumes no role
-        if (!$this->isLoggedIn()) {
-            return false;
+        $user = $user ?: $this->user;
+        if ($user) {
+            $this->aclRepository->removeRole($user ?: $this->user, $role);
         }
-
-        if (!is_array($role)) {
-            $role = [$role];
-        }
-
-        if (array_intersect($role, [IRole::ROOT])) {
-            return $this->isRoot();
-        }
-
-        //Not strict check and User is ROOT or ADMIN - assumes has role
-        if (!$strict && ($this->isRoot() || $this->isAdmin())) {
-            return true;
-        }
-
-        if ($type === self::CHECK_TYPE_AND) {
-            return !array_diff($role, $this->roleList->map->id->toArray());
-        }
-
-        if ($type === self::CHECK_TYPE_OR) {
-            return (bool)array_intersect($role, $this->roleList->map->id->toArray());
-        }
-
-        return false;
     }
 
-    public function checkRoute(string $routeName): bool
+    public function repository(): IAclRepository
     {
-        //User is ROOT - assumes has access
-        if ($this->isRoot()) {
-            return true;
-        }
-
-        //Ищем в группе запрещенных для всех роутов
-        $exists = $this->searchInSection($routeName, self::SECTION_DENIED);
-        if ($exists === true) {
-            return false;
-        }
-
-        //Ищем в группе разрешенных для всех роутов
-        $exists = $this->searchInSection($routeName, self::SECTION_ALLOWED);
-        if ($exists === true) {
-            return true;
-        }
-
-        //Ищем в группе защищенных роутов (ROLE)
-        $accessData = $this->searchInSection($routeName, self::SECTION_PROTECTED_ROLE);
-        if ($accessData !== false) {
-            if (is_array($accessData)) {
-                $type = $accessData['type'] ?? self::CHECK_TYPE_AND;
-                $accessData = $accessData['access'];
-            } else {
-                $type = self::CHECK_TYPE_AND;
-            }
-
-            return $this->checkRole($accessData, $type);
-        }
-
-        //Ищем в группе защищенных роутов (PERMISSION)
-        $accessData = $this->searchInSection($routeName, self::SECTION_PROTECTED_PERMISSION);
-        if ($accessData !== false) {
-            if (is_array($accessData)) {
-                $type = $accessData['type'] ?? self::CHECK_TYPE_AND;
-                $accessData = $accessData['access'];
-            } else {
-                $type = self::CHECK_TYPE_AND;
-            }
-
-            return $this->check($accessData, $type);
-        }
-
-        //Если не нашли (роут не указан нигде, значит действуем по настройке режима Acl)
-        return $this->mode === self::MODE_ALLOW;
+        return $this->aclRepository;
     }
 
-    public function checkForUser(User $user, array|string $permission, string $type = self::CHECK_TYPE_AND): bool
+    public function check(array|string $permission, string $type = self::CHECK_TYPE_AND, ?User $user = null): bool
     {
-        return $this->runForUser($user, 'check', [$permission, $type]);
+        list ($roleList, $permissionList) = $this->getRawData($user);
+        
+        return $this->rawDataCheck($roleList, $permissionList, $permission, $type);
     }
 
-    public function checkRoleForUser(User $user, array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool
+    public function checkRole(array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false, ?User $user = null): bool
     {
-        return $this->runForUser($user, 'checkRole', [$role, $type, $strict]);
+        list ($roleList, $permissionList) = $this->getRawData($user);
+
+        return $this->rawDataCheckRole($roleList, $role, $type, $strict);
     }
 
-    public function checkRouteForUser(User $user, string $routeName): bool
+    public function checkRoute(string $routeName, ?User $user = null): bool
     {
-        return $this->runForUser($user, 'checkRoute', [$routeName]);
-    }
+        list ($roleList, $permissionList) = $this->getRawData($user);
 
-    private function checkAssignDates($value, $nowTs): bool
-    {
-        //TODO omadonex: корректность проверки даты, учитывая таймзоны
-
-        if ($value->assign_starting_at === null && $value->assign_expires_at === null) {
-            return true;
-        }
-
-        if ($value->assign_starting_at !== null && $value->assign_expires_at === null) {
-            return $value->assign_starting_at < $nowTs;
-        }
-
-        if ($value->assign_starting_at === null && $value->assign_expires_at !== null) {
-            return $value->assign_expires_at > $nowTs;
-        }
-
-        return $value->assign_starting_at < $nowTs && $value->assign_expires_at > $nowTs;
+        return $this->rawDataCheckRoute($roleList, $permissionList, $routeName);
     }
 
     public function setUser(?User $user): void
     {
-        $this->user = $user;
-
         if ($user) {
-            $relations = ['roles'];
-            if ($this->isDeepMode()) {
-                $relations[] = 'roles.permissions';
-                $relations[] = 'permissions';
-            }
-            $user->load($relations);
+            list ($roleList, $permissionList) = $this->loadCheckedUserData($user);
 
-            $nowTs = Carbon::now()->timestamp;
-            $this->roleList = $user->roles->filter(function ($value, $key) use ($nowTs) {
-                return $this->checkAssignDates($value, $nowTs);
-            });
-
-            if (!$this->roleList->count()) {
-                $this->roleList->push(Role::find(IRole::USER));
-            }
-
-            if ($this->isDeepMode()) {
-                foreach ($this->roleList as $role) {
-                    $this->permissionList = $this->permissionList->concat($role->permissions);
-                }
-                //Персонально назначенные пользователю привилегии могут иметь срок истечения
-                $userPermissionList = $user->permissions->filter(function ($value, $key) use ($nowTs) {
-                    return $this->checkAssignDates($value, $nowTs);
-                });
-                $this->permissionList = $this->permissionList->concat($userPermissionList);
-                $this->permissionList = $this->permissionList->unique->id->values();
-            }
+            $this->roleList = $roleList;
+            $this->permissionList = $permissionList;
         }
+
+        $this->user = $user;
     }
 
     public function getRoutesData(): array
@@ -368,6 +249,159 @@ class AclService extends OmxService implements IAclService
         return $routesData;
     }
 
+    private function checkAssignDates($value, $nowTs): bool
+    {
+        //TODO omadonex: корректность проверки даты, учитывая таймзоны
+
+        if ($value->assign_starting_at === null && $value->assign_expires_at === null) {
+            return true;
+        }
+
+        if ($value->assign_starting_at !== null && $value->assign_expires_at === null) {
+            return $value->assign_starting_at < $nowTs;
+        }
+
+        if ($value->assign_starting_at === null && $value->assign_expires_at !== null) {
+            return $value->assign_expires_at > $nowTs;
+        }
+
+        return $value->assign_starting_at < $nowTs && $value->assign_expires_at > $nowTs;
+    }
+
+    private function loadCheckedUserData(User $user): array
+    {
+        $relations = ['roles'];
+        if ($this->isDeepMode()) {
+            $relations[] = 'roles.permissions';
+            $relations[] = 'permissions';
+        }
+        $user->load($relations);
+
+        $nowTs = Carbon::now()->timestamp;
+        $roleList = $user->roles->filter(function ($value, $key) use ($nowTs) {
+            return $this->checkAssignDates($value, $nowTs);
+        });
+
+        if (!$roleList->count()) {
+            $roleList->push(Role::find(IRole::USER));
+        }
+
+        if ($this->isDeepMode()) {
+            $permissionList = collect();
+            foreach ($roleList as $role) {
+                $permissionList = $permissionList->concat($role->permissions);
+            }
+            //Персонально назначенные пользователю привилегии могут иметь срок истечения
+            $userPermissionList = $user->permissions->filter(function ($value, $key) use ($nowTs) {
+                return $this->checkAssignDates($value, $nowTs);
+            });
+            $permissionList = $permissionList->concat($userPermissionList);
+            $permissionList = $permissionList->unique->id->values();
+        }
+
+        return [$roleList, $permissionList];
+    }
+
+    private function getRawData(?User $user = null): array
+    {
+        if ($user) {
+            return $this->loadCheckedUserData($user);
+        }
+
+        return [$this->roleList, $this->permissionList];
+    }
+
+    private function rawDataCheck(Collection $roleList, Collection $permissionList, array|string $permission, string $type = self::CHECK_TYPE_AND): bool
+    {
+        if (array_intersect([IRole::ROOT, IRole::ADMIN], $roleList->map->id->toArray())) {
+            return true;
+        }
+
+        if (!is_array($permission)) {
+            $permission = [$permission];
+        }
+
+        if ($type === self::CHECK_TYPE_AND) {
+            return !array_diff($permission, $permissionList->toArray());
+        }
+
+        if ($type === self::CHECK_TYPE_OR) {
+            return (bool)array_intersect($permission, $permissionList->toArray());
+        }
+
+        return false;
+    }
+
+    private function rawDataCheckRole(Collection $roleList, array|string $role, string $type = self::CHECK_TYPE_AND, bool $strict = false): bool
+    {
+        if (!$strict && array_intersect([IRole::ROOT, IRole::ADMIN], $roleList->map->id->toArray())) {
+            return true;
+        }
+
+        if (!is_array($role)) {
+            $role = [$role];
+        }
+
+        if ($type === self::CHECK_TYPE_AND) {
+            return !array_diff($role, $roleList->map->id->toArray());
+        }
+
+        if ($type === self::CHECK_TYPE_OR) {
+            return (bool)array_intersect($role, $roleList->map->id->toArray());
+        }
+
+        return false;
+    }
+
+    private function rawDataCheckRoute(Collection $roleList, Collection $permissionList, string $routeName): bool
+    {
+        //User is ROOT - assumes has access
+        if (array_intersect([IRole::ROOT], $roleList->map->id->toArray())) {
+            return true;
+        }
+
+        //Ищем в группе запрещенных для всех роутов
+        $exists = $this->searchInSection($routeName, self::SECTION_DENIED);
+        if ($exists === true) {
+            return false;
+        }
+
+        //Ищем в группе разрешенных для всех роутов
+        $exists = $this->searchInSection($routeName, self::SECTION_ALLOWED);
+        if ($exists === true) {
+            return true;
+        }
+
+        //Ищем в группе защищенных роутов (ROLE)
+        $accessData = $this->searchInSection($routeName, self::SECTION_PROTECTED_ROLE);
+        if ($accessData !== false) {
+            if (is_array($accessData)) {
+                $type = $accessData['type'] ?? self::CHECK_TYPE_AND;
+                $accessData = $accessData['access'];
+            } else {
+                $type = self::CHECK_TYPE_AND;
+            }
+
+            return $this->rawDataCheckRole($roleList, $accessData, $type);
+        }
+
+        //Ищем в группе защищенных роутов (PERMISSION)
+        $accessData = $this->searchInSection($routeName, self::SECTION_PROTECTED_PERMISSION);
+        if ($accessData !== false) {
+            if (is_array($accessData)) {
+                $type = $accessData['type'] ?? self::CHECK_TYPE_AND;
+                $accessData = $accessData['access'];
+            } else {
+                $type = self::CHECK_TYPE_AND;
+            }
+
+            return $this->rawDataCheck($roleList, $permissionList, $accessData, $type);
+        }
+
+        //Если не нашли (роут не указан нигде, значит действуем по настройке режима Acl)
+        return $this->mode === self::MODE_ALLOW;
+    }
+
     private function generateRouteMap(array $moduleArr = []): array
     {
         $routeMapEntryList = [config('omx.acl.route')];
@@ -449,36 +483,5 @@ class AclService extends OmxService implements IAclService
         }
 
         return false;
-    }
-
-    private function runForUser(User $user, $func, $params)
-    {
-        $currUser = $this->user;
-        $currPermissions = $this->permissionList;
-        $currRoles = $this->roleList;
-
-        $this->setUser($user);
-        $result = call_user_func_array([$this, $func], $params);
-
-        $this->user = $currUser;
-        $this->permissionList = $currPermissions;
-        $this->roleList = $currRoles;
-
-        return $result;
-    }
-
-    public function attachRole(array|string $role, User $user = null): void
-    {
-        $this->aclRepository->addRole($user ?: $this->user, $role);
-    }
-
-    public function detachRole(array|string $role, User $user = null): void
-    {
-        $this->aclRepository->removeRole($user ?: $this->user, $role);
-    }
-
-    public function repository(): IAclRepository
-    {
-        return $this->aclRepository;
     }
 }
