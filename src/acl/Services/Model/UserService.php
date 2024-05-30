@@ -133,7 +133,7 @@ class UserService extends ModelService
     public function attachRole(int|string|Model $moid, array|string $roleId): void
     {
         $moid = $this->modelRepository->find($moid);
-        if ($this->aclService->checkRoleForUser($moid, $roleId, IAclService::CHECK_TYPE_AND, true)) {
+        if ($this->aclService->checkRole($roleId, IAclService::CHECK_TYPE_AND, true, $moid)) {
             OmxUserException::throw(OmxUserException::ERR_CODE_1001);
         }
 
