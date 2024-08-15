@@ -18,9 +18,15 @@ trait HistoryServiceTrait
 
         $hiddenFields = defined("{$historyModelClass}::HIDDEN_FIELDS") ? $historyModel::HIDDEN_FIELDS : [];
         $simpleFields = defined("{$historyModelClass}::SIMPLE_FIELDS") ? $historyModel::SIMPLE_FIELDS : [];
+        $ignoreFields = defined("{$historyModelClass}::IGNORE_FIELDS") ? $historyModel::IGNORE_FIELDS : [];
 
         foreach ($oldData as $specKey => $data) {
             foreach ($data as $key => $value) {
+                if (in_array($key, $ignoreFields)) {
+                    unset($oldData[$specKey][$key]);
+                    continue;
+                }
+
                 if ($oldData[$specKey][$key] instanceof Carbon) {
                     $oldData[$specKey][$key] = $oldData[$specKey][$key]->format($dtFormat);
                 }
@@ -37,6 +43,11 @@ trait HistoryServiceTrait
 
         foreach ($newData as $specKey => $data) {
             foreach ($data as $key => $value) {
+                if (in_array($key, $ignoreFields)) {
+                    unset($newData[$specKey][$key]);
+                    continue;
+                }
+
                 if ($newData[$specKey][$key] instanceof Carbon) {
                     $newData[$specKey][$key] = $newData[$specKey][$key]->format($dtFormat);
                 }

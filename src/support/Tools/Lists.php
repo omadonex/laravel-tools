@@ -8,10 +8,10 @@ use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
 
 class Lists
 {
-    public static function get(string $listName, bool $addEmpty = true, array $empty = [], bool $closure = false): mixed
+    public static function get(string $listName, bool $addEmpty = true, array $empty = [], bool $closure = false, array $arguments = []): mixed
     {
-        $func = function (array $params = []) use ($listName, $addEmpty, $empty) {
-            $list = static::$listName();
+        $func = function (array $params = []) use ($listName, $addEmpty, $empty, $arguments) {
+            $list = static::$listName(...$arguments);
             $list = is_array($list) ? $list : $list->toArray();
 
             if ($addEmpty) {

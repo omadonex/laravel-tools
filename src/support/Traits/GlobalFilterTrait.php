@@ -41,7 +41,6 @@ trait GlobalFilterTrait
     public function updateFilter(array $requestData, string $pageId, string $tableId, bool $keepOld = false): array
     {
         $filterGlobal = $this->getFilterGlobal();
-
         $filterRequest = $this->evalFilter($tableId, $requestData);
         if (!$keepOld) {
             $filterGlobal[$pageId][$tableId] = $filterRequest;
