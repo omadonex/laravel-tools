@@ -16,6 +16,7 @@ class SupportServiceProvider extends ServiceProvider
     {
         $pathRoot = realpath(__DIR__.'/../../..');
 
+        $this->loadRoutesFrom("{$pathRoot}/src/support/Routes/web.php");
         $this->loadTranslationsFrom("{$pathRoot}/resources/lang/support", 'omx-support');
         $this->loadMigrationsFrom("{$pathRoot}/database/migrations/support");
         $this->loadViewsFrom("{$pathRoot}/resources/views/form", 'omx-form');
