@@ -1,20 +1,28 @@
 @php
-    $btnSize = isset($btnSize) ? $btnSize : '';
-    $spinnerSize = '';
-    if (isset($spinner) && $btnSize !== '') {
-        $spinnerSize = "{$spinner}-{$btnSize}";
-    }
-    $btnSize = "btn-{$btnSize}";
-    $submitContext = isset($submitContext) ? "btn-{$submitContext}" : 'btn-primary';
-    $submitText = isset($submitText) ? $submitText : 'Ok';
-    $cancelText = isset($cancelText) ? $cancelText : 'Cancel';
+    /** @var string $modalId */
+    /** @var string $modalSubmitText */
+    /** @var string $modalCancelText */
+    /** @var string $modalSubmitContext */
+    /** @var string $modalTitle */
+    /** @var string $modalOverlayHtml */
+    /** @var string $modalSubmitIconHtml */
+    /** @var string $modalBtnSize */
+    /** @var bool   $modalHideFooter  */
+
+    $modalSubmitText = $modalSubmitText ?? 'Ok';
+    $modalCancelText = $modalCancelText ?? 'Cancel';
+    $modalSubmitContext = $modalSubmitContext ?? \Omadonex\LaravelTools\Support\Tools\Context::PRIMARY;
+    $modalOverlayHtml = $modalOverlayHtml ?? 'Please wait.</br>Loading...';
+    $modalHideFooter = $modalHideFooter ?? false;
+    $modalBtnSize = $modalBtnSize ?? \Omadonex\LaravelTools\Support\Tools\Size::DEFAULT;
+    $modalSubmitIconHtml = $modalSubmitIconHtml ?? '';
 @endphp
 
 <div id="{{ $modalId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="{{ $modalId }}__title" aria-hidden="true">
     <div class="modal-dialog {{ $modalClass ?? '' }}" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="{{ $modalId }}__title">{{ $title }}</h3>
+                <h3 class="modal-title" id="{{ $modalId }}__title">{{ $modalTitle ?? '' }}</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div>
@@ -22,30 +30,34 @@
                     <div id="{{ $modalId }}__alert" class="alert d-none"></div>
                     <div id="{{ $modalId }}__overlay" class="omx-overlay d-none">
                         @yield("{$modalId}-overlay")
-                        <div class="omx-overlay-text">Подождите.<br/>Идет загрузка...</div>
+                        <div class="omx-overlay-text">{!! $modalOverlayHtml !!}</div>
                     </div>
-                    <div id="{{ $modalId }}__body_caption">
-                        @yield("{$modalId}-body-caption")
+                    <div id="{{ $modalId }}__bodyCaption">
+                        @yield("{$modalId}-bodyCaption")
                     </div>
                     <div id="{{ $modalId }}__body">
                         @yield("{$modalId}-body")
                     </div>
                 </div>
-                @if (!isset($hideFooter) || !$hideFooter)
+                @if (!$modalHideFooter)
                     <div class="modal-footer">
-                        <button id="{{ $modalId }}__btn_cancel" type="button" class="btn btn-light {{ $btnSize }}" data-bs-dismiss="modal">
-                            <span id="{{ $modalId }}__btn_cancel_text">{{ $cancelText }}</span>
-                        </button>
+                        @include('omx-form::bs52.partials.button', [
+                            'btnEntityId' => $modalId,
+                            'btnActionId' => 'cancel',
+                            'btnText' => $modalCancelText,
+                            'btnAttrs' => ['data-bs-dismiss' => 'modal'],
+                            'btnSize' => $modalBtnSize,
+                            'btnContext' => \Omadonex\LaravelTools\Support\Tools\Context::SECONDARY,
+                        ])
                         @yield("{$modalId}-footer")
-                        <button id="{{ $modalId }}__btn_submit" type="button" class="btn {{ $submitContext }} {{ $btnSize }}">
-                            @isset($submitIcon)
-                                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $submitIcon !!}</span>
-                            @endisset
-                            @if (isset($spinner))
-                                <span id="{{ $modalId }}__btn_submit_spinner" style="{{ $spinnerStyle }}" class="{{ $spinner }} {{ $spinnerSize }} float-end d-none" role="status" aria-hidden="true"></span>
-                            @endif
-                            <span id="{{ $modalId }}__btn_submit_text">{{ $submitText }}</span>
-                        </button>
+                        @include('omx-form::bs52.partials.button', [
+                            'btnSubmit' => true,
+                            'btnEntityId' => $modalId,
+                            'btnText' => $modalSubmitText,
+                            'btnSize' => $modalBtnSize,
+                            'btnContext' => $modalSubmitContext,
+                            'btnIconHtml' => $modalSubmitIconHtml,
+                        ])
                     </div>
                 @endif
             </div>

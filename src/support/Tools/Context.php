@@ -11,4 +11,5 @@ class Context
     const DANGER = 'danger';
     const WARNING = 'warning';
     const INFO = 'info';
+    const DEFAULT = '';
 }
