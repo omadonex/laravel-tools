@@ -55,10 +55,10 @@
         @if ($btnSubmit)
             <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
         @endif
-        @isset($btnIconHtml)
+        @if (isset($btnIconHtml) && $btnIconHtml)
             <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
         @endisset
-        <span id="{{ $id }}Text">{{ $btnText }}</span>
+        <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
     </button>
 @else
     <a id="{{ $id }}" href="{{ $btnHref }}" type="button"
@@ -66,9 +66,9 @@
         @isset($btnStyle) style="{{ $btnStyle }}" @endisset
         {!! $attrsStr !!}
     >
-        @isset($btnIconHtml)
+        @if (isset($btnIconHtml) && $btnIconHtml)
             <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
         @endisset
-        <span id="{{ $id }}Text">{{ $btnText }}</span>
+        <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
     </a>
 @endempty
