@@ -7,10 +7,12 @@ class ButtonAction
     const CANCEL = 'cancel';
     const CLEAR = 'clear';
     const CREATE = 'create';
+    const DELETE = 'delete';
     const DOWNLOAD = 'download';
     const EDIT = 'edit';
     const EXPORT = 'export';
     const IMPORT = 'import';
+    const REPLY = 'reply';
     const SAVE = 'save';
     const SEND = 'send';
     const UPLOAD = 'upload';
@@ -33,6 +35,11 @@ class ButtonAction
                 'context' => Context::SUCCESS,
                 'icon' => 'streamline.bold.add-bold',
             ],
+            self::DELETE => [
+                'text' => 'Удалить',
+                'context' => Context::DANGER,
+                'icon' => 'streamline.bold.close',
+            ],
             self::DOWNLOAD => [
                 'text' => 'Скачать',
                 'context' => Context::SECONDARY,
@@ -52,6 +59,11 @@ class ButtonAction
                 'text' => 'Импорт',
                 'context' => Context::INFO,
                 'icon' => 'streamline.bold.move-up',
+            ],
+            self::REPLY => [
+                'text' => 'Ответить',
+                'context' => Context::INFO,
+                'icon' => 'streamline.bold.reply',
             ],
             self::SAVE => [
                 'text' => 'Сохранить',

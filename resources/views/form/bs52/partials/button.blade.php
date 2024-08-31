@@ -13,6 +13,7 @@
     /** @var string $btnIconHtml */
     /** @var string $btnText */
     /** @var string $btnSpinner */
+    /** @var bool   $btmFlat  */
     /** @var array  $btnAttrs */
 
     $btnSubmit = isset($btnSubmit) && $btnSubmit;
@@ -41,34 +42,68 @@
         $attrsStrArray[] = "{$key}=\"{$value}\"";
     }
     $attrsStr = implode(' ', $attrsStrArray);
+
+    $btnFlat = $btnFlat ?? false;
 @endphp
 
 @empty($btnHref)
-    <button id="{{ $id }}" type="button"
-        @if ($btnSubmit)
-            data-jst-submit
-        @endif
-        class="{{ $customClass }}"
-        @isset($btnStyle) style="{{ $btnStyle }}" @endisset
-        {!! $attrsStr !!}
-    >
-        @if ($btnSubmit)
-            <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
-        @endif
-        @if (isset($btnIconHtml) && $btnIconHtml)
-            <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
-        @endisset
-        <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
-    </button>
+    @if ($btnFlat)
+        <span id="{{ $id }}"
+            @if ($btnSubmit)
+                data-jst-submit
+            @endif
+            class="{{ $customClass }}"
+            @isset($btnStyle) style="{{ $btnStyle }}" @endisset
+            {!! $attrsStr !!}
+        >
+            @if ($btnSubmit)
+                <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
+            @endif
+            @if (isset($btnIconHtml) && $btnIconHtml)
+                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+            @endisset
+            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+        </span>
+    @else
+        <button id="{{ $id }}" type="button"
+            @if ($btnSubmit)
+                data-jst-submit
+            @endif
+            class="{{ $customClass }}"
+            @isset($btnStyle) style="{{ $btnStyle }}" @endisset
+            {!! $attrsStr !!}
+        >
+            @if ($btnSubmit)
+                <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
+            @endif
+            @if (isset($btnIconHtml) && $btnIconHtml)
+                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+            @endisset
+            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+        </button>
+    @endif
 @else
-    <a id="{{ $id }}" href="{{ $btnHref }}" type="button"
-        class="{{ $customClass }}"
-        @isset($btnStyle) style="{{ $btnStyle }}" @endisset
-        {!! $attrsStr !!}
-    >
-        @if (isset($btnIconHtml) && $btnIconHtml)
-            <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
-        @endisset
-        <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
-    </a>
+    @if ($btnFlat)
+        <a id="{{ $id }}" href="{{ $btnHref }}"
+           class="{{ $customClass }}"
+           @isset($btnStyle) style="{{ $btnStyle }}" @endisset
+                {!! $attrsStr !!}
+        >
+            @if (isset($btnIconHtml) && $btnIconHtml)
+                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+            @endisset
+            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+        </a>
+    @else
+        <a id="{{ $id }}" href="{{ $btnHref }}" type="button"
+            class="{{ $customClass }}"
+            @isset($btnStyle) style="{{ $btnStyle }}" @endisset
+            {!! $attrsStr !!}
+        >
+            @if (isset($btnIconHtml) && $btnIconHtml)
+                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+            @endisset
+            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+        </a>
+    @endif
 @endempty
