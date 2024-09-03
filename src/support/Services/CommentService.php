@@ -16,6 +16,14 @@ class CommentService extends ModelService
         parent::__construct($commentRepository, $aclService, $localeService);
     }
 
+    public function delete(int|string|Model $moid, bool $event = true): int|string
+    {
+        $comment = $this->modelRepository->find($moid);
+        $comment->comments()->delete();
+
+        return parent::delete($comment, $event);
+    }
+
     public function checkDelete(Model $model): void
     {
         /** @var Comment $model */
