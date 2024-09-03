@@ -19,6 +19,8 @@ class OmxUserException extends Exception
     public const ERR_CODE_1003 = 1003;
     /** Нельзя удалять зарезервированные роли */
     public const ERR_CODE_1004 = 1004;
+    /** Нельзя удалять чужие комментарии  */
+    public const ERR_CODE_1005 = 1005;
 
     public static function throw(int $code, ?Throwable $previous = null): void
     {

@@ -4,8 +4,10 @@ namespace Omadonex\LaravelTools\Support\Tools;
 
 class ButtonAction
 {
+    const BACK = 'back';
     const CANCEL = 'cancel';
     const CLEAR = 'clear';
+    const COMMENT = 'comment';
     const CREATE = 'create';
     const DELETE = 'delete';
     const DOWNLOAD = 'download';
@@ -21,6 +23,11 @@ class ButtonAction
     protected static function map(): array
     {
         return [
+            self::BACK => [
+                'text' => 'Назад',
+                'context' => Context::SECONDARY,
+                'icon' => 'streamline.bold.move-back',
+            ],
             self::CANCEL => [
                 'text' => 'Отмена',
                 'context' => Context::SECONDARY,
@@ -30,15 +37,20 @@ class ButtonAction
                 'context' => Context::SECONDARY,
                 'icon' => 'streamline.regular.close',
             ],
+            self::COMMENT => [
+                'text' => 'Комментировать',
+                'context' => Context::SUCCESS,
+                'icon' => 'streamline.regular.message-bouble',
+            ],
             self::CREATE => [
                 'text' => 'Создать',
                 'context' => Context::SUCCESS,
-                'icon' => 'streamline.bold.add-bold',
+                'icon' => 'streamline.regular.add-bold',
             ],
             self::DELETE => [
                 'text' => 'Удалить',
                 'context' => Context::DANGER,
-                'icon' => 'streamline.bold.close',
+                'icon' => 'streamline.regular.close',
             ],
             self::DOWNLOAD => [
                 'text' => 'Скачать',
@@ -63,12 +75,12 @@ class ButtonAction
             self::REPLY => [
                 'text' => 'Ответить',
                 'context' => Context::INFO,
-                'icon' => 'streamline.bold.reply',
+                'icon' => 'streamline.regular.message-bouble-double',
             ],
             self::SAVE => [
                 'text' => 'Сохранить',
                 'context' => Context::SUCCESS,
-                'icon' => 'streamline.bold.floppy-disk',
+                'icon' => 'streamline.regular.floppy-disk',
             ],
             self::SEND => [
                 'text' => 'Отправить',

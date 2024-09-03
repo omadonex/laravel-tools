@@ -7,4 +7,5 @@ return [
     OmxUserException::ERR_CODE_1002 => 'Нельзя удалить самого себя!',
     OmxUserException::ERR_CODE_1003 => 'Указан неверный пароль!',
     OmxUserException::ERR_CODE_1004 => 'Нельзя удалять зарезервированные роли',
+    OmxUserException::ERR_CODE_1005 => 'Нельзя удалять чужие комментарии',
 ];

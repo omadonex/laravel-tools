@@ -6,6 +6,7 @@
     /** @var string $btnActionId */
     /** @var string $btnHref */
     /** @var string $btnSubmit */
+    /** @var bool   $btnHasSpinner  */
     /** @var string $btnContext */
     /** @var string $btnSize */
     /** @var string $btnClass */
@@ -17,6 +18,7 @@
     /** @var array  $btnAttrs */
 
     $btnSubmit = isset($btnSubmit) && $btnSubmit;
+    $btnHasSpinner = $btnSubmit || ($btnHasSpinner ?? false);
 
     if ($btnSubmit) {
         $btnActionId = 'submit';
@@ -56,7 +58,7 @@
             @isset($btnStyle) style="{{ $btnStyle }}" @endisset
             {!! $attrsStr !!}
         >
-            @if ($btnSubmit)
+            @if ($btnHasSpinner)
                 <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
             @endif
             @if (isset($btnIconHtml) && $btnIconHtml)
@@ -73,7 +75,7 @@
             @isset($btnStyle) style="{{ $btnStyle }}" @endisset
             {!! $attrsStr !!}
         >
-            @if ($btnSubmit)
+            @if ($btnHasSpinner)
                 <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
             @endif
             @if (isset($btnIconHtml) && $btnIconHtml)
