@@ -11,7 +11,6 @@ abstract class BaseTransformer
     const CROPPED_STRING_LENGTH = 175;
     protected $params;
     protected $response;
-    protected $originalData;
     protected $convertTranslate;
 
     public function __construct($response, $params = [], $convertTranslate = true)
@@ -19,7 +18,6 @@ abstract class BaseTransformer
         $this->params = $params;
         $this->response = $response;
         $this->convertTranslate = $convertTranslate;
-        $this->originalData = $this->response->data;
         $this->columns = count($this->response->data) ? array_keys((array)$this->response->data[0]) : [];
     }
 
@@ -27,24 +25,24 @@ abstract class BaseTransformer
 
     protected function makeBooleanIcon()
     {
-        return function ($value, $row) {
+        return function ($value, $row, $rowOriginal) {
             return boolIcon($value);
         };
     }
 
     protected function makeDateTime($format = 'd.m.Y H:i:s', $timezone = 'Europe/Moscow')
     {
-        return function ($value, $row) use ($format, $timezone) {
+        return function ($value, $row, $rowOriginal) use ($format, $timezone) {
             return Carbon::parse($value)->timezone($timezone)->format($format);
         };
     }
 
     protected function makeLink(string $urlName, string $caption = null, string $keyName = null, int $croppedLength = null)
     {
-        return function ($value, $row) use ($urlName, $caption, $keyName, $croppedLength) {
-            $id = $keyName ? $row->$keyName : $value;
+        return function ($value, $row, $rowOriginal) use ($urlName, $caption, $keyName, $croppedLength) {
+            $id = $keyName ? $rowOriginal->$keyName : $value;
             if (!$id) {
-                return $this->makeIfEmpty()($value, $row);
+                return $this->makeIfEmpty()($value, $row, $rowOriginal);
             }
 
             $url = route($urlName, $id);
@@ -62,7 +60,7 @@ abstract class BaseTransformer
 
     protected function makeMoney(bool|string $useCurrency = true, bool $useEmptyCaption = false, string $currencyColumn = 'currency', int $digits = 2)
     {
-        return function ($value, $row) use ($useCurrency, $useEmptyCaption, $currencyColumn, $digits) {
+        return function ($value, $row, $rowOriginal) use ($useCurrency, $useEmptyCaption, $currencyColumn, $digits) {
             if ($useEmptyCaption && $value === null) {
                 return Caption::EMPTY;
             }
@@ -78,28 +76,28 @@ abstract class BaseTransformer
 
     protected function makeFloat(int $digits = 2)
     {
-        return function ($value, $row) use ($digits) {
+        return function ($value, $row, $rowOriginal) use ($digits) {
             return number_format((float)$value, $digits, ',', ' ');
         };
     }
 
     protected function makePercent()
     {
-        return function ($value, $row) {
+        return function ($value, $row, $rowOriginal) {
             return "{$value} %";
         };
     }
 
     protected function makeIfEmpty()
     {
-        return function ($value, $row) {
+        return function ($value, $row, $rowOriginal) {
             return empty($value) ? '&mdash;' : $value;
         };
     }
 
     protected function makeCropped($croppedLength = self::CROPPED_STRING_LENGTH)
     {
-        return function ($value, $row) use ($croppedLength) {
+        return function ($value, $row, $rowOriginal) use ($croppedLength) {
             $croppedText = (mb_strlen($value) <= $croppedLength) ? $value : (mb_substr($value, 0, $croppedLength) . '...');
 
             return "<span title='{$value}'>{$croppedText}</span>";
@@ -109,7 +107,7 @@ abstract class BaseTransformer
 
     protected function setFromAnother(string $column)
     {
-        return function ($value, $row) use ($column) {
+        return function ($value, $row, $rowOriginal) use ($column) {
             return $row[$column];
         };
     }
@@ -118,17 +116,17 @@ abstract class BaseTransformer
     {
         $transformers = $this->transformers();
         $transformedData = [];
-        foreach ($this->response->data as $item) {
-            $transformedData[] = $this->applyTransformers($item, $transformers);
+        foreach ($this->response->data as $index => $item) {
+            $transformedData[] = $this->applyTransformers($item, clone $item, $transformers);
         }
 
         return $transformedData;
     }
 
-    private function applyTransformers($row, $transformers)
+    private function applyTransformers($row, $rowOriginal, $transformers)
     {
         foreach ($transformers as $column => $transformer) {
-            $row->$column = $transformer(in_array($column, $this->columns) ? $row->$column : null, $row);
+            $row->$column = $transformer(in_array($column, $this->columns) ? $row->$column : null, $row, $rowOriginal);
         }
 
         if ($this->convertTranslate && property_exists($row, 't')) {
