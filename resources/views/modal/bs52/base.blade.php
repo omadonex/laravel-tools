@@ -16,6 +16,9 @@
     $modalHideFooter = $modalHideFooter ?? false;
     $modalBtnSize = $modalBtnSize ?? \Omadonex\LaravelTools\Support\Tools\Size::DEFAULT;
     $modalSubmitIconHtml = $modalSubmitIconHtml ?? '';
+
+    $modalSpinner = isset($modalSpinner) ? $modalSpinner : 'spinner-grow';
+    $sizeSpinnerClass = $modalBtnSize ? "{$modalSpinner}-{$modalBtnSize}" : '';
 @endphp
 
 <div id="{{ $modalId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="{{ $modalId }}__title" aria-hidden="true">
@@ -40,7 +43,11 @@
                     </div>
                 </div>
                 @if (!$modalHideFooter)
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="justify-content: space-between !important;">
+                        <div>
+                            <span id="{{ $modalId }}__loadingSpinner" style="background-color: {{ \Omadonex\LaravelTools\Support\Tools\Color::SECONDARY }}" data-jst-spinner class="{{ $modalSpinner }} {{ $sizeSpinnerClass }} d-none" role="status" aria-hidden="true"></span>
+                        </div>
+                        <div class="modal-buttons">
                         @include('omx-form::bs52.partials.button', [
                             'btnEntityId' => $modalId,
                             'btnActionId' => 'cancel',
@@ -58,6 +65,7 @@
                             'btnContext' => $modalSubmitContext,
                             'btnIconHtml' => $modalSubmitIconHtml,
                         ])
+                        </div>
                     </div>
                 @endif
             </div>
