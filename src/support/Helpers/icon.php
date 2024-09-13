@@ -108,6 +108,6 @@ if (!function_exists('boolIcon')) {
 if (!function_exists('getIconHtml')) {
     function getIconHtml(string $icon, $size = 18, $stroke = 'currentColor', $fill = 'none', $class = '', $path = ''): string
     {
-        return view($path ? "{$path}.{$icon}" : "omx-icon::icon.{$icon}", [ 'class' => $class, 'width' => $size, 'height' => $size, 'stroke' => $stroke, 'fill' => $fill ])->render();
+        return view($path ? "{$path}.{$icon}" : "omx-icon::{$icon}", [ 'class' => $class, 'width' => $size, 'height' => $size, 'stroke' => $stroke, 'fill' => $fill ])->render();
     }
 }

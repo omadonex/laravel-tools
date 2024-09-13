@@ -69,12 +69,13 @@ class PageService extends OmxService
         $icon = [];
         if (!$noIcon) {
             $icon = ($data['icon'] ?? null) ? ['icon' => $data['icon']] : [];
+            $iconData = $data['iconData'] ?? [];
         }
 
         return array_merge([
             'name' => $data['title'],
             'route' => ($data['sub'] ?? false) ? "{$data['path']}.index" : $data['route'],
-        ], $icon, $role ? ['role' => $role] : [], $badge ? ['badge' => $badge] : []);
+        ], $icon, $iconData, $role ? ['role' => $role] : [], $badge ? ['badge' => $badge] : []);
     }
 
     public function getPageId(string $pageIndex, string $sub = ''): string
@@ -156,6 +157,7 @@ class PageService extends OmxService
                 'idBack' => $pageId, //TODO omadonex: ???
                 'title' => $pageData['title'],
                 'icon' => $pageData['icon'] ?? null,
+                'iconData' => $pageData['iconData'] ?? null,
                 'breadcrumbs' => $this->getBreadcrumbs($pageIndex, $pageData, $sub),
                 'breadcrumb' => $this->getBreadcrumb($pageData, $model, $sub),
                 'tab' => $data['tab'] ?? null,
