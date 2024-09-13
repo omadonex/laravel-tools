@@ -3,12 +3,16 @@
 use Omadonex\LaravelTools\Support\Tools\Color;
 
 if (!function_exists('rowEditIcon')) {
-    function rowEditIcon($id, string $caption = '', string $hint = ''): string
+    function rowEditIcon($id, string $caption = '', string $hint = '', string $href = ''): string
     {
         if (!$hint) {
             $hint = 'Редактировать';
         }
         $icon = getIconHtml('streamline.regular.edit', 16, Color::WARNING);
+
+        if ($href) {
+            return "<span><a title='{$hint}' href='{$href}' style='cursor: pointer;'>{$icon}</a></span>";
+        }
 
         return "<span data-row-id='{$id}' data-row-caption='{$caption}' title='{$hint}' class='js-row-edit' style='cursor: pointer;'>{$icon}</span>";
     }
@@ -64,6 +68,30 @@ if (!function_exists('rowAddIcon')) {
     }
 }
 
+if (!function_exists('rowDownIcon')) {
+    function rowDownIcon($id, string $caption = '', string $hint = '', bool $noJs = false): string
+    {
+        if (!$hint) {
+            $hint = 'Вниз';
+        }
+        $icon = getIconHtml('streamline.regular.arrow-thick-down', 16, Color::PRIMARY, Color::PRIMARY);
+
+        return "<span data-row-id='{$id}' data-row-caption='{$caption}' title='{$hint}' class='js-row-down' style='cursor: pointer'>{$icon}</span>";
+    }
+}
+
+if (!function_exists('rowUpIcon')) {
+    function rowUpIcon($id, string $caption = '', string $hint = '', bool $noJs = false): string
+    {
+        if (!$hint) {
+            $hint = 'Вверх';
+        }
+        $icon = getIconHtml('streamline.regular.arrow-thick-up', 16, Color::PRIMARY, Color::PRIMARY);
+
+        return "<span data-row-id='{$id}' data-row-caption='{$caption}' title='{$hint}' class='js-row-up' style='cursor: pointer'>{$icon}</span>";
+    }
+}
+
 if (!function_exists('boolIcon')) {
     function boolIcon($value): string
     {
@@ -80,6 +108,6 @@ if (!function_exists('boolIcon')) {
 if (!function_exists('getIconHtml')) {
     function getIconHtml(string $icon, $size = 18, $stroke = 'currentColor', $fill = 'none', $class = ''): string
     {
-        return view("partials.icon.{$icon}", [ 'class' => $class, 'width' => $size, 'height' => $size, 'stroke' => $stroke, 'fill' => $fill ])->render();
+        return view("omx-icon::{$icon}", [ 'class' => $class, 'width' => $size, 'height' => $size, 'stroke' => $stroke, 'fill' => $fill ])->render();
     }
 }
