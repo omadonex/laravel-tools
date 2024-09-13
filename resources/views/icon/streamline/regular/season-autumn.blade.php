@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="{{ $class }}" width="{{ $width }}" height="{{ $height }}">
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.582,20.754s1.22,2.495,3.27,2.308c4.158-.38,3.88-5.907,5.4-7.859a9.1,9.1,0,0,0-8.265.075C12.833,16.5,12.681,18.548,14.582,20.754Z" stroke="{{ $stroke }}"/>
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.523,18.219s-2.7.335-4.623,5.031" stroke="{{ $stroke }}"/>
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.026,11.491a10.666,10.666,0,0,0,.911-4.849.479.479,0,0,0-.449-.455,8.318,8.318,0,0,0-6.765,2.428A14.95,14.95,0,0,0,11.236.945a.479.479,0,0,0-.771,0,14.95,14.95,0,0,0-2.487,7.67A8.318,8.318,0,0,0,1.213,6.187a.479.479,0,0,0-.449.455C.688,8.271.587,13.365,6.753,15.01L4.381,16.365a.479.479,0,0,0,.14.885c1.387.289,3.3,1.247,5.982-.292" stroke="{{ $stroke }}"/>
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.503 21L10.503 16.958" stroke="{{ $stroke }}"/>
+</svg>

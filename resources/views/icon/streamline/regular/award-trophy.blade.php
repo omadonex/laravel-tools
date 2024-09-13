@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="{{ $class }}" width="{{ $width }}" height="{{ $height }}">
+    <rect width="13.5" height="4.5" x="5.25" y="18.75" fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" rx="1.5" ry="1.5" stroke="{{ $stroke }}"/>
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25.75H1.773A1.023,1.023,0,0,0,.75,1.773a11.25,11.25,0,0,0,22.5,0A1.023,1.023,0,0,0,22.227.75H15.75" stroke="{{ $stroke }}"/>
+    <polyline fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" points="9.882 12.824 8.139 18.75 15.639 18.75 14.063 12.834" stroke="{{ $stroke }}"/>
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12.6,1.075l1.248,2.458h2.127a.583.583,0,0,1,.419,1L14.438,6.452,15.52,8.937a.589.589,0,0,1-.84.736L12.065,8.2,9.45,9.673a.589.589,0,0,1-.839-.736L9.693,6.452,7.74,4.53a.583.583,0,0,1,.42-1h2.126l1.249-2.458A.6.6,0,0,1,12.6,1.075Z" stroke="{{ $stroke }}"/>
+</svg>
