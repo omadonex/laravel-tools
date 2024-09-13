@@ -2,6 +2,7 @@
 
 namespace Omadonex\LaravelTools\Support\Classes\Utils;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class UtilsCustom
@@ -22,6 +23,17 @@ class UtilsCustom
         return $str;
     }
 
+    public static function progressiveYearLiot($countYears = 5)
+    {
+        $year = Carbon::now()->year;
+        $list = [$year => $year];
+        for ($i = 1; $i < $countYears; $i++) {
+            $list[$year + $i] = $year + $i;
+        }
+
+        return $list;
+    }
+
     public static function timezoneList()
     {
         $timezoneIdentifiers = \DateTimeZone::listIdentifiers();
@@ -31,7 +43,7 @@ class UtilsCustom
             $currentTimezone = new \DateTimeZone($timezoneIdentifier);
             return [
                 'offset' => (int)$currentTimezone->getOffset($utcTime),
-                'identifier' => $timezoneIdentifier
+                'identifier' => $timezoneIdentifier,
             ];
         }, $timezoneIdentifiers);
 
