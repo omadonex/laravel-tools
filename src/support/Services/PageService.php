@@ -67,6 +67,7 @@ class PageService extends OmxService
         $data = self::data($pageId);
 
         $icon = [];
+        $iconData = [];
         if (!$noIcon) {
             $icon = ($data['icon'] ?? null) ? ['icon' => $data['icon']] : [];
             $iconData = $data['iconData'] ?? [];

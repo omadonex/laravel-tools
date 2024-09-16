@@ -1,0 +1,87 @@
+.dataTables_length {
+  display: inline-block;
+  padding: 0 1.25rem;
+}
+
+.dataTables_filter {
+  display: inline-block;
+  float: right;
+  padding: 0 1.25rem;
+}
+
+.dataTables_info {
+  padding-left: 1.25rem;
+}
+
+.dataTables_info {
+  float: left;
+}
+
+.dataTables_paginate {
+  margin-top: 15px !important;
+  margin-right: 15px !important;
+  --bs-pagination-padding-x: #{$dTblPaginationPaddingX};
+  --bs-pagination-padding-y: #{$dTblPaginationPaddingY};
+  --bs-pagination-font-size: #{$dTblPaginationFontSize};
+  --bs-pagination-color: var(--bs-link-color);
+  --bs-pagination-bg: var(--bs-body-bg);
+  --bs-pagination-border-width: 1px;
+  --bs-pagination-border-color: var(--bs-border-color-translucent);
+  --bs-pagination-border-radius: 0.625rem;
+  --bs-pagination-hover-color: var(--bs-link-hover-color);
+  --bs-pagination-hover-bg: var(--bs-gray-100);
+  --bs-pagination-hover-border-color: var(--bs-border-color-translucent);
+  --bs-pagination-focus-color: var(--bs-link-hover-color);
+  --bs-pagination-focus-bg: #f4f4f4;
+  --bs-pagination-focus-box-shadow: 0 0 0.75rem 0.25rem rgba(0,186,199,.25);
+  --bs-pagination-active-color: #fff;
+  --bs-pagination-active-bg: #00bac7;
+  --bs-pagination-active-border-color: #00bac7;
+  --bs-pagination-disabled-color: #989ea6;
+  --bs-pagination-disabled-bg: #fff;
+  --bs-pagination-disabled-border-color: #edeef0;
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+  justify-content: flex-end!important;
+
+  .paginate_button.previous {
+    border-bottom-left-radius: 0.625rem;
+    border-top-left-radius: 0.625rem;
+  }
+
+  .paginate_button.next {
+    border-bottom-right-radius: 0.625rem;
+    border-top-right-radius: 0.625rem;
+  }
+
+  .paginate_button.current {
+    background-color: var(--bs-pagination-active-bg);
+    border-color: var(--bs-pagination-active-border-color);
+    color: var(--bs-pagination-active-color);
+    z-index: 3;
+  }
+
+  .paginate_button.disabled {
+    background-color: var(--bs-pagination-disabled-bg);
+    border-color: var(--bs-pagination-disabled-border-color);
+    color: var(--bs-pagination-disabled-color);
+    pointer-events: none;
+  }
+
+  .paginate_button {
+    background-color: var(--bs-pagination-bg);
+    border: var(--bs-pagination-border-width) solid var(--bs-pagination-border-color);
+    color: var(--bs-pagination-color);
+    display: block;
+    font-size: var(--bs-pagination-font-size);
+    padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+    position: relative;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    cursor: pointer;
+  }
+
+  span {
+    display: flex;
+  }
+}
