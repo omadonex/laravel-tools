@@ -4,6 +4,7 @@ return [
     \Omadonex\LaravelTools\Support\Classes\ConstCustom::DB_FIELD_PROTECTED_GENERATE => 'Защищенная генерация',
 
     'actions'                          => 'Действия',
+    'actions_pre'                      => '',
     'address'                          => 'Адрес',
     'age'                              => 'Возраст',
     'amount'                           => 'Количество',
@@ -109,6 +110,7 @@ return [
     'symbol_i18n'                      => 'Усл. об. (международное)',
     'table_id'                         => 'Таблица',
     'teacher'                          => 'Учитель',
+    'telegram'                         => 'Telegram',
     'terms'                            => 'Правила',
     'test_description'                 => 'Тестовое описание',
     'test_locale'                      => 'Тестовая локализация',
@@ -125,21 +127,3 @@ return [
     'vat'                              => 'Ставка НДС',
     'year'                             => 'Год',
 ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

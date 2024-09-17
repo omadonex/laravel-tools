@@ -88,10 +88,10 @@ class PageService extends OmxService
     {
         if ($sub && !in_array($sub, self::data($pageIndex)['custom'] ?? [])) {
             switch ($sub) {
-                case 'index': return 'partials.resource.index.template';
-                case 'show': return 'partials.resource.show.template';
-                case 'history': return 'partials.resource.history.template';
-                case 'import': return 'partials.resource.import.template';
+                case 'index': return 'omx-bootstrap::resource.index.template';
+                case 'show': return 'omx-bootstrap::resource.show.template';
+                case 'history': return 'omx-bootstrap::resource.history.template';
+                case 'import': return 'omx-bootstrap::resource.import.template';
             }
         }
 

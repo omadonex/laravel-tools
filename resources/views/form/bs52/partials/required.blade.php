@@ -1,1 +1,0 @@
-@if(isset($validate) && str_contains($validate, 'required'))<span style="color: red">* </span>@endif

@@ -3,6 +3,7 @@
 namespace Omadonex\LaravelTools\Support\ModelView;
 
 
+use Carbon\Carbon;
 use Omadonex\LaravelTools\Acl\Repositories\UserRepository;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 use Omadonex\LaravelTools\Support\Tools\Color;
@@ -27,6 +28,7 @@ abstract class ModelView
     protected array $columnsImport = [];
 
     protected bool $hasActions = true;
+    protected bool $hasActionsPre = false;
     protected bool $hasPrependEmpty = false;
     protected array $ignoreList = [];
 
@@ -110,7 +112,7 @@ abstract class ModelView
 
     public function getStyle(string $column): string
     {
-        return $this->columns[$column]['style'] ?? '';
+        return $this->getColumns([], true, true)[$column]['style'] ?? '';
     }
 
     public function getType(string $column): string
@@ -138,6 +140,11 @@ abstract class ModelView
         return $this->columns[$column]['money'];
     }
 
+    public function getDateData(string $column): array
+    {
+        return $this->columns[$column]['dt'];
+    }
+
     public function getCallbackData(string $column): array
     {
         return $this->columns[$column]['callback'];
@@ -162,6 +169,11 @@ abstract class ModelView
         return $this->hasActions;
     }
 
+    public function hasActionsPre(): bool
+    {
+        return $this->hasActionsPre;
+    }
+
     public function hasPrependEmpty(): bool
     {
         return $this->hasPrependEmpty;
@@ -184,7 +196,7 @@ abstract class ModelView
 
     public function isSearchable(string $column): bool
     {
-        if ($column === 'actions') {
+        if (in_array($column, ['actions', 'actions_pre'])) {
             return false;
         }
 
@@ -206,6 +218,11 @@ abstract class ModelView
     public function setHasActions(bool $hasActions): void
     {
         $this->hasActions = $hasActions;
+    }
+
+    public function setHasActionsPre(bool $hasActionsPre): void
+    {
+        $this->hasActionsPre = $hasActionsPre;
     }
 
     public function setHasPrependEmpty(bool $hasPrependEmpty): void
@@ -255,6 +272,8 @@ abstract class ModelView
         }
 
         switch ($type) {
+            case 'dt':
+                return Carbon::now();
             case 'int':
                 return random_int(0, 10000);
             case 'money':

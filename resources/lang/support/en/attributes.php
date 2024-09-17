@@ -4,6 +4,7 @@ return [
     \Omadonex\LaravelTools\Support\Classes\ConstCustom::DB_FIELD_PROTECTED_GENERATE => 'Защищенная генерация',
 
     'actions'                          => 'Действия',
+    'actions_pre'                      => '',
     'address'                          => 'Адрес',
     'age'                              => 'Возраст',
     'amount'                           => 'Количество',
@@ -36,11 +37,13 @@ return [
     'district'                         => 'Федеральный округ',
     'duration'                         => 'Продолжительность',
     'email'                            => 'E-mail',
+    'end_at'                           => 'Дата окончания',
     'entitiable_type'                  => 'Тип сущности',
     'entitiable_id'                    => 'ID сущности',
     'excerpt'                          => 'Выдержка',
     'filter'                           => 'Фильтр',
     'first_name'                       => 'Имя',
+    'game'                             => 'Игра',
     'gender'                           => 'Пол',
     'group'                            => 'Группа',
     'hour'                             => 'Час',
@@ -97,6 +100,7 @@ return [
     'short_text'                       => 'Короткое описание',
     'size'                             => 'Размер',
     'sort_index'                       => 'Порядок при сортировке',
+    'start_at'                         => 'Дата начала',
     'state'                            => 'Штат',
     'street'                           => 'Улица',
     'student'                          => 'Студент',
@@ -106,6 +110,7 @@ return [
     'symbol_i18n'                      => 'Усл. об. (международное)',
     'table_id'                         => 'Таблица',
     'teacher'                          => 'Учитель',
+    'telegram'                         => 'Telegram',
     'terms'                            => 'Правила',
     'test_description'                 => 'Тестовое описание',
     'test_locale'                      => 'Тестовая локализация',
@@ -122,21 +127,3 @@ return [
     'vat'                              => 'Ставка НДС',
     'year'                             => 'Год',
 ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

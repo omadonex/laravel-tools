@@ -1,7 +1,11 @@
-@if (!isset($noLabel) || !$noLabel)
-    <label for="{{ $id }}" class="form-label">@include('omx-form::bs52.partials.required'){{ $label }}</label>
-@endif
-<div id="{{ $id }}" class="{{ $class ?? '' }}" style="{{ $style ?? '' }}" data-jst-field="{{ $name }}" data-jst-component="quill" data-value="{{ $value ?? null }}"
-     @isset($noValidate) data-jst-no-validate="true" @else @isset($validate) data-jst-validate="{{ $validate }}" @endisset @endisset>
+@include('omx-form::bs52.partials.blocks.label')
+<div
+    @include('omx-form::bs52.partials.blocks.info')
+    @include('omx-form::bs52.partials.blocks.validate')
+    class="{{ $cmpClass ?? '' }}"
+    style="{{ $cmpStyle ?? '' }}"
+    data-jst-component="quill"
+    data-value="{{ $cmpValue ?? null }}"
+>
 </div>
-<div data-jst-field="{{ $name }}" class="invalid-feedback">{{ $errors->first($name) }}</div>
+@include('omx-form::bs52.partials.blocks.errors')

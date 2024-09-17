@@ -22,6 +22,7 @@ class SupportServiceProvider extends ServiceProvider
         $this->loadViewsFrom("{$pathRoot}/resources/views/form", 'omx-form');
         $this->loadViewsFrom("{$pathRoot}/resources/views/modal", 'omx-modal');
         $this->loadViewsFrom("{$pathRoot}/resources/views/icon", 'omx-icon');
+        $this->loadViewsFrom("{$pathRoot}/resources/views/bootstrap", 'omx-bootstrap');
 
         $this->publishes([
             "{$pathRoot}/resources/assets/sass" => resource_path('assets/sass/vendor/omx'),
@@ -30,9 +31,9 @@ class SupportServiceProvider extends ServiceProvider
 //        $this->publishes([
 //            "{$pathRoot}/config/modules.php" => config_path('modules.php'),
 //        ], 'config');
-//        $this->publishes([
-//            "{$pathRoot}/resources/views" => resource_path('views/vendor/support'),
-//        ], 'views');
+        $this->publishes([
+            "{$pathRoot}/resources/views" => resource_path('views/vendor/support'),
+        ], 'views');
 //        $this->publishes([
 //            "{$pathRoot}/resources/lang" => resource_path('lang/vendor/support'),
 //        ], 'translations');

@@ -1,48 +1,53 @@
 @php
-    /** @var $name */
-    /** @var $placeholder */
-    $list = isset($list) ? $list: [];
-    $current = old($name) ?: (isset($value) ? $value : null);
+    /** @var $cmpName */
+    /** @var $cmpPlaceholder */
+
+    $cmpList = isset($cmpList) ? $cmpList: [];
+    $current = old($cmpName) ?: (isset($cmpValue) ? $cmpValue : null);
+
+    if (isset($cmpPlaceholder)) {
+        $blockPlaceholder = $cmpPlaceholder;
+    } else {
+        $blockPlaceholderKey = isset($cmpPlaceholderKey) ? $cmpPlaceholderKey : $cmpName;
+        $blockPlaceholder = __("validation.attributes.{$blockPlaceholderKey}");
+    }
+
     $options = [
-        'placeholder' => $placeholder,
+        'placeholder' => $blockPlaceholder,
         'allowEmptyOption' => $allowEmptyOption ?? true,
     ];
 
-    if (!isset($search) || !$search) {
+    if (!isset($cmpSearch) || !$cmpSearch) {
         $options['controlInput'] = null;
         $options['plugins'] = ['no_backspace_delete'];
     }
 
-    if (isset($hideSelected)) {
-        $options['hideSelected'] = $hideSelected;
+    if (isset($cmpHideSelected)) {
+        $options['hideSelected'] = $cmpHideSelected;
     }
 
-    if (isset($multiple)) {
+    if (isset($cmpMultiple)) {
         $options['plugins'] = array_merge($options['plugins'] ?? [], ['remove_button']);
     }
 @endphp
 
-@if (!isset($noLabel) || !$noLabel)
-    <label for="{{ $id }}" class="form-label">@include('omx-form::bs52.partials.required'){{ $label }}</label>
-@endif
+@include('omx-form::bs52.partials.blocks.label')
 <select
-    @isset($multiple) multiple @endisset
-    @if(!empty($placeholder)) data-placeholder="{{$placeholder}}" @endisset
-    id="{{ $id }}"
-    name="{{ $name }}"
-    class="form-select {{ $class ?? '' }} {{ count($errors->get($name)) ? 'is-invalid' : '' }}"
+    @include('omx-form::bs52.partials.blocks.info')
+    @include('omx-form::bs52.partials.blocks.placeholder')
+    @include('omx-form::bs52.partials.blocks.validate')
+    @isset($cmpMultiple) multiple @endisset
+    class="form-select {{ $cmpClass ?? '' }} {{ count($errors->get($cmpName)) ? 'is-invalid' : '' }}"
     autocomplete="off"
     data-select="{{ json_encode($options) }}"
-    data-jst-field="{{ $name }}"
     @isset($data)
         @foreach($data as $key => $value)
             data-{{ $key }}="{{ $value }}"
         @endforeach
     @endisset
-    @isset($noValidate) data-jst-no-validate="true" @else @isset($validate) data-jst-validate="{{ $validate }}" @endisset @endisset
 >
-    @foreach($list as $key => $item)
-        <option @if (isset($multiple) ? in_array($key, $value ?? []) : $key == $current) selected @endif value="{{ $key }}">{!! $item !!}</option>
+    @foreach($cmpList as $key => $item)
+        <option @if (isset($cmpMultiple) ? in_array($key, $value ?? []) : $key == $current) selected @endif value="{{ $key }}">{!! $item !!}</option>
     @endforeach
 </select>
-<div data-jst-field="{{ $name }}" class="invalid-feedback">{{ $errors->first($name) }}</div>
+@include('omx-form::bs52.partials.blocks.errors')

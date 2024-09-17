@@ -1,9 +1,13 @@
-@if (!isset($noLabel) || !$noLabel)
-    <label for="{{ $id }}" class="form-label">@include('omx-form::bs52.partials.required'){{ $label }}</label>
-@endif
-{!! $treeData['buttonsHtml'] !!}
-<div id="{{ $id }}" class="{{ $class ?? '' }}" style="{{ $style ?? '' }}" data-jst-field="{{ $name }}" data-jst-component="jstree" data-value="{{ $value ?? null }}"
-    @isset($noValidate) data-jst-no-validate="true" @else @isset($validate) data-jst-validate="{{ $validate }}" @endisset @endisset>
-    {!! $treeData['bodyHtml'] !!}
+@include('omx-form::bs52.partials.blocks.label')
+{!! $cmpTreeData['buttonsHtml'] !!}
+<div
+    @include('omx-form::bs52.partials.blocks.info')
+    @include('omx-form::bs52.partials.blocks.validate')
+    class="{{ $cmpClass ?? '' }}"
+    style="{{ $cmpStyle ?? '' }}"
+    data-jst-component="jstree"
+    data-value="{{ $cmpValue ?? null }}"
+>
+    {!! $cmpTreeData['bodyHtml'] !!}
 </div>
-<div data-jst-field="{{ $name }}" class="invalid-feedback">{{ $errors->first($name) }}</div>
+@include('omx-form::bs52.partials.blocks.errors')
