@@ -1,0 +1,1 @@
+@if(isset($cmpValidate) && str_contains($cmpValidate, 'required'))<span style="color: red">* </span>@endif
