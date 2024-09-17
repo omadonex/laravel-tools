@@ -10,5 +10,5 @@
 @extends('omx-bootstrap::modal.base')
 
 @section("{$modalId}-body")
-    @include('admin.tableColumnSetting._form', ['formId' => "{$tableId}__formEdit", 'method' => 'PUT', 'action' => route('admin.tableColumnSetting.update', '*')])
+    @include('omx-form::bs52._form', ['formId' => "{$tableId}__formEdit", 'method' => 'PUT', 'action' => route('admin.tableColumnSetting.update', '*')])
 @endsection

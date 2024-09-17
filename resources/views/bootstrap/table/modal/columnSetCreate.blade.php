@@ -13,5 +13,5 @@
 @extends('omx-bootstrap::modal.base')
 
 @section("{$modalId}-body")
-    @include('admin.setting.column-set._form', ['formId' => "{$tableId}__formCreateSettingColumns", 'method' => 'POST', 'action' => route($routeName)])
+    @include('omx-form::bs52.column-set._form', ['formId' => "{$tableId}__formCreateSettingColumns", 'method' => 'POST', 'action' => route($routeName)])
 @endsection
