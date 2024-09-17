@@ -32,7 +32,7 @@ class Navbar extends OmxAclNavbarService
 
     private function badgeHtml(string $badge, array $badgeParams): string
     {
-        return !$badge ? '' : view("omx-bootstrap.badge.{$badge}", ['badgeParams' => $badgeParams])->render();
+        return !$badge ? '' : view("omx-bootstrap::badge.{$badge}", ['badgeParams' => $badgeParams])->render();
     }
 
     protected function singleItemTemplateHtml(
