@@ -80,7 +80,11 @@
                                     {!! boolIcon($model->$column) !!}
                                     @break
                                 @case('dt')
-                                    {{ $model->$column->timezone('Europe/Moscow')->format($view->getDateData($column)['format'])  }}
+                                    @if ($model->$column)
+                                        {{ $model->$column->timezone('Europe/Moscow')->format($view->getDateData($column)['format'])  }}
+                                    @else
+                                        {!! Omadonex\LaravelTools\Support\Tools\Caption::EMPTY !!}
+                                    @endif
                                     @break
                                 @case('money')
                                     {{ number_format($model->$column, 2, ',', ' ') }}

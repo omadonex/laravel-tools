@@ -11,6 +11,7 @@
     $pageId = $page['id'];
     $pageTab = $page['tab'];
     $model = $page['model'];
+    $modelClass = get_class($model);
 @endphp
 
 @extends('layouts.app')
@@ -28,12 +29,16 @@
                     <ul class="nav nav-tabs px-5" id="{{ $pageId }}__tabCard" role="tablist">
                         @include('omx-bootstrap::resource.tab._button.main')
                         @yield('show-tab-buttons')
-                        @include('omx-bootstrap::resource.tab._button.history')
+                        @if (defined("{$modelClass}::HISTORY_ENABLED") ? $modelClass::HISTORY_ENABLED : false)
+                            @include('omx-bootstrap::resource.tab._button.history')
+                        @endif
                     </ul>
                     <div class="tab-content" id="{{ $pageId }}__tabCard__pane">
                         @include('omx-bootstrap::resource.tab.main')
                         @yield('show-tab-content')
-                        @include('omx-bootstrap::resource.tab.history')
+                        @if (defined("{$modelClass}::HISTORY_ENABLED") ? $modelClass::HISTORY_ENABLED : false)
+                            @include('omx-bootstrap::resource.tab.history')
+                        @endif
                     </div>
                 </div>
             </div>

@@ -16,6 +16,7 @@
     /** @var string $btnSpinner */
     /** @var bool   $btmFlat  */
     /** @var array  $btnAttrs */
+    /** @var string $btnTextStyle */
 
     $btnSubmit = isset($btnSubmit) && $btnSubmit;
     $btnHasSpinner = $btnSubmit || ($btnHasSpinner ?? false);
@@ -46,6 +47,8 @@
     $attrsStr = implode(' ', $attrsStrArray);
 
     $btnFlat = $btnFlat ?? false;
+
+    $btnTextStyle = isset($btnTextStyle) ? $btnTextStyle : '';
 @endphp
 
 @empty($btnHref)
@@ -64,7 +67,7 @@
             @if (isset($btnIconHtml) && $btnIconHtml)
                 <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
             @endisset
-            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
         </span>
     @else
         <button id="{{ $id }}" type="button"
@@ -81,7 +84,7 @@
             @if (isset($btnIconHtml) && $btnIconHtml)
                 <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
             @endisset
-            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
         </button>
     @endif
 @else
@@ -94,7 +97,7 @@
             @if (isset($btnIconHtml) && $btnIconHtml)
                 <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
             @endisset
-            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
         </a>
     @else
         <a id="{{ $id }}" href="{{ $btnHref }}" type="button"
@@ -105,7 +108,7 @@
             @if (isset($btnIconHtml) && $btnIconHtml)
                 <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
             @endisset
-            <span id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
         </a>
     @endif
 @endempty

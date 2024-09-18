@@ -2,9 +2,9 @@
 
 namespace Omadonex\LaravelTools\Support\Transformers;
 
-use App\Tools\Caption;
 use Carbon\Carbon;
 use Omadonex\LaravelTools\Locale\Classes\Utils\UtilsCurrencySign;
+use Omadonex\LaravelTools\Support\Tools\Caption;
 
 abstract class BaseTransformer
 {
@@ -33,7 +33,11 @@ abstract class BaseTransformer
     protected function makeDateTime($format = 'd.m.Y H:i:s', $timezone = 'Europe/Moscow')
     {
         return function ($value, $row, $rowOriginal) use ($format, $timezone) {
-            return Carbon::parse($value)->timezone($timezone)->format($format);
+            if ($value) {
+                return Carbon::parse($value)->timezone($timezone)->format($format);
+            }
+
+            return $value;
         };
     }
 

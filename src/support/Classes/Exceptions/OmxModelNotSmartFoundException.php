@@ -18,7 +18,7 @@ class OmxModelNotSmartFoundException extends \Exception
         $this->field = $field;
 
         $exClassName = UtilsCustom::getShortClassName($this);;
-        parent::__construct(trans("support::exceptions.{$exClassName}.message", [
+        parent::__construct(trans("omx-support::exceptions.{$exClassName}.message", [
             'table' => $model->getTable(),
             'field' => $field,
             'value' => $value,
