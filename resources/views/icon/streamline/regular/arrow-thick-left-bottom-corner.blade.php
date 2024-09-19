@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="{{ $class }}" width="{{ $width }}" height="{{ $height }}">
+    <path fill="{{ $fill }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M22.991,8.544l-8.163,8.163,3.134,3.133a.887.887,0,0,1-.533,1.515L1.737,23.246a.9.9,0,0,1-.983-.983L2.645,6.571A.887.887,0,0,1,4.16,6.038L7.293,9.172l8.163-8.163a.891.891,0,0,1,1.261.005l6.269,6.269A.891.891,0,0,1,22.991,8.544Z" stroke="{{ $stroke }}"/>
+</svg>

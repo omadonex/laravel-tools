@@ -32,7 +32,7 @@ class SupportServiceProvider extends ServiceProvider
 //            "{$pathRoot}/config/modules.php" => config_path('modules.php'),
 //        ], 'config');
         $this->publishes([
-            "{$pathRoot}/resources/views" => resource_path('views/vendor/support'),
+            "{$pathRoot}/resources/views/bootstrap" => resource_path('views/vendor/omx-bootstrap'),
         ], 'views');
 //        $this->publishes([
 //            "{$pathRoot}/resources/lang" => resource_path('lang/vendor/support'),

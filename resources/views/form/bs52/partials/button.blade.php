@@ -49,6 +49,8 @@
     $btnFlat = $btnFlat ?? false;
 
     $btnTextStyle = isset($btnTextStyle) ? $btnTextStyle : '';
+
+    $btnIconPos = isset($btnIconPos) ? $btnIconPos : 'left';
 @endphp
 
 @empty($btnHref)
@@ -62,12 +64,20 @@
             {!! $attrsStr !!}
         >
             @if ($btnHasSpinner)
-                <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
+                <span data-jst-spinner style="margin: @if ($btnIconPos == 'left') 0.1em -.5em 0 1em @else 0.1em 1em 0 -.5em @endif" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} @if ($btnIconPos == 'left') float-end @else float-start @endif d-none" role="status" aria-hidden="true"></span>
             @endif
-            @if (isset($btnIconHtml) && $btnIconHtml)
-                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
-            @endisset
-            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+
+            @if ($btnIconPos == 'left')
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            @else
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-left: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+            @endif
         </span>
     @else
         <button id="{{ $id }}" type="button"
@@ -79,12 +89,20 @@
             {!! $attrsStr !!}
         >
             @if ($btnHasSpinner)
-                <span data-jst-spinner style="margin: 0.1em -.5em 0 1em" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} float-end d-none" role="status" aria-hidden="true"></span>
+                <span data-jst-spinner style="margin: @if ($btnIconPos == 'left') 0.1em -.5em 0 1em @else 0.1em 1em 0 -.5em @endif" id="{{ $id }}Spinner" class="{{ $btnSpinner }} {{ $sizeSpinnerClass }} @if ($btnIconPos == 'left') float-end @else float-start @endif d-none" role="status" aria-hidden="true"></span>
             @endif
-            @if (isset($btnIconHtml) && $btnIconHtml)
-                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
-            @endisset
-            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+
+            @if ($btnIconPos == 'left')
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            @else
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-left: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+            @endif
         </button>
     @endif
 @else
@@ -94,10 +112,17 @@
            @isset($btnStyle) style="{{ $btnStyle }}" @endisset
                 {!! $attrsStr !!}
         >
-            @if (isset($btnIconHtml) && $btnIconHtml)
-                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
-            @endisset
-            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            @if ($btnIconPos == 'left')
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            @else
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-left: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+            @endif
         </a>
     @else
         <a id="{{ $id }}" href="{{ $btnHref }}" type="button"
@@ -105,10 +130,17 @@
             @isset($btnStyle) style="{{ $btnStyle }}" @endisset
             {!! $attrsStr !!}
         >
-            @if (isset($btnIconHtml) && $btnIconHtml)
-                <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
-            @endisset
-            <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            @if ($btnIconPos == 'left')
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-right: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+            @else
+                <span style="{{ $btnTextStyle }}" id="{{ $id }}Text">{{ $btnText ?? '' }}</span>
+                @if (isset($btnIconHtml) && $btnIconHtml)
+                    <span style="margin-left: .5em; vertical-align: text-bottom;">{!! $btnIconHtml !!}</span>
+                @endisset
+            @endif
         </a>
     @endif
 @endempty
