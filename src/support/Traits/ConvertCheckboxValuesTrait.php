@@ -2,6 +2,8 @@
 
 namespace Omadonex\LaravelTools\Support\Traits;
 
+use Illuminate\Http\Resources\Json\JsonResource;
+
 trait ConvertCheckboxValuesTrait
 {
     public function convertFromCheckboxValues(array $data, array $fields): array
@@ -24,5 +26,14 @@ trait ConvertCheckboxValuesTrait
         }
 
         return $data;
+    }
+
+    public function convertToCheckboxValuesResource(JsonResource $resource, array $fields): JsonResource
+    {
+        foreach ($fields as $field) {
+            $resource->$field = $resource->$field ? 'on' : 'off';
+        }
+
+        return $resource;
     }
 }
