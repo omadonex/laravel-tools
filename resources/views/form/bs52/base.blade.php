@@ -1,4 +1,4 @@
-<form id="{{ $formId }}" method="{{ $method == 'GET' ? $method : 'POST' }}" action="{{ $action }}" @if(isset($enctype)) enctype="{{ $enctype }}" @endif class="needs-validation @isset($formClass) {{ $formClass }} @endisset" novalidate>
+<form id="{{ $formId }}" method="{{ $method == 'GET' ? $method : 'POST' }}" action="{{ $action }}" @if(isset($enctype)) enctype="{{ $enctype }}" @endif class="needs-validation @isset($formClass) {{ $formClass }} @endisset" @isset($formStyle) style="{{ $formStyle }}" @endisset novalidate>
     @csrf
     @if (!in_array($method, ['GET', 'POST']))
         @method($method)
