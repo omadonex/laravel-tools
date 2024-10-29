@@ -40,8 +40,8 @@
     class="form-select {{ $cmpClass ?? '' }} {{ count($errors->get($cmpName)) ? 'is-invalid' : '' }}"
     autocomplete="off"
     data-select="{{ json_encode($options) }}"
-    @isset($data)
-        @foreach($data as $key => $value)
+    @isset($cmpData)
+        @foreach($cmpData as $key => $value)
             data-{{ $key }}="{{ $value }}"
         @endforeach
     @endisset
