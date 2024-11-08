@@ -6,4 +6,5 @@ interface ICurrency
 {
     const USD = 'usd';
     const RUB = 'rub';
+    const EUR = 'eur';
 }

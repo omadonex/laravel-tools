@@ -8,6 +8,7 @@ class UtilsCurrencySign
     {
         return [
             'rub' => '&#8381;',
+            'eur' => '&#8364;',
             'usd' => '&#36;',
         ][$currency] ?? '';
     }
