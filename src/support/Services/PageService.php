@@ -120,19 +120,31 @@ class PageService extends OmxService
         return $pageData['breadcrumbs'] ?? [];
     }
 
-    protected function getBreadcrumb(array $pageData, ?Model $model, string $sub = ''): string
+    protected function getBreadcrumb(array $pageData, ?Model $model, string $sub = '', array $breadcrumbReplaceData = []): string
     {
+        $breadcrumbReplaceData['?'] = $model ? $model->getKey() : null;
+
         if ($pageData['resource'] ?? false) {
             if ($sub === 'history') {
                 return self::BREADCRUMB_HISTORY;
             }
 
             if ($sub === 'show') {
-                return str_replace('?', $model ? $model->getKey() : null, self::BREADCRUMB_SHOW);
+                $str = self::BREADCRUMB_SHOW;
+                foreach ($breadcrumbReplaceData as $searth => $replace) {
+                    $str = str_replace($searth, $replace, $str);
+                }
+
+                return $str;
             }
         }
 
-        return str_replace('?', $model ? $model->getKey() : null, $pageData['breadcrumb'] ?? $pageData['title']);
+        $str = $pageData['breadcrumb'] ?? $pageData['title'];
+        foreach ($breadcrumbReplaceData as $searth => $replace) {
+            $str = str_replace($searth, $replace, $str);
+        }
+
+        return $str;
     }
 
     private function getModelView(array $pageData): ?ModelView
@@ -144,7 +156,7 @@ class PageService extends OmxService
         return null;
     }
 
-    protected function getViewData(string $pageIndex, string $sub = '', array $data = [])
+    protected function getViewData(string $pageIndex, string $sub = '', array $data = [], array $breadcrumbReplaceData = [])
     {
         $user = $this->aclService->user();
         $pageId = $this->getPageId($pageIndex, $sub);
@@ -160,7 +172,7 @@ class PageService extends OmxService
                 'icon' => $pageData['icon'] ?? null,
                 'iconData' => $pageData['iconData'] ?? null,
                 'breadcrumbs' => $this->getBreadcrumbs($pageIndex, $pageData, $sub),
-                'breadcrumb' => $this->getBreadcrumb($pageData, $model, $sub),
+                'breadcrumb' => $this->getBreadcrumb($pageData, $model, $sub, $breadcrumbReplaceData),
                 'tab' => $data['tab'] ?? null,
                 'filter' => $data['filter'] ?? [],
                 'model' => $model,
@@ -199,11 +211,11 @@ class PageService extends OmxService
         ]);
     }
 
-    public function view(Request $request, string $pageIndex, string $sub = '', array $data = [])
+    public function view(Request $request, string $pageIndex, string $sub = '', array $data = [], array $breadcrumbReplaceData = [])
     {
         $viewName = $this->getViewName($pageIndex, $sub);
         $data['filter'] = $this->getFilterPage($this->getPageId($pageIndex, $sub));
 
-        return view($viewName, $this->getViewData($pageIndex, $sub, $data));
+        return view($viewName, $this->getViewData($pageIndex, $sub, $data, $breadcrumbReplaceData));
     }
 }

@@ -25,15 +25,15 @@ class UtilsUserLabel
         return $userIdPersonNames->getFullName();
     }
 
-    public static function selectSql(string $columnName): string
+    public static function selectSql(string $columnName, string $userTableAlias = 'u'): string
     {
         return "
-            u.first_name as {$columnName}_u_fname,
-            u.last_name as {$columnName}_u_lname,
-            u.opt_name as {$columnName}_u_oname,
-            u.display_name as {$columnName}_u_display,
-            u.username as {$columnName}_u_username,
-            u.id as {$columnName}_label
+            {$userTableAlias}.first_name as {$columnName}_u_fname,
+            {$userTableAlias}.last_name as {$columnName}_u_lname,
+            {$userTableAlias}.opt_name as {$columnName}_u_oname,
+            {$userTableAlias}.display_name as {$columnName}_u_display,
+            {$userTableAlias}.username as {$columnName}_u_username,
+            {$userTableAlias}.id as {$columnName}_label
         ";
     }
 }
