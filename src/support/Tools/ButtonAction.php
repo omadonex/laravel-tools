@@ -14,6 +14,8 @@ class ButtonAction
     const EDIT = 'edit';
     const EXPORT = 'export';
     const IMPORT = 'import';
+    const STEP_NEXT = 'stepNext';
+    const STEP_PREVIOUS = 'stepPrevious';
     const REPLY = 'reply';
     const SAVE = 'save';
     const SEND = 'send';
@@ -71,6 +73,16 @@ class ButtonAction
                 'text' => 'Импорт',
                 'context' => Context::INFO,
                 'icon' => 'streamline.bold.move-up',
+            ],
+            self::STEP_NEXT => [
+                'text' => 'Вперед',
+                'context' => Context::SUCCESS,
+                'icon' => 'streamline.regular.arrow-thick-right',
+            ],
+            self::STEP_PREVIOUS => [
+                'text' => 'Назад',
+                'context' => Context::SECONDARY,
+                'icon' => 'streamline.regular.arrow-thick-left',
             ],
             self::REPLY => [
                 'text' => 'Ответить',
