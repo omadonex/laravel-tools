@@ -45,8 +45,12 @@ class PageService extends OmxService
         return static::$pages[$pageIndex] ?? [];
     }
 
-    public static function title(string $pageIndex): string
+    public static function title(string $pageIndex, string $sub = '', array $routeParams = []): string
     {
+        if ($sub === 'show') {
+            return $routeParams[0];
+        }
+
         return self::data($pageIndex)['title'] ?? '';
     }
 
@@ -55,11 +59,11 @@ class PageService extends OmxService
         return self::data($pageIndex)['icon'];
     }
 
-    public static function route(string $pageIndex, string $sub = ''): string
+    public static function route(string $pageIndex, string $sub = '', array $routeParams = []): string
     {
         $finalPageIndex = $pageIndex . ($sub ? "_{$sub}" : '');
 
-        return route(UtilsCustom::camelToDashed(str_replace('_', '.', $finalPageIndex)));
+        return route(UtilsCustom::camelToDashed(str_replace('_', '.', $finalPageIndex)), $routeParams);
     }
 
     public static function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = ''): array
@@ -107,20 +111,25 @@ class PageService extends OmxService
         return $name . ($sub ? ".{$sub}" : '');
     }
 
-    protected function getBreadcrumbs(string $pageIndex, array $pageData, string $sub = ''): array
+    protected function getBreadcrumbs(string $pageIndex, ?Model $model, array $pageData, string $sub = '', array $breadcrumbReplaceData = []): array
     {
-        if ($pageData['resource'] ?? false) {
-            if ($sub !== 'index') {
-                return [
-                    [$pageIndex, 'index'],
-                ];
+        $breadcrumbReplaceData['?'] = $model ? $model->getKey() : null;
+
+        $breadcrumbs = $pageData['breadcrumbs'] ?? [];
+
+        foreach ($breadcrumbs as $key => $breadcrumb) {
+            foreach ($breadcrumb as $index => $item) {
+                foreach ($breadcrumbReplaceData as $searth => $replace) {
+                    $str = str_replace($searth, $replace, $item);
+                }
+                $breadcrumbs[$key][$index] = $str;
             }
         }
 
-        return $pageData['breadcrumbs'] ?? [];
+        return $breadcrumbs;
     }
 
-    protected function getBreadcrumb(array $pageData, ?Model $model, string $sub = '', array $breadcrumbReplaceData = []): string
+    protected function getBreadcrumb(?Model $model, array $pageData, string $sub = '', array $breadcrumbReplaceData = []): string
     {
         $breadcrumbReplaceData['?'] = $model ? $model->getKey() : null;
 
@@ -171,8 +180,8 @@ class PageService extends OmxService
                 'title' => $pageData['title'],
                 'icon' => $pageData['icon'] ?? null,
                 'iconData' => $pageData['iconData'] ?? null,
-                'breadcrumbs' => $this->getBreadcrumbs($pageIndex, $pageData, $sub),
-                'breadcrumb' => $this->getBreadcrumb($pageData, $model, $sub, $breadcrumbReplaceData),
+                'breadcrumbs' => $this->getBreadcrumbs($pageIndex, $model, $pageData, $sub, $breadcrumbReplaceData),
+                'breadcrumb' => $this->getBreadcrumb($model, $pageData, $sub, $breadcrumbReplaceData),
                 'tab' => $data['tab'] ?? null,
                 'filter' => $data['filter'] ?? [],
                 'model' => $model,
