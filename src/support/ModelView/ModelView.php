@@ -248,7 +248,7 @@ abstract class ModelView
         return [$columnsData, $columnsNames];
     }
     
-    public function getViewColunnsCount(): int
+    public function getViewColumnsCount(): int
     {
         return $this->viewColumnsCount;
     }

@@ -3,7 +3,7 @@
     $columns = $view->getColumns(isset($columnList) ? $columnList : []);
     $columnsCount = count($columns);
     $singleColumn = isset($singleColumn) ? $singleColumn : false;
-    $viewColumnsCount = $singleColumn ? 1 : $view->getViewColunnsCount();
+    $viewColumnsCount = $singleColumn ? 1 : $view->getViewColumnsCount();
     $countPerColumn = intdiv($columnsCount, $viewColumnsCount);
 
     $columnKeys = array_keys($columns);
