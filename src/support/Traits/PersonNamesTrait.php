@@ -77,4 +77,17 @@ trait PersonNamesTrait
 
         return trim($this->last_name . ' ' . $initials) ?: '';
     }
+
+    public function getMainNameAttribute(): string
+    {
+        if (trim($this->displayName)) {
+            return trim($this->displayName);
+        }
+
+        if (trim($this->fullName)) {
+            return trim($this->fullName);
+        }
+
+        return $this->username;
+    }
 }
