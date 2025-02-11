@@ -98,6 +98,13 @@ abstract class BaseTransformer
             return empty($value) ? '&mdash;' : $value;
         };
     }
+    
+    protected function makeIfNull()
+    {
+        return function ($value, $row, $rowOriginal) {
+            return $value === null ? '&mdash;' : $value;
+        };
+    }
 
     protected function makeCropped($croppedLength = self::CROPPED_STRING_LENGTH)
     {
