@@ -23,6 +23,40 @@ class UtilsCustom
         return $str;
     }
 
+    public static function flattenArray(array $array) {
+        $return = [];
+        array_walk_recursive($array, function($item, $key) use (&$return) {
+            $return[] = $item;
+        });
+
+        return $return;
+    }
+
+    public static function flattenArrayKeys(array $array) {
+        $return = [];
+        array_walk_recursive($array, function($item, $key) use (&$return) {
+            $return[] = [$key => $item];
+        });
+
+        return $return;
+    }
+
+    public static function flattenArrayKeysMax(array $array)
+    {
+        $return = [];
+        array_walk_recursive($array, function($item, $key) use (&$return) {
+            if (array_key_exists($key, $return)) {
+                if ($item > $return[$key]) {
+                    $return[$key] = $item;
+                }
+            } else {
+                $return[$key] = $item;
+            }
+        });
+
+        return $return;
+    }
+
     public static function progressiveYearLiot($countYears = 5)
     {
         $year = Carbon::now()->year;
