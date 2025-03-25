@@ -6,7 +6,7 @@
     <th></th>
 @endif
 
-@if ($view->hasActionsPre())
+@if ($view->hasActionsPre() && !in_array('actions', $view->getIgnoreList()))
     <th>{{ $view->getLabel('actions_pre') }}</th>
 @endif
 
@@ -18,6 +18,6 @@
     <th>{{ $columnSpecificData['caption'] }}</th>
 @endforeach
 
-@if ($view->hasActions())
+@if ($view->hasActions() && !in_array('actions', $view->getIgnoreList()))
     <th style="width: 100px">{{ $view->getLabel('actions') }}</th>
 @endif

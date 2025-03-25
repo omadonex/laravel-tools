@@ -37,6 +37,11 @@ abstract class ModelView
         $this->ignoreList = $ignoreList;
     }
 
+    public function getIgnoreList(): array
+    {
+        return $this->ignoreList;
+    }
+
     public function appendColumns(array $columnsData = []): void
     {
         $this->columnsAppend = $columnsData;
