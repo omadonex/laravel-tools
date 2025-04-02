@@ -1,10 +1,10 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Bootstrap\Constructor;
+namespace Omadonex\LaravelTools\Support\Constructor\Template;
 
 use Omadonex\LaravelTools\Acl\Services\AclNavbarService as OmxAclNavbarService;
 
-class Navbar extends OmxAclNavbarService
+class NavbarService extends OmxAclNavbarService
 {
     protected function lineItemHtml(): string
     {

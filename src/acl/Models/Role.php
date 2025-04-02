@@ -32,4 +32,13 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class, 'acl_pivot_permission_role');
     }
+
+    public static function getPath(): string
+    {
+        return config('omx.acl.acl.rolePath');
+    }
+    public static function getRouteName(string $resourcePart): string
+    {
+        return self::getPath() . ".{$resourcePart}";
+    }
 }

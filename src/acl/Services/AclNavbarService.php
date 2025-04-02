@@ -9,20 +9,18 @@ use Omadonex\LaravelTools\Support\Services\OmxService;
 abstract class AclNavbarService extends OmxService
 {
     protected AclService $aclService;
-    protected array $data;
 
     public function __construct(IAclService $aclService)
     {
         $this->aclService = $aclService;
-        $this->data = config('omx.acl.navbar', []);
     }
 
-    public function generate()
+    public function generate(array $data)
     {
         $html = $this->rootItemAttributes();
 
         $html = "<ul {$html}>";
-        $html .= self::walkMenuData($this->data);
+        $html .= self::walkMenuData($data);
         $html .= '</ul>';
 
         return $html;

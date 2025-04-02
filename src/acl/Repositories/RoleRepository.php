@@ -3,16 +3,30 @@
 namespace Omadonex\LaravelTools\Acl\Repositories;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Omadonex\LaravelTools\Acl\Http\Resources\RoleResource;
 use Omadonex\LaravelTools\Acl\Interfaces\IRole;
 use Omadonex\LaravelTools\Acl\Models\Role;
+use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
+use Omadonex\LaravelTools\Support\Classes\Utils\UtilsFilter;
 use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
 
 class RoleRepository extends ModelRepository
 {
-    public function __construct(Role $role)
+    protected $filterFieldsTypes = [
+        'id'          => [ 'type' => UtilsFilter::STRING_LIKE ],
+        'name'        => [ 'type' => UtilsFilter::STRING_LIKE ],
+        'description' => [ 'type' => UtilsFilter::STRING_LIKE ],
+        'is_staff'    => [ 'type' => UtilsFilter::YES_NO ],
+        'is_hidden'   => [ 'type' => UtilsFilter::YES_NO ],
+    ];
+
+    protected ILocaleService $localeService;
+
+    public function __construct(Role $role, ILocaleService $localeService)
     {
         parent::__construct($role, RoleResource::class);
+        $this->localeService = $localeService;
     }
 
     public function pluckUnusedRolesNames(?string $emptyOptionName, array $exceptRoleIdList = [IRole::USER]): array
@@ -44,5 +58,24 @@ class RoleRepository extends ModelRepository
         }
 
         return Role::with($relations)->get();
+    }
+
+    public function grid($options = [])
+    {
+        $lang = $this->localeService->getLocaleCurrent();
+
+        $sql = /* @lang MySQL */ "
+        SELECT
+            r.id,
+            t.name,
+            t.description,
+            r.is_staff,
+            r.is_hidden
+        FROM
+            acl_role AS r
+            LEFT JOIN acl_role_translate AS t ON t.model_id = r.id AND t.lang = '{$lang}'
+        ";
+
+        return $this->list($options, DB::table(DB::raw("({$sql}) as temp")));
     }
 }

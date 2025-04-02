@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Omadonex\LaravelTools\Acl\Http\Controllers\Auth;
 
-use Omadonex\LaravelTools\Acl\Events\UserLoggedIn;
-use Omadonex\LaravelTools\Acl\Http\Requests\Auth\LoginRequest;
-use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Omadonex\LaravelTools\Support\Services\PageService;
+use Omadonex\LaravelTools\Acl\Events\UserLoggedIn;
+use Omadonex\LaravelTools\Acl\Http\Requests\Auth\LoginRequest;
+use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
+use Omadonex\LaravelTools\Support\Constructor\Template\IPageService as Page;
 
 class AuthenticatedSessionController extends Controller
 {
 
-    public function create(Request $request, PageService $pageService)
+    public function create(Request $request, Page $page)
     {
-        return $pageService->view($request, PageService::AUTH__LOGIN);
+        return $page->view($request, Page::AUTH__LOGIN);
     }
 
     public function store(LoginRequest $request): RedirectResponse

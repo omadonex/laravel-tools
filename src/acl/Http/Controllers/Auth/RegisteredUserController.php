@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Omadonex\LaravelTools\Acl\Http\Requests\Auth\RegisterRequest;
 use Omadonex\LaravelTools\Acl\Services\Model\UserService;
 use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
-use Omadonex\LaravelTools\Support\Services\PageService;
+use Omadonex\LaravelTools\Support\Constructor\Template\IPageService as Page;
 
 class RegisteredUserController extends Controller
 {
 
-    public function create(Request $request, PageService $pageService)
+    public function create(Request $request, Page $page)
     {
-        return $pageService->view($request, PageService::AUTH__REGISTER);
+        return $page->view($request, Page::AUTH__REGISTER);
     }
 
     public function store(RegisterRequest $request, UserService $userService)

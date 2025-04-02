@@ -1,23 +1,22 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Services;
+namespace Omadonex\LaravelTools\Support\Constructor\Template;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Acl\Models\Role;
+use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
 use Omadonex\LaravelTools\Support\ModelView\ModelView;
 use Omadonex\LaravelTools\Support\Repositories\ColumnSetRepository;
+use Omadonex\LaravelTools\Support\Services\OmxService;
 use Omadonex\LaravelTools\Support\Traits\GlobalFilterTrait;
 
-class PageService extends OmxService
+abstract class PageService extends OmxService implements IPageService
 {
     use GlobalFilterTrait;
-
-    public const ROOT__TOOLS__ACL_ROUTE = 'Root_Tools_AclRoute';
-    public const AUTH__LOGIN = 'Auth_Login';
-    public const AUTH__REGISTER = 'Auth_Register';
 
     protected const BREADCRUMB_HISTORY = 'История изменений';
     protected const BREADCRUMB_SHOW = 'Карточка записи (ID: ?)';
@@ -31,32 +30,16 @@ class PageService extends OmxService
         $this->columnSetRepository = $columnSetRepository;
     }
 
-    protected static array $pages = [
-        self::AUTH__LOGIN => [
-            'title' => 'Вход',
-        ],
-        self::AUTH__REGISTER => [
-            'title' => 'Регистрация',
-        ],
-    ];
-
-    public static function data(string $pageIndex): array
+    public static function getTable(array $tableList, string $tableIndex): array
     {
-        return static::$pages[$pageIndex] ?? [];
+        return array_values(array_filter($tableList, function ($item) use ($tableIndex) {
+            return $item['index'] == $tableIndex;
+        }))[0];
     }
 
-    public static function title(string $pageIndex, string $sub = '', array $routeParams = []): string
+    public static function getTableIndexById(string $tableId): string
     {
-        if ($sub === 'show') {
-            return $routeParams[0];
-        }
-
-        return self::data($pageIndex)['title'] ?? '';
-    }
-
-    public static function icon(string $pageIndex): string
-    {
-        return self::data($pageIndex)['icon'];
+        return explode('__Table', $tableId)[1];
     }
 
     public static function route(string $pageIndex, string $sub = '', array $routeParams = []): string
@@ -66,9 +49,87 @@ class PageService extends OmxService
         return route(UtilsCustom::camelToDashed(str_replace('_', '.', $finalPageIndex)), $routeParams);
     }
 
-    public static function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = ''): array
+    public function getPageIndexById(string $pageId): array
     {
-        $data = self::data($pageId);
+        if ($this->data($pageId)) {
+            return [$pageId, ''];
+        }
+
+        $parts = explode('_', $pageId);
+        $sub = array_pop($parts);
+        $pageIndex = implode('_', $parts);
+
+        return [$pageIndex, $sub];
+    }
+
+    abstract protected function pages(): array;
+
+    protected function pagesDefault(): array
+    {
+        return [
+            self::AUTH__LOGIN => [
+                'title' => 'Вход',
+            ],
+            self::AUTH__REGISTER => [
+                'title' => 'Регистрация',
+            ],
+            self::OMX__RESOURCE__ROLE => [
+                'sub' => ['index', 'show', 'history'],
+                'title' => 'Роли',
+                'path' => Role::getPath(),
+                'tableList' => [
+                    ITableService::ROLE => [
+                        'create',
+                        'edit',
+                        'destroy',
+                        'history',
+                        'filter',
+                    ],
+                ],
+            ],
+            self::OMX__RESOURCE__USER => [
+                'sub' => ['index', 'show'],
+                'title' => 'Пользователи',
+                'path' => User::getPath(),
+                'tableList' => [
+                    ITableService::USER => [
+                        'create',
+                        'edit',
+                        'destroy',
+                        'filter',
+                    ],
+                ],
+                'custom' => [
+                    'show',
+                ],
+            ],
+        ];
+    }
+
+    public function data(string $pageIndex): array
+    {
+        $pages = $this->pagesDefault() + $this->pages();
+
+        return $pages[$pageIndex] ?? [];
+    }
+
+    public function title(string $pageIndex, string $sub = '', array $routeParams = []): string
+    {
+        if ($sub === 'show') {
+            return $routeParams[0];
+        }
+
+        return $this->data($pageIndex)['title'] ?? '';
+    }
+
+    public function icon(string $pageIndex): string
+    {
+        return $this->data($pageIndex)['icon'];
+    }
+
+    public function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = ''): array
+    {
+        $data = $this->data($pageId);
 
         $icon = [];
         $iconData = [];
@@ -204,11 +265,15 @@ class PageService extends OmxService
             $tableList = [];
             foreach ($pageData['tableList'] as $tableKey => $modeList) {
                 $tableId = "{$pageId}__Table" . ucfirst($tableKey);
+                $ext = app(ITableService::class)->data($tableKey);
+                $ext['view'] = app($ext['modelView']);
+
                 $tableList[] = [
                     'index' => $tableKey,
                     'id' => $tableId,
                     'modeList' => $modeList,
                     'columnSetList' => $this->columnSetRepository->getList($user ? $user->getKey() : 0, $pageId, $tableId),
+                    'ext' => $ext,
                 ];
             }
             $options['tableList'] = $tableList;

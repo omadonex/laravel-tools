@@ -50,4 +50,13 @@ class User extends Authenticatable
     {
         return Avatar::get($this->avatar);
     }
+
+    public static function getPath(): string
+    {
+        return config('omx.acl.acl.userPath');
+    }
+    public static function getRouteName(string $resourcePart): string
+    {
+        return self::getPath() . ".{$resourcePart}";
+    }
 }
