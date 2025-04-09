@@ -37,6 +37,12 @@ class Role extends Model
     {
         return config('omx.acl.acl.rolePath');
     }
+
+    public static function getFormPath(): string
+    {
+        return 'omx-bootstrap::pages.role';
+    }
+
     public static function getRouteName(string $resourcePart): string
     {
         return self::getPath() . ".{$resourcePart}";

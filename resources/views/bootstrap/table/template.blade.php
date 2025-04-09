@@ -5,6 +5,7 @@
 
     $tableId = $table['id'];
     $tablePath = $table['ext']['path'];
+    $tableFormPath = $table['ext']['formPath'];
     $tableModeList = $table['modeList'];
 
     $view = $table['ext']['view'];

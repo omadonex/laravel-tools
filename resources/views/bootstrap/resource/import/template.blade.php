@@ -6,6 +6,7 @@
     $tableId = $table['id'];
     $tableTitle = $table['ext']['title'];
     $tablePath = $table['ext']['path'];
+    $tableFormPath = $table['ext']['formPath'];
     /** @var \Omadonex\LaravelTools\Support\ModelView\ModelView $view */
     $view = $table['ext']['view'];
 

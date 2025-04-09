@@ -55,6 +55,12 @@ class User extends Authenticatable
     {
         return config('omx.acl.acl.userPath');
     }
+
+    public static function getFormPath(): string
+    {
+        return 'omx-bootstrap::pages.user';
+    }
+
     public static function getRouteName(string $resourcePart): string
     {
         return self::getPath() . ".{$resourcePart}";

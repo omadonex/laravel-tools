@@ -3,6 +3,7 @@
 namespace Omadonex\LaravelTools\Acl\Transformers;
 
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Common\Tools\Avatar;
 use Omadonex\LaravelTools\Support\Transformers\BaseTransformer;
 
@@ -18,8 +19,8 @@ class UserTransformer extends BaseTransformer
         return [
             'actions' => function ($value, $row, $rowOriginal) {
                 if ((app('acl')->isRoot() && $row->id == app('acl')->id()) || !in_array($row->id, IAclService::RESERVED_USER_IDS)) {
-                    return rowViewIcon(route('root.acl.user.show', $row->id))
-                        .rowHistoryIcon(route('root.acl.user.show', $row->id))
+                    return rowViewIcon(route(User::getRouteName('show'), $row->id))
+                        .rowHistoryIcon(route(User::getRouteName('show'), $row->id))
                         .rowEditIcon($row->id);
                 }
 

@@ -9,6 +9,7 @@ use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Acl\Models\Role;
 use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsCustom;
+use Omadonex\LaravelTools\Support\Models\Config;
 use Omadonex\LaravelTools\Support\ModelView\ModelView;
 use Omadonex\LaravelTools\Support\Repositories\ColumnSetRepository;
 use Omadonex\LaravelTools\Support\Services\OmxService;
@@ -22,11 +23,13 @@ abstract class PageService extends OmxService implements IPageService
     protected const BREADCRUMB_SHOW = 'Карточка записи (ID: ?)';
 
     protected IAclService $aclService;
+    protected ITableService $tableService;
     protected ColumnSetRepository $columnSetRepository;
 
-    public function __construct(IAclService $aclService, ColumnSetRepository $columnSetRepository)
+    public function __construct(IAclService $aclService, ITableService $tableService, ColumnSetRepository $columnSetRepository)
     {
         $this->aclService = $aclService;
+        $this->tableService = $tableService;
         $this->columnSetRepository = $columnSetRepository;
     }
 
@@ -72,6 +75,16 @@ abstract class PageService extends OmxService implements IPageService
             ],
             self::AUTH__REGISTER => [
                 'title' => 'Регистрация',
+            ],
+            self::OMX__RESOURCE__CONFIG => [
+                'sub' => ['index', 'history'],
+                'title' => 'Конфигуратор',
+                'path' => Config::getPath(),
+                'tableList' => [
+                    ITableService::CONFIG => [
+                        'edit', 'history', 'filter',
+                    ],
+                ],
             ],
             self::OMX__RESOURCE__ROLE => [
                 'sub' => ['index', 'show', 'history'],
@@ -151,6 +164,17 @@ abstract class PageService extends OmxService implements IPageService
 
     protected function getViewName(string $pageIndex, string $sub = '')
     {
+        if ($sub && in_array($sub, self::data($pageIndex)['custom'] ?? []) && in_array($pageIndex, [IPageService::OMX__RESOURCE__USER, IPageService::OMX__RESOURCE__ROLE])) {
+            switch ($pageIndex) {
+                case IPageService::OMX__RESOURCE__CONFIG:
+                    return "omx-bootstrap::pages.config.{$sub}";
+                case IPageService::OMX__RESOURCE__ROLE:
+                    return "omx-bootstrap::pages.role.{$sub}";
+                case IPageService::OMX__RESOURCE__USER:
+                    return "omx-bootstrap::pages.user.{$sub}";
+            }
+        }
+
         if ($sub && !in_array($sub, self::data($pageIndex)['custom'] ?? [])) {
             switch ($sub) {
                 case 'index': return 'omx-bootstrap::resource.index.template';
@@ -201,8 +225,8 @@ abstract class PageService extends OmxService implements IPageService
 
             if ($sub === 'show') {
                 $str = self::BREADCRUMB_SHOW;
-                foreach ($breadcrumbReplaceData as $searth => $replace) {
-                    $str = str_replace($searth, $replace, $str);
+                foreach ($breadcrumbReplaceData as $search => $replace) {
+                    $str = str_replace($search, $replace, $str);
                 }
 
                 return $str;
@@ -210,8 +234,8 @@ abstract class PageService extends OmxService implements IPageService
         }
 
         $str = $pageData['breadcrumb'] ?? $pageData['title'];
-        foreach ($breadcrumbReplaceData as $searth => $replace) {
-            $str = str_replace($searth, $replace, $str);
+        foreach ($breadcrumbReplaceData as $search => $replace) {
+            $str = str_replace($search, $replace, $str);
         }
 
         return $str;
@@ -265,8 +289,9 @@ abstract class PageService extends OmxService implements IPageService
             $tableList = [];
             foreach ($pageData['tableList'] as $tableKey => $modeList) {
                 $tableId = "{$pageId}__Table" . ucfirst($tableKey);
-                $ext = app(ITableService::class)->data($tableKey);
+                $ext = $this->tableService->data($tableKey);
                 $ext['view'] = app($ext['modelView']);
+                $ext['formPath'] = ($ext['formPath'] ?? null) ?: $ext['path'];
 
                 $tableList[] = [
                     'index' => $tableKey,

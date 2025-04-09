@@ -1,6 +1,7 @@
 @php
     /** @var string $tableId */
     /** @var string $tablePath */
+    /** @var string $tableFormPath */
     /** @var array $modalCaptions */
     /** @var array $modalParams */
     /** @var int $modalWidth */
@@ -16,7 +17,7 @@
 @extends('omx-bootstrap::modal.base')
 
 @section("{$modalId}-body")
-    @include("{$tablePath}._form", array_merge($modalParams, ['formId' => $formId, 'method' => 'POST', 'action' => route("{$tablePath}.store")]))
+    @include("{$tableFormPath}._form", array_merge($modalParams, ['formId' => $formId, 'method' => 'POST', 'action' => route("{$tablePath}.store")]))
 @endsection
 
 @if ($modalWidth)

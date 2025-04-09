@@ -28,9 +28,10 @@ class SupportServiceProvider extends ServiceProvider
             "{$pathRoot}/resources/assets/sass" => resource_path('assets/sass/vendor/omx'),
         ]);
 
-//        $this->publishes([
-//            "{$pathRoot}/config/modules.php" => config_path('modules.php'),
-//        ], 'config');
+        $this->publishes([
+            "{$pathRoot}/config/support/support.php" => config_path('omx/support/support.php'),
+        ], 'config');
+
         $this->publishes([
             "{$pathRoot}/resources/views/bootstrap" => resource_path('views/vendor/omx-bootstrap'),
         ], 'views');

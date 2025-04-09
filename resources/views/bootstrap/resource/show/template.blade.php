@@ -6,6 +6,7 @@
     $tableId = $table['id'];
     $tableTitle = $table['ext']['title'];
     $tablePath = $table['ext']['path'];
+    $tableFormPath = $table['ext']['formPath'];
     $view = $table['ext']['view'];
 
     $pageId = $page['id'];
