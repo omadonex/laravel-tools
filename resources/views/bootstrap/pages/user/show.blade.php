@@ -10,7 +10,7 @@
 @extends('omx-bootstrap::resource.show.template')
 
 @section('show-tab-buttons')
-    @include('root.acl.user.tab._button.role')
+    @include('omx-bootstrap::pages.user.tab._button.role')
 @endsection
 
 @section('show-tab-main-extContent')
@@ -18,12 +18,12 @@
         <div class="card border-primary mb-3">
             <div class="card-header"><h4>Смена пароля</h4></div>
             <div class="card-body">
-                @include('root.acl.user._formChangePass', ['formId' => "{$pageId}__formChangePass", 'method' => 'POST', 'action' => route('root.acl.user.pass.store', $model->getKey())])
+                @include('omx-bootstrap::pages.user._formChangePass', ['formId' => "{$pageId}__formChangePass", 'method' => 'POST', 'action' => route(\Omadonex\LaravelTools\Acl\Models\User::getPath() . '.pass.store', $model->getKey())])
             </div>
         </div>
     </div>
 @endsection
 
 @section('show-tab-content')
-    @include('root.acl.user.tab.role')
+    @include('omx-bootstrap::pages.user.tab.role')
 @endsection

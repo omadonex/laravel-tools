@@ -14,6 +14,7 @@ use Omadonex\LaravelTools\Support\Constructor\Template\IPageService as Page;
 
 class AuthenticatedSessionController extends Controller
 {
+    protected $loginRedirectTo = '/';
 
     public function create(Request $request, Page $page)
     {
@@ -28,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         
         event(new UserLoggedIn($user->getKey()));
 
-        return redirect()->intended('/');
+        return redirect()->intended($this->loginRedirectTo);
     }
 
     public function destroy(Request $request): RedirectResponse
