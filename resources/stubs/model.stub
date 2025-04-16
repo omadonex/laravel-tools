@@ -1,0 +1,26 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Модель $CLASS$
+ * $DESCRIPTION$
+ *
+ * @property int    $id       Первичный ключ
+ *
+ * Relations
+ *
+ */
+class $CLASS$ extends Model
+{
+    public const MODEL_SHOW_URL = '';
+    public const HISTORY_ENABLED = false;
+
+    protected $guarded = [ 'id' ];
+    protected $table   = '$TABLE$';
+    protected $fillable = [
+
+    ];
+}

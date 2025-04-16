@@ -1,0 +1,20 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use $NAMESPACE_MODEL$;
+use $NAMESPACE_RESOURCE$;
+use Omadonex\LaravelTools\Support\Classes\Utils\UtilsFilter;
+use Omadonex\LaravelTools\Support\Repositories\ModelRepository;
+
+class $MODEL$Repository extends ModelRepository
+{
+    protected $filterFieldsTypes = [
+        'id' => ['type' => UtilsFilter::EQUALS],
+    ];
+
+    public function __construct($MODEL$ $model)
+    {
+        parent::__construct($model, $MODEL$Resource::class);
+    }
+}

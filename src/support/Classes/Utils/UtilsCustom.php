@@ -251,6 +251,29 @@ class UtilsCustom
         return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1_', $str));
     }
 
+    public static function insertLine($file, $pattern, $newLine, $after = true)
+    {
+        $content = file_get_contents($file);
+        $lines = explode(PHP_EOL, $content);
+        $newContent = '';
+
+        foreach ($lines as $line) {
+            if ($after) {
+                $newContent .= $line . PHP_EOL;
+                if (preg_match($pattern, $line)) {
+                    $newContent .= $newLine . PHP_EOL;
+                }
+            } else {
+                if (preg_match($pattern, $line)) {
+                    $newContent .= $newLine . PHP_EOL;
+                }
+                $newContent .= $line . PHP_EOL;
+            }
+        }
+
+        file_put_contents($file, $newContent);
+    }
+
     public static function deepScandir($path, $recursive = true, $nameModifierCallback = null, $ignore = [], $subfolder = null)
     {
         //TODO omadonex: для $ignore стоит сделать регулярные выражения, сейчас тупо сравниваем по имени
@@ -318,6 +341,15 @@ class UtilsCustom
     public static function strictStrToBool(string $str): bool
     {
         return $str === 'true';
+    }
+
+    public static function strictBoolToStr(bool $bool): string
+    {
+        if ($bool) {
+            return 'true';
+        }
+
+        return 'false';
     }
 
     public static function excelColumn($index): string

@@ -1,0 +1,10 @@
+import {Page} from 'laravel-jstools';
+
+export default class $MODEL_FULL_PATH_UNDERSCORE$_Show extends Page {
+    init() {
+        window.initHistoryTab(this.pageId, this.getDefaultTableModelHistoryId('$MODEL$'), {
+            searching: false,
+            lengthChange: false,
+        });
+    }
+}

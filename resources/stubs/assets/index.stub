@@ -1,0 +1,12 @@
+import {Page} from 'laravel-jstools';
+
+export default class $MODEL_FULL_PATH_UNDERSCORE$_Index extends Page {
+    init() {
+        const tableId = this.getDefaultTableId('$MODEL$');
+        const columns = this.getDynamicColumns(tableId);
+
+        const table = window.table(tableId, columns);
+
+        window.initButtonCreate(table, tableId);
+    }
+}

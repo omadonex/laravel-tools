@@ -1,0 +1,16 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use $NAMESPACE_REPOSITORY$;
+use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
+use Omadonex\LaravelTools\Support\Services\ModelService;
+
+class $MODEL$Service extends ModelService
+{
+    public function __construct($MODEL$Repository $modelRepository, IAclService $aclService, ILocaleService $localeService)
+    {
+        parent::__construct($modelRepository, $aclService, $localeService);
+    }
+}

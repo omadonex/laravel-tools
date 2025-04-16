@@ -1,0 +1,50 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use Omadonex\LaravelTools\Support\ModelView\ModelView;
+
+class $CLASS$ extends ModelView
+{
+    // protected bool $hasActions = false;
+    // protected int $viewColumnsCount = 3;
+
+    protected array $columns = [
+        // 'id' => ['type' => 'int', 'filter' => self::FILTER_NONE, 'style' => 'max-width:50px;'],
+        // 'name' => ['type' => 'string', 'filter' => self::FILTER_INPUT],
+        // 'parent_id_label' => ['type' => 'relation', 'relation' => ['name' => 'parent', 'field' => 'name', 'type' => 'string'], 'filter' => self::FILTER_SELECT, 'keyColumn' => 'parent_id'],
+        // 'start_at' => ['type' => 'datetime', 'filter' => self::FILTER_NONE],
+        // 'is_active' => ['type' => 'bool', 'filter' => self::FILTER_SELECT, 'style' => 'min-width: 120px'],
+        // 'percent' => ['type' => 'percent', 'filter' => self::FILTER_INPUT],
+        // 'currency_label' => ['type' => 'key', 'key' => ['field' => 'currency', 'type' => 'currency'], 'filter' => self::FILTER_SELECT, 'keyColumn' => 'currency', 'searchable' => false],
+        // 'price' => ['type' => 'money', 'money' => ['currency' => ICurrency::EUR], 'filter' => self::FILTER_INPUT],
+    ];
+
+    /*
+    public function filterCallbackList(string $column): \Closure
+    {
+        return [
+            'parent_id_label' => Lists::get('parent', closure: true),
+            'is_active' => Lists::get('yesNo', closure: true),
+        ][$column];
+    }
+    */
+
+    /*
+    protected array $columnsImport = [
+        'name' => ['type' => 'string'],
+        'parent_id_label' => ['type' => 'int', 'list' => true],
+        'currency_label' => ['type' => 'string', 'list' => true],
+        'price' => ['type' => 'money'],
+        'percent' => ['type' => 'percent'],
+    ];
+
+    public function importCallbackList(string $column): \Closure
+    {
+        return [
+            'pack_unit_id_label' => Lists::get('packUnitCodeExtended', false, closure: true),
+            'currency_label' => Lists::get('currency', false, closure: true),
+        ][$column];
+    }
+    */
+}

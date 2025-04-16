@@ -1,0 +1,35 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
+use Omadonex\LaravelTools\Support\Models\History;
+
+/**
+ * Модель $MODEL$History.
+ * $DESCRIPTION$
+ *
+ * @property int         $id         Первичный ключ
+ * @property Carbon|null $created_at Дата создания
+ * @property Carbon|null $updated_at Дата обновления
+ *
+ * Relations
+ */
+class $MODEL$History extends History
+{
+    protected $table = '$TABLE$_history';
+
+    // RELATIONS
+
+    public function $MODEL_CAMELCASE$(): BelongsTo
+    {
+        return $this->belongsTo($MODEL$::class, 'id', 'model_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

@@ -4,6 +4,7 @@ namespace Omadonex\LaravelTools\Support\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Omadonex\LaravelTools\Support\Commands\HistoryGenerate;
+use Omadonex\LaravelTools\Support\Commands\ModelBootstrap;
 
 class SupportServiceProvider extends ServiceProvider
 {
@@ -61,6 +62,7 @@ class SupportServiceProvider extends ServiceProvider
 
         $this->commands([
             HistoryGenerate::class,
+            ModelBootstrap::class,
         ]);
     }
 

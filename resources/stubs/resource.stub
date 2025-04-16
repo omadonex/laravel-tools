@@ -1,0 +1,20 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use $NAMESPACE_MODEL$;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class $CLASS$ extends JsonResource
+{
+    /** @var $MODEL$ $this */
+
+    public function toArray($request): array
+    {
+        return [
+            // 'id'   => $this->id,
+            // 'name' => $this->name,
+        ];
+    }
+}
+

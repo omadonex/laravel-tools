@@ -1,0 +1,95 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use App\Constructor\Template\Page;
+use $NAMESPACE_MODEL$;
+use $NAMESPACE_MODEL_HISTORY$;
+use $NAMESPACE_REQUEST$;
+use $NAMESPACE_REPOSITORY$;
+use $NAMESPACE_RESOURCE_DATATABLES$;
+use $NAMESPACE_SERVICE$;
+use $NAMESPACE_TRANSFORMER$;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
+use Omadonex\LaravelTools\Support\Repositories\HistoryRepository;
+use Omadonex\LaravelTools\Support\Tools\Noty;
+use Omadonex\LaravelTools\Support\Traits\DatatablesResponseTrait;
+use Omadonex\LaravelTools\Support\Traits\JsonResponseTrait;
+use Omadonex\LaravelTools\Support\Transformers\HistoryTransformer;
+
+class $MODEL$Controller extends Controller
+{
+    use DatatablesResponseTrait;
+    use JsonResponseTrait;
+
+    public function index(Request $request, Page $page): Factory|View|Application
+    {
+        return $page->view($request, Page::$PAGE_CONST$, 'index');
+    }
+
+    public function data(Request $request, $MODEL$Repository $modelRepository)
+    {
+        return $this->toDatatablesResponse($request, $modelRepository, [
+            'resource' => true,
+            'resourceClass' => $MODEL$DatatablesResource::class,
+        ], 'grid', $MODEL$Transformer::class);
+    }
+
+    public function history(Request $request, Page $page): Factory|View|Application
+    {
+        return $page->view($request, Page::$PAGE_CONST$, 'history');
+    }
+
+    public function historyData(Request $request)
+    {
+        $historyRepository = new HistoryRepository(new $MODEL$History);
+
+        return $this->toDatatablesResponse($request, $historyRepository, [
+            'resource' => true,
+            'params' => [],
+        ], 'grid', HistoryTransformer::class, [
+            'modelClass' => $MODEL$::class,
+            'modelShowUrl' => $MODEL$::MODEL_SHOW_URL,
+            'historyClass' => $MODEL$History::class,
+        ]);
+    }
+
+    public function show($id, Request $request, $MODEL$Repository $modelRepository, Page $page)
+    {
+        return $page->view($request, Page::$PAGE_CONST$, 'show', [
+            'model' => $modelRepository->find($id),
+            'tab' => $request->tab ?? 'main',
+        ]);
+    }
+
+    public function edit($id, $MODEL$Repository $modelRepository): JsonResponse
+    {
+        return $this->defaultJsonResponse($modelRepository->find($id, ['resource' => true]));
+    }
+
+    public function store($MODEL$Request $request, $MODEL$Service $modelService): JsonResponse
+    {
+        $modelService->create($request->validated(), false);
+
+        return $this->defaultJsonResponse([], Noty::get('$MODEL$ успешно добавлен'));
+    }
+
+    public function update($id, $MODEL$Request $request, $MODEL$Service $modelService): JsonResponse
+    {
+        $modelService->update($id, $request->validated());
+
+        return $this->defaultJsonResponse([], Noty::get('$MODEL$ успешно сохранен'));
+    }
+
+    public function destroy($id, $MODEL$Service $modelService): JsonResponse
+    {
+        $modelService->delete($id);
+
+        return $this->defaultJsonResponse([], Noty::get('$MODEL$ успешно удален'));
+    }
+}
