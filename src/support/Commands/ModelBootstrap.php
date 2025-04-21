@@ -76,8 +76,6 @@ class ModelBootstrap extends Command
         $this->desc = $this->option('description');
         $this->historyEnabled = UtilsCustom::strictStrToBool($this->option('history'));
 
-        $this->addConstructorPages();
-
         if ($this->historyEnabled) {
             $this->classList['controllerWithHistory'] = 'Controller';
             $this->classList['modelWithHistory'] = '';
@@ -89,8 +87,8 @@ class ModelBootstrap extends Command
         }
 
         $this->setNamespaceClassList($config, $this->space);
+        $this->addConstructorPages();
         $this->setPathLists($config, $this->space);
-
         $this->proceedClassList($this->model, $this->desc);
         $this->proceedViewList($this->model, $this->desc);
         $this->proceedAssetList($this->model, $this->desc);
@@ -214,6 +212,7 @@ class ModelBootstrap extends Command
             'HISTORY_ENABLED' => UtilsCustom::strictBoolToStr($this->historyEnabled),
             'NAMESPACE' => $this->namespaceClassList[$key] ?? '',
             'NAMESPACE_MODEL' => $this->namespaceClassList[$this->historyEnabled ? 'modelWithHistory' : 'model'] . "\\{$model}",
+            'NAMESPACE_MODEL_VIEW' => $this->namespaceClassList['modelView'] . "\\{$model}View",
             'NAMESPACE_RESOURCE' => $this->namespaceClassList['resource'] . "\\{$model}Resource",
             'NAMESPACE_RESOURCE_DATATABLES' => $this->namespaceClassList['resourceDatatables'] . "\\{$model}DatatablesResource",
             'NAMESPACE_REPOSITORY' => $this->namespaceClassList['repository'] . "\\{$model}Repository",
@@ -264,5 +263,36 @@ class ModelBootstrap extends Command
 
         UtilsCustom::insertLine(base_path('app/Constructor/Template/ITable.php'), '/}/', $tableConstStr, false);
         UtilsCustom::insertLine(base_path('app/Constructor/Template/IPage.php'), '/}/', $pageConstStr, false);
+
+        $modelViewNamespace = $this->namespaceClassList['modelView'] . "\\{$this->model}View";
+        $insertLine = "use {$modelViewNamespace};";
+        UtilsCustom::insertLine(base_path('app/Constructor/Template/Table.php'), '/class Table/', $insertLine, false);
+        $insertText = <<<EOD
+                    self::{$this->tableConst} => [
+                        'modelView' => {$this->model}View::class,
+                        'title' => '',
+                        'path' => '',
+                        'captions' => [
+                            'create' => 'Создание {$this->model}',
+                            'edit' => 'Редактирование {$this->model}',
+                        ],
+                    ],
+        EOD;
+        UtilsCustom::insertLine(base_path('app/Constructor/Template/Table.php'), '/];/', $insertText, false);
+
+        $insertText = <<<EOD
+                    self::{$this->pageConst} => [
+                        'sub' => ['index', 'show'],
+                        'title' => '',
+                        'path' => '',
+                        'icon' => 'streamline.regular.add',
+                        'tableList' => [
+                            Table::{$this->tableConst} => [
+                                'create', 'edit', 'destroy',
+                            ],
+                        ],
+                    ],
+        EOD;
+        UtilsCustom::insertLine(base_path('app/Constructor/Template/Page.php'), '/];/', $insertText, false);
     }
 }
