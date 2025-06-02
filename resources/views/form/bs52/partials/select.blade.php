@@ -35,6 +35,7 @@
 <select
     @include('omx-form::bs52.partials.blocks.info')
     @include('omx-form::bs52.partials.blocks.placeholder')
+    @include('omx-form::bs52.partials.blocks.disabled')
     @include('omx-form::bs52.partials.blocks.validate')
     @isset($cmpMultiple) multiple @endisset
     class="form-select {{ $cmpClass ?? '' }} {{ count($errors->get($cmpName)) ? 'is-invalid' : '' }}"

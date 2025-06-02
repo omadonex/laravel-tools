@@ -30,7 +30,7 @@ class RoleController extends Controller
 
     public function index(Request $request, Page $page)
     {
-        return $page->view($request, Page::OMX__RESOURCE__ROLE, 'index');
+        return $page->view($request, Page::OMX__ROLE, 'index');
     }
 
     public function data(Request $request, RoleRepository $roleRepository)
@@ -43,7 +43,7 @@ class RoleController extends Controller
 
     public function history(Request $request, Page $page): Factory|View|Application
     {
-        return $page->view($request, Page::OMX__RESOURCE__ROLE, 'history');
+        return $page->view($request, Page::OMX__ROLE, 'history');
     }
 
     public function historyData(Request $request)
@@ -69,7 +69,7 @@ class RoleController extends Controller
             'relations' => ['translates'],
         ]);
 
-        return $page->view($request, Page::OMX__RESOURCE__ROLE, 'show', [
+        return $page->view($request, Page::OMX__ROLE, 'show', [
             'model' => $model,
             'tab' => $request->tab ?? 'main',
         ]);

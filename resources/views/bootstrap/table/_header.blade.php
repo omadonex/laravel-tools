@@ -14,12 +14,14 @@
     $backTab = isset($backTab) ? $backTab : null;
 @endphp
 
+@if (!isset($noHeader) || !$noHeader)
 <h2 class="card-header-title h4 text-uppercase">
     @if (!isset($specHeader) || !$specHeader)
         Таблица <i>"{{ $tableTitle }}"</i> @if (in_array('history', $tableModeList))<a href="{{ route("{$tablePath}.history") }}">(История изменений)</a>@endif
     @endif
     @yield('table-header')
 </h2>
+@endif
 @if (in_array('create', $tableModeList))
     @include("omx-bootstrap::table.modal.create")
 @endif

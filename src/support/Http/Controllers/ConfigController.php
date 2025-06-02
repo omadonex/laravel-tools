@@ -29,7 +29,7 @@ class ConfigController extends Controller
 
     public function index(Request $request, Page $page): Factory|View|Application
     {
-        return $page->view($request, Page::OMX__RESOURCE__CONFIG, 'index');
+        return $page->view($request, Page::OMX__CONFIG, 'index');
     }
 
     public function data(Request $request, ConfigRepository $configRepository)
@@ -42,7 +42,7 @@ class ConfigController extends Controller
 
     public function history(Request $request, Page $page): Factory|View|Application
     {
-        return $page->view($request, Page::OMX__RESOURCE__CONFIG, 'history');
+        return $page->view($request, Page::OMX__CONFIG, 'history');
     }
 
     public function historyData(Request $request)

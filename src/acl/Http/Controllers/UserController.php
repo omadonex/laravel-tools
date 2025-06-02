@@ -37,7 +37,7 @@ class UserController extends Controller
 
     public function index(Request $request, Page $page)
     {
-        return $page->view($request, Page::OMX__RESOURCE__USER, 'index');
+        return $page->view($request, Page::OMX__USER, 'index');
     }
 
     public function data(Request $request, UserRepository $userRepository)
@@ -50,7 +50,7 @@ class UserController extends Controller
 
     public function history(Request $request, Page $page): Factory|View|Application
     {
-        return $page->view($request, Page::OMX__RESOURCE__USER, 'history');
+        return $page->view($request, Page::OMX__USER, 'history');
     }
 
     public function historyData(Request $request)
@@ -82,7 +82,7 @@ class UserController extends Controller
 
         $unusedRoleList = $roleRepository->pluckUnusedRolesNames(trans('placeholders.filter_role_id'), $exceptRoleIdList);
 
-        return $page->view($request, Page::OMX__RESOURCE__USER, 'show', [
+        return $page->view($request, Page::OMX__USER, 'show', [
             'model' => $user,
             'userRoleList' => $userRoleList,
             'unusedRoleList' => $unusedRoleList,

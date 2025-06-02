@@ -257,7 +257,7 @@ class ModelBootstrap extends Command
         $spaceDoubleDashedUpper = implode('__', $spaceDoubleDashedUpper);
 
         $this->tableConst = $modelDashedUpper;
-        $this->pageConst = "RESOURCE__{$spaceDoubleDashedUpper}__{$modelDashedUpper}";
+        $this->pageConst = "{$spaceDoubleDashedUpper}__{$modelDashedUpper}";
         $tableConstStr = "    const {$this->tableConst} = '{$this->model}';";
         $pageConstStr = "    const {$this->pageConst} = '{$spaceDashed}_{$this->model}';";
 

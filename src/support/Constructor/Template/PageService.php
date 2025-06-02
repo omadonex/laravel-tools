@@ -22,6 +22,10 @@ abstract class PageService extends OmxService implements IPageService
     protected const BREADCRUMB_HISTORY = 'История изменений';
     protected const BREADCRUMB_SHOW = 'Карточка записи (ID: ?)';
 
+    public const MODE_ROOT = 'root';
+    public const MODE_ADMIN = 'admin';
+    public const MODE_USER = 'user';
+
     protected IAclService $aclService;
     protected ITableService $tableService;
     protected ColumnSetRepository $columnSetRepository;
@@ -76,41 +80,31 @@ abstract class PageService extends OmxService implements IPageService
             self::AUTH__REGISTER => [
                 'title' => 'Регистрация',
             ],
-            self::OMX__RESOURCE__CONFIG => [
+            self::OMX__CONFIG => [
                 'sub' => ['index', 'history'],
                 'title' => 'Конфигуратор',
                 'path' => Config::getPath(),
+                'icon' => 'streamline.regular.cog',
                 'tableList' => [
-                    ITableService::CONFIG => [
-                        'edit', 'history', 'filter',
-                    ],
+                    ['table' => ITableService::CONFIG, 'modeList' => ['edit', 'history', 'filter']],
                 ],
             ],
-            self::OMX__RESOURCE__ROLE => [
+            self::OMX__ROLE => [
                 'sub' => ['index', 'show', 'history'],
                 'title' => 'Роли',
                 'path' => Role::getPath(),
+                'icon' => 'streamline.regular.technology-privacy-consent-profile-lock-1',
                 'tableList' => [
-                    ITableService::ROLE => [
-                        'create',
-                        'edit',
-                        'destroy',
-                        'history',
-                        'filter',
-                    ],
+                    ['table' => ITableService::ROLE, 'modeList' => ['create', 'edit', 'destroy', 'history', 'filter']],
                 ],
             ],
-            self::OMX__RESOURCE__USER => [
+            self::OMX__USER => [
                 'sub' => ['index', 'show'],
                 'title' => 'Пользователи',
                 'path' => User::getPath(),
+                'icon' => 'streamline.regular.multiple-users-1',
                 'tableList' => [
-                    ITableService::USER => [
-                        'create',
-                        'edit',
-                        'destroy',
-                        'filter',
-                    ],
+                    ['table' => ITableService::USER, 'modeList' => ['create', 'edit', 'destroy', 'filter']],
                 ],
                 'custom' => [
                     'show',
@@ -143,7 +137,6 @@ abstract class PageService extends OmxService implements IPageService
     public function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = ''): array
     {
         $data = $this->data($pageId);
-
         $icon = [];
         $iconData = [];
         if (!$noIcon) {
@@ -164,13 +157,13 @@ abstract class PageService extends OmxService implements IPageService
 
     protected function getViewName(string $pageIndex, string $sub = '')
     {
-        if ($sub && in_array($sub, self::data($pageIndex)['custom'] ?? []) && in_array($pageIndex, [IPageService::OMX__RESOURCE__USER, IPageService::OMX__RESOURCE__ROLE])) {
+        if ($sub && in_array($sub, self::data($pageIndex)['custom'] ?? []) && in_array($pageIndex, [IPageService::OMX__USER, IPageService::OMX__ROLE])) {
             switch ($pageIndex) {
-                case IPageService::OMX__RESOURCE__CONFIG:
+                case IPageService::OMX__CONFIG:
                     return "omx-bootstrap::pages.config.{$sub}";
-                case IPageService::OMX__RESOURCE__ROLE:
+                case IPageService::OMX__ROLE:
                     return "omx-bootstrap::pages.role.{$sub}";
-                case IPageService::OMX__RESOURCE__USER:
+                case IPageService::OMX__USER:
                     return "omx-bootstrap::pages.user.{$sub}";
             }
         }
@@ -265,6 +258,7 @@ abstract class PageService extends OmxService implements IPageService
                 'title' => $pageData['title'],
                 'icon' => $pageData['icon'] ?? null,
                 'iconData' => $pageData['iconData'] ?? null,
+                'mode' => $pageData['mode'] ?? self::MODE_USER,
                 'breadcrumbs' => $this->getBreadcrumbs($pageIndex, $model, $pageData, $sub, $breadcrumbReplaceData),
                 'breadcrumb' => $this->getBreadcrumb($model, $pageData, $sub, $breadcrumbReplaceData),
                 'tab' => $data['tab'] ?? null,
@@ -287,11 +281,14 @@ abstract class PageService extends OmxService implements IPageService
 
         if ($pageData['tableList'] ?? []) {
             $tableList = [];
-            foreach ($pageData['tableList'] as $tableKey => $modeList) {
+            foreach ($pageData['tableList'] as $tableInfo) {
+                $tableKey = $tableInfo['table'];
+                $modeList = $tableInfo['modeList'];
                 $tableId = "{$pageId}__Table" . ucfirst($tableKey);
                 $ext = $this->tableService->data($tableKey);
                 $ext['view'] = app($ext['modelView']);
-                $ext['formPath'] = ($ext['formPath'] ?? null) ?: $ext['path'];
+                $ext['path'] = $tableInfo['path'] ?? $pageData['path'];
+                $ext['formPath'] = $pageData['formPath'] ?? ($tableInfo['formPath'] ?? $ext['formPath']);
 
                 $tableList[] = [
                     'index' => $tableKey,

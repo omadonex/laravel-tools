@@ -104,11 +104,12 @@ trait DatatablesResponseTrait
         $ignoredSearchColumns = ['actions']
     ) {
         $requestData = $request->all();
+
         $options['filter'] = $this->updateFilter($requestData, $requestData['pageId'], $requestData['tableId']);
 
-        $paginate = $request->length ?? false;
-        $start = $request->start ?? 0;
         $length = $request->length ?? 0;
+        $start = $request->start ?? 0;
+        $paginate = $length > 0;
 
         $columns = array_map(function ($item) {
             return $item['name'];
@@ -156,8 +157,14 @@ trait DatatablesResponseTrait
 
         $data = $repository->$listMethod($options);
         $data = $data->toResponse($request)->getData();
-        $data->recordsTotal = $data->meta->total;
-        $data->recordsFiltered = $data->meta->total;
+        if ($data->meta ?? false) {
+            $data->recordsTotal = $data->meta->total;
+            $data->recordsFiltered = $data->meta->total;
+        } else {
+            $count = count($data->data);
+            $data->recordsTotal = $count;
+            $data->recordsFiltered = $count;
+        }
         $data->draw = $request->draw;
 
         return $transformerClass ? (new $transformerClass($data, $transformerParams))->getTransformedResponse() : $data;
