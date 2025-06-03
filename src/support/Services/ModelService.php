@@ -63,6 +63,25 @@ abstract class ModelService extends OmxService implements IModelService
         return $model;
     }
 
+    public function createOrUpdate(array $data, array $dataSearch, bool $fresh = true, bool $event = true): Model
+    {
+        $model = $this->modelRepository->search(['closures' => [
+            function ($query) use ($dataSearch) {
+                foreach ($dataSearch as $field => $value) {
+                    $query->where($field, $value);
+                }
+
+                return $query;
+            },
+        ]]);
+
+        if (!$model) {
+            return $this->create($data, $fresh, $event);
+        }
+
+        return $this->update($model, $data, true, $event);
+    }
+
     public function update(int|string|Model $moid, array $data, bool $returnModel = false, bool $event = true): bool|Model
     {
         list ($model, $oldData) = $this->modelRepository->getCurrData($moid, array_keys($data));

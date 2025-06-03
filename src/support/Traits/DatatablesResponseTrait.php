@@ -19,9 +19,9 @@ trait DatatablesResponseTrait
         $requestData = $request->all();
         $options['filter'] = $this->updateFilter($requestData, $requestData['pageId'], $requestData['tableId']);
 
-        $paginate = $request->length ?? false;
-        $start = $request->start ?? 0;
         $length = $request->length ?? 0;
+        $start = $request->start ?? 0;
+        $paginate = ($length > 0) ? $length : false;
 
         $columns = array_map(function ($item) {
             return $item['name'];
@@ -109,7 +109,7 @@ trait DatatablesResponseTrait
 
         $length = $request->length ?? 0;
         $start = $request->start ?? 0;
-        $paginate = $length > 0;
+        $paginate = ($length > 0) ? $length : false;
 
         $columns = array_map(function ($item) {
             return $item['name'];
