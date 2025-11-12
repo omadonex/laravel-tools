@@ -288,7 +288,7 @@ abstract class PageService extends OmxService implements IPageService
                 $ext = $this->tableService->data($tableKey);
                 $ext['view'] = app($ext['modelView']);
                 $ext['path'] = $tableInfo['path'] ?? $pageData['path'];
-                $ext['formPath'] = $pageData['formPath'] ?? ($tableInfo['formPath'] ?? $ext['formPath']);
+                $ext['formPath'] = ($tableInfo['noForm'] ?? false) ? null : ($pageData['formPath'] ?? ($tableInfo['formPath'] ?? $ext['formPath']));
 
                 $tableList[] = [
                     'index' => $tableKey,
