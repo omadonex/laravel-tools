@@ -1,6 +1,8 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Transformers;
+namespace Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Transformers;
+
+use Omadonex\LaravelTools\Support\Transformers\BaseTransformer;
 
 class ConfigTransformer extends BaseTransformer
 {

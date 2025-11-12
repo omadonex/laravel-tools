@@ -6,8 +6,8 @@ use Omadonex\LaravelTools\Acl\Models\Role;
 use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Acl\ModelView\RoleView;
 use Omadonex\LaravelTools\Acl\ModelView\UserView;
-use Omadonex\LaravelTools\Support\Models\Config;
-use Omadonex\LaravelTools\Support\ModelView\ConfigView;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Models\Config;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\ModelView\ConfigView;
 use Omadonex\LaravelTools\Support\Services\OmxService;
 
 abstract class TableService extends OmxService implements ITableService

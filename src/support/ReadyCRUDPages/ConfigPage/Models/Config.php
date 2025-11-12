@@ -1,6 +1,8 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Models;
+namespace Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Models;
+
+use Omadonex\LaravelTools\Support\Models\TypedKeyValueDictionary;
 
 class Config extends TypedKeyValueDictionary
 {

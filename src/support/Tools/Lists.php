@@ -5,7 +5,7 @@ namespace Omadonex\LaravelTools\Support\Tools;
 
 use Omadonex\LaravelTools\Acl\Repositories\UserRepository;
 use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
-use Omadonex\LaravelTools\Support\Repositories\ConfigRepository;
+use Omadonex\LaravelTools\Support\Repositories\TypedKeyValueDictionaryRepository;
 
 class Lists
 {
@@ -25,9 +25,9 @@ class Lists
         return $closure ? $func : $func();
     }
 
-    protected static function configValueType()
+    protected static function valueType()
     {
-        return ConfigRepository::VALUE_TYPE_LIST;
+        return TypedKeyValueDictionaryRepository::VALUE_TYPE_LIST;
     }
 
     protected static function currency()

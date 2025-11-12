@@ -1,6 +1,6 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Http\Controllers;
+namespace Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Http\Controllers;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -9,17 +9,17 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Omadonex\LaravelTools\Common\Http\Controllers\Controller;
 use Omadonex\LaravelTools\Support\Constructor\Template\IPageService as Page;
-use Omadonex\LaravelTools\Support\Http\Requests\ConfigRequest;
-use Omadonex\LaravelTools\Support\Models\Config;
-use Omadonex\LaravelTools\Support\Models\ConfigHistory;
-use Omadonex\LaravelTools\Support\Repositories\ConfigRepository;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Http\Requests\ConfigRequest;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Models\Config;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Models\ConfigHistory;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Repositories\ConfigRepository;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Resources\Datatables\ConfigDatatablesResource;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Services\ConfigService;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Transformers\ConfigTransformer;
 use Omadonex\LaravelTools\Support\Repositories\HistoryRepository;
-use Omadonex\LaravelTools\Support\Resources\Datatables\ConfigDatatablesResource;
-use Omadonex\LaravelTools\Support\Services\ConfigService;
 use Omadonex\LaravelTools\Support\Tools\Noty;
 use Omadonex\LaravelTools\Support\Traits\DatatablesResponseTrait;
 use Omadonex\LaravelTools\Support\Traits\JsonResponseTrait;
-use Omadonex\LaravelTools\Support\Transformers\ConfigTransformer;
 use Omadonex\LaravelTools\Support\Transformers\HistoryTransformer;
 
 class ConfigController extends Controller

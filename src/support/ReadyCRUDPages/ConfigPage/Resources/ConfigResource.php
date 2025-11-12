@@ -1,8 +1,9 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Resources;
+namespace Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Resources;
 
-use Omadonex\LaravelTools\Support\Models\Config;
+use Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Models\Config;
+use Omadonex\LaravelTools\Support\Resources\TypedKeyValueDictionaryResource;
 
 class ConfigResource extends TypedKeyValueDictionaryResource
 {

@@ -3,7 +3,7 @@
 namespace Omadonex\LaravelTools\Support\Resources\Datatables;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Omadonex\LaravelTools\Support\Repositories\ConfigRepository;
+use Omadonex\LaravelTools\Support\Repositories\TypedKeyValueDictionaryRepository;
 
 abstract class TypedKeyValueDictionaryDatatablesResource extends JsonResource
 {
@@ -18,7 +18,7 @@ abstract class TypedKeyValueDictionaryDatatablesResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'value_type_id' => $this->value_type_id,
-            'value_type_id_label' => ConfigRepository::VALUE_TYPE_LIST[$this->value_type_id],
+            'value_type_id_label' => TypedKeyValueDictionaryRepository::VALUE_TYPE_LIST[$this->value_type_id],
             'value' => $this->value,
         ];
     }

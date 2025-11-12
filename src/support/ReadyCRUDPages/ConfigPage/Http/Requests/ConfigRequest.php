@@ -1,6 +1,6 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Http\Requests;
+namespace Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
