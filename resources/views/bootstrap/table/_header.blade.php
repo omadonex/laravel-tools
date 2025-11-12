@@ -22,26 +22,26 @@
     @yield('table-header')
 </h2>
 @endif
-@if (in_array('create', $tableModeList))
+@if (in_array('create', $tableModeList) && !in_array('create', $tableAclDeniedModeList))
     @include("omx-bootstrap::table.modal.create")
 @endif
-@if (in_array('edit', $tableModeList))
+@if (in_array('edit', $tableModeList) && !in_array('edit', $tableAclDeniedModeList))
     @include("omx-bootstrap::table.modal.edit")
 @endif
-@if (in_array('destroy', $tableModeList))
+@if (in_array('destroy', $tableModeList) && !in_array('destroy', $tableAclDeniedModeList))
     @include('omx-bootstrap::modal.confirmDelete')
 @endif
 
 @yield('table-buttons')
 
-@if (in_array('export', $tableModeList))
+@if (in_array('export', $tableModeList) && !in_array('export', $tableAclDeniedModeList))
     @include('omx-bootstrap::resource.export._form', ['formId' => "{$tableId}__formExport", 'method' => 'POST', 'action' => route("{$tablePath}.export"), 'tableParams' => isset($tableParams) ? $tableParams : []])
     @include('omx-bootstrap::buttons.standard.export', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;'])
 @endif
-@if (in_array('import', $tableModeList))
+@if (in_array('import', $tableModeList) && !in_array('import', $tableAclDeniedModeList))
     @include('omx-bootstrap::buttons.standard.import', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;', 'btnHref' => route("{$tablePath}.import")])
 @endif
-@if (in_array('create', $tableModeList))
+@if (in_array('create', $tableModeList) && !in_array('create', $tableAclDeniedModeList))
     @include('omx-bootstrap::buttons.standard.create', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;'])
 @endif
 @if (in_array('filter', $tableModeList))

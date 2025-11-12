@@ -11,28 +11,39 @@ class NavbarService extends OmxAclNavbarService
         return '<li class="nav-item w-100"><hr></li>';
     }
 
-    protected function captionItemHtml(string $name, string $badge = '', array $badgeParams = []): string
+    protected function captionItemHtml(string $name, string $badge = '', array $badgeParams = [], array $optParams = []): string
     {
         $badgeHtml = $this->badgeHtml($badge, $badgeParams);
+
+        $rightIconHtml = '';
+        if ($optParams) {
+            if ($optParams['rightIcon']) {
+                $rightIcon = $optParams['rightIcon'];
+                $rightIconHtml = $this->iconHtml($rightIcon['icon'], $rightIcon['fill'], $rightIcon['stroke']);
+            }
+        }
 
         return "
             <li class=\"nav-item\">
                 <a class=\"nav-link disabled\">
                     {$badgeHtml}
                     <span class='mx-3'>{$name}</span>
+                    {$rightIconHtml}
                 </a>
             </li>
         ";
     }
 
-    private function iconHtml(string $icon): string
+    private function iconHtml(string $icon, string $color = 'currentColor', string $stroke = 'none'): string
     {
-        return empty($icon) ? '' : getIconHtml($icon, 18, 'currentColor', 'none', 'nav-link-icon');
+        return empty($icon) ? '' : getIconHtml($icon, 18, $color, $stroke, 'nav-link-icon');
     }
 
     private function badgeHtml(string $badge, array $badgeParams): string
     {
-        return !$badge ? '' : view("omx-bootstrap::badge.{$badge}", ['badgeParams' => $badgeParams])->render();
+        $path = in_array($badge, ['root', 'admin', 'user', 'new']) ? "omx-bootstrap::badge.{$badge}" : "partials.badge.navbar.{$badge}";
+
+        return !$badge ? '' : view($path, ['badgeParams' => $badgeParams])->render();
     }
 
     protected function singleItemTemplateHtml(
@@ -41,7 +52,8 @@ class NavbarService extends OmxAclNavbarService
         string $status,
         string $icon = '',
         string $badge = '',
-        array $badgeParams = []
+        array $badgeParams = [],
+        array $optParams = []
     ): string {
         $iconHtml = $this->iconHtml($icon);
         $badgeHtml = $this->badgeHtml($badge, $badgeParams);
@@ -70,7 +82,8 @@ class NavbarService extends OmxAclNavbarService
         string $uniqueSubIndex,
         string $icon = '',
         string $badge = '',
-        array $badgeParams = []
+        array $badgeParams = [],
+        array $optParams = []
     ): string {
         $iconHtml = $this->iconHtml($icon);
         $badgeHtml = $this->badgeHtml($badge, $badgeParams);

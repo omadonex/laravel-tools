@@ -4,10 +4,14 @@ namespace Omadonex\LaravelTools\Acl\Services;
 
 use Illuminate\Support\Facades\Route;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
+use Omadonex\LaravelTools\Acl\Models\User;
 use Omadonex\LaravelTools\Support\Services\OmxService;
 
 abstract class AclNavbarService extends OmxService
 {
+    public const ACL_INNER_CHECK = 'aclInnerCheck';
+    public const RIGHT_ICON = 'rightIcon';
+
     protected AclService $aclService;
 
     public function __construct(IAclService $aclService)
@@ -28,9 +32,32 @@ abstract class AclNavbarService extends OmxService
 
     protected abstract function rootItemAttributes(): string;
     protected abstract function lineItemHtml(): string;
-    protected abstract function captionItemHtml(string $name, string $badge = '', array $badgeParams = []): string;
-    protected abstract function singleItemTemplateHtml(string $url, string $name, string $status, string $icon = '', string $badge = '', array $badgeParams = []): string;
-    protected abstract function listItemTemplateHtml(string $url, string $name, string $status, string $subHtml, string $uniqueSubIndex, string $icon = '', string $badge = '', array $badgeParams = []): string;
+    protected abstract function captionItemHtml(string $name, string $badge = '', array $badgeParams = [], array $optParams = []): string;
+    protected abstract function singleItemTemplateHtml(string $url, string $name, string $status, string $icon = '', string $badge = '', array $badgeParams = [], array $optParams = []): string;
+    protected abstract function listItemTemplateHtml(string $url, string $name, string $status, string $subHtml, string $uniqueSubIndex, string $icon = '', string $badge = '', array $badgeParams = [], array $optParams = []): string;
+
+    private function makeOptParams(User $user, array $opt): array
+    {
+        $optParams = [];
+        foreach ($opt as $optKey => $optData) {
+            $conditionDataMethod = $optData['conditionDataMethod'];
+            $condition = $optData['condition'];
+            $conditionField = $condition['field'];
+            $conditionPass = $this->aclService->hasAdminAccess($user) ?: $user->$conditionDataMethod()->$conditionField == $condition['value'];
+
+            switch ($optKey) {
+                case self::ACL_INNER_CHECK:
+                    $optParams[$optKey] = $conditionPass;
+                    break;
+                default:
+                    if ($conditionPass) {
+                        $optParams[$optKey] = $optData['params'];
+                    }
+            }
+        }
+
+        return $optParams;
+    }
 
     private function walkMenuData($data, $level = 0)
     {
@@ -46,15 +73,22 @@ abstract class AclNavbarService extends OmxService
                 $access = $access && ($role ? $this->aclService->checkRole($role) : true);
             }
 
+            $user = $this->aclService->user();
+            $optParams = $this->makeOptParams($user, $menuItem['opt'] ?? []);
+            if (array_key_exists(self::ACL_INNER_CHECK, $optParams)) {
+                $access = $optParams[self::ACL_INNER_CHECK];
+            }
+
             if ($access) {
                 if ($menuItem['line'] ?? false) {
                     $html .= $this->lineItemHtml();
                     continue;
                 }
+
                 if ($menuItem['caption'] ?? false) {
                     $badge = $menuItem['badge'] ?? '';
                     $badgeParams = $menuItem['badgeParams'] ?? [];
-                    $html .= $this->captionItemHtml($menuItem['name'], $badge, $badgeParams);
+                    $html .= $this->captionItemHtml($menuItem['name'], $badge, $badgeParams, $optParams);
                     continue;
                 }
 
@@ -71,18 +105,23 @@ abstract class AclNavbarService extends OmxService
                     //TODO omadonex: params for routes
                 }
 
-                $replacedRouteName = preg_replace('/.index$/', '', $menuItem['route']);
-                if (strpos($currentRouteName, $replacedRouteName) !== false) {
+                $replacedMenuRouteName = preg_replace('/.index$/', '', $menuItem['route']);
+                if (strpos($currentRouteName, $replacedMenuRouteName) !== false) {
                     $arrCurrent = explode('.', $currentRouteName);
-                    $arrReplaced = explode('.', $replacedRouteName);
+                    array_pop($arrCurrent);
+                    $arrReplacedMenu = explode('.', $replacedMenuRouteName);
                     $same = true;
                     $i = 0;
-                    while ($i < count($arrReplaced)) {
-                        if ($arrCurrent[$i] != $arrReplaced[$i]) {
-                            $same = false;
-                            break;
+                    if (count($arrCurrent) > count($arrReplacedMenu)) {
+                        $same = false;
+                    } else {
+                        while ($i < count($arrReplacedMenu)) {
+                            if ($arrCurrent[$i] != $arrReplacedMenu[$i]) {
+                                $same = false;
+                                break;
+                            }
+                            $i++;
                         }
-                        $i++;
                     }
 
                     if ($same) {
@@ -97,13 +136,13 @@ abstract class AclNavbarService extends OmxService
                     }
                     if ($subHtml || ($menuItem['route'] !== '#')) {
                         if ($subHtml) {
-                            $html .= $this->listItemTemplateHtml($route, $name, $status, $subHtml, "{$level}_{$index}", $icon, $badge, $badgeParams);
+                            $html .= $this->listItemTemplateHtml($route, $name, $status, $subHtml, "{$level}_{$index}", $icon, $badge, $badgeParams, $optParams);
                         } else {
-                            $html .= $this->singleItemTemplateHtml($route, $name, $status, $icon, $badge, $badgeParams);
+                            $html .= $this->singleItemTemplateHtml($route, $name, $status, $icon, $badge, $badgeParams, $optParams);
                         }
                     }
                 } else {
-                    $html .= $this->singleItemTemplateHtml($route, $name, $status, $icon, $badge, $badgeParams);
+                    $html .= $this->singleItemTemplateHtml($route, $name, $status, $icon, $badge, $badgeParams, $optParams);
                 }
             }
 

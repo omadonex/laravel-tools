@@ -7,6 +7,7 @@
     $tablePath = $table['ext']['path'];
     $tableFormPath = $table['ext']['formPath'];
     $tableModeList = $table['modeList'];
+    $tableAclDeniedModeList = $table['aclDeniedModeList'];
 
     $view = $table['ext']['view'];
     $filter = $page['filter'];

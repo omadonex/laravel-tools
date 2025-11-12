@@ -134,7 +134,7 @@ abstract class PageService extends OmxService implements IPageService
         return $this->data($pageIndex)['icon'];
     }
 
-    public function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = ''): array
+    public function navbarData(string $pageId, string $role = '', bool $noIcon = false, string $badge = '', array $opt = []): array
     {
         $data = $this->data($pageId);
         $icon = [];
@@ -147,7 +147,7 @@ abstract class PageService extends OmxService implements IPageService
         return array_merge([
             'name' => $data['title'],
             'route' => ($data['sub'] ?? false) ? "{$data['path']}.index" : $data['route'],
-        ], $icon, $iconData, $role ? ['role' => $role] : [], $badge ? ['badge' => $badge] : []);
+        ], $icon, $iconData, $role ? ['role' => $role] : [], $badge ? ['badge' => $badge] : [], ['opt' => $opt]);
     }
 
     public function getPageId(string $pageIndex, string $sub = ''): string
@@ -243,7 +243,7 @@ abstract class PageService extends OmxService implements IPageService
         return null;
     }
 
-    protected function getViewData(string $pageIndex, string $sub = '', array $data = [], array $breadcrumbReplaceData = [])
+    protected function getViewData(string $pageIndex, string $sub = '', array $data = [], array $breadcrumbReplaceData = [], array $aclDeniedModeList = [])
     {
         $user = $this->aclService->user();
         $pageId = $this->getPageId($pageIndex, $sub);
@@ -296,6 +296,7 @@ abstract class PageService extends OmxService implements IPageService
                     'modeList' => $modeList,
                     'columnSetList' => $this->columnSetRepository->getList($user ? $user->getKey() : 0, $pageId, $tableId),
                     'ext' => $ext,
+                    'aclDeniedModeList' => $aclDeniedModeList[$tableKey] ?? [],
                 ];
             }
             $options['tableList'] = $tableList;
@@ -307,11 +308,11 @@ abstract class PageService extends OmxService implements IPageService
         ]);
     }
 
-    public function view(Request $request, string $pageIndex, string $sub = '', array $data = [], array $breadcrumbReplaceData = [])
+    public function view(Request $request, string $pageIndex, string $sub = '', array $data = [], array $breadcrumbReplaceData = [], array $aclDeniedModeList = [])
     {
         $viewName = $this->getViewName($pageIndex, $sub);
         $data['filter'] = $this->getFilterPage($this->getPageId($pageIndex, $sub));
 
-        return view($viewName, $this->getViewData($pageIndex, $sub, $data, $breadcrumbReplaceData));
+        return view($viewName, $this->getViewData($pageIndex, $sub, $data, $breadcrumbReplaceData, $aclDeniedModeList));
     }
 }
