@@ -15,9 +15,15 @@ abstract class TypedKeyValueDictionaryRepository extends ModelRepository
         'value' => ['type' => UtilsFilter::STRING_LIKE],
     ];
 
-    public function get(string $id): mixed
+    public function get(string $key): mixed
     {
-        $config = $this->find($id);
+        $config = $this->search([
+            'closures' => [
+                function ($query) use ($key) {
+                    return $query->where('key', $key);
+                },
+            ]
+        ]);
 
         return $this->castValue($config->value, $config->value_type_id);
     }

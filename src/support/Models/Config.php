@@ -2,16 +2,10 @@
 
 namespace Omadonex\LaravelTools\Support\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Config extends Model
+class Config extends TypedKeyValueDictionary
 {
     public const HISTORY_ENABLED = true;
-
-    protected $guarded = [ 'id' ];
-    protected $table   = 'support_config';
-    protected $fillable = ['name', 'description', 'value_type_id', 'value'];
-    public $incrementing = false;
+    protected $table = 'support_config';
 
     public static function getPath(): string
     {

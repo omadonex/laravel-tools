@@ -52,4 +52,15 @@ class UtilsDb
             $table->text('data');
         };
     }
+
+    public static function addTypedKeyValueDictionaryFields(Blueprint $table)
+    {
+        $table->smallIncrements('id');
+        $table->string('key')->index();
+        $table->string('name');
+        $table->string('description');
+        $table->unsignedTinyInteger('value_type_id')->index();
+        $table->string('value');
+        $table->timestamps();
+    }
 }

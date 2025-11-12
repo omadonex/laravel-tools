@@ -2,10 +2,9 @@
 
 namespace Omadonex\LaravelTools\Support\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use Omadonex\LaravelTools\Support\Models\Config;
 
-class ConfigResource extends JsonResource
+class ConfigResource extends TypedKeyValueDictionaryResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +14,7 @@ class ConfigResource extends JsonResource
         /** @var Config $this */
 
         return [
-            'id'   => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'value_type_id' => $this->value_type_id,
-            'value' => $this->value,
-        ];
+
+        ] + parent::toArray($request);
     }
 }
