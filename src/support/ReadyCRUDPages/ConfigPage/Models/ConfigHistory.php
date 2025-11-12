@@ -5,7 +5,6 @@ namespace Omadonex\LaravelTools\Support\ReadyCRUDPages\ConfigPage\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Omadonex\LaravelTools\Acl\Models\User;
-use Omadonex\LaravelTools\Support\Models\Eloquent;
 use Omadonex\LaravelTools\Support\Models\History;
 
 /**
@@ -19,8 +18,6 @@ use Omadonex\LaravelTools\Support\Models\History;
  * @property object $data               Старое и новое значение
  * @property Carbon|null $occurred_at   Дата записи
  *
- *
- * @mixin Eloquent
  */
 class ConfigHistory extends History
 {
