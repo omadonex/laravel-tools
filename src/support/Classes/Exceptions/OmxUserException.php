@@ -21,6 +21,8 @@ class OmxUserException extends Exception
     public const ERR_CODE_1004 = 1004;
     /** Нельзя удалять чужие комментарии  */
     public const ERR_CODE_1005 = 1005;
+    /** Непредвиденная ошибка удаления */
+    public const ERR_CODE_1006 = 1006;
 
     public static function throw(int $code, ?Throwable $previous = null): void
     {

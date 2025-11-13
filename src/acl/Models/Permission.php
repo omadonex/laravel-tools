@@ -2,10 +2,10 @@
 
 namespace Omadonex\LaravelTools\Acl\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Omadonex\LaravelTools\Locale\Traits\TranslateTrait;
+use Omadonex\LaravelTools\Support\Models\OmxModel;
 
-class Permission extends Model
+class Permission extends OmxModel
 {
     use TranslateTrait;
 

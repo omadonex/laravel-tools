@@ -2,7 +2,6 @@
 
 namespace Omadonex\LaravelTools\Support\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
@@ -17,7 +16,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at  Дата обновления
  *
  */
-class ColumnSet extends Model
+class ColumnSet extends OmxModel
 {
     protected $guarded = [ 'id' ];
     protected $table   = 'support_column_set';

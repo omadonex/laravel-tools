@@ -3,11 +3,10 @@
 namespace Omadonex\LaravelTools\Support\Models;
 
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Omadonex\LaravelTools\Acl\Models\User;
 
-abstract class History extends Model
+abstract class History extends OmxModel
 {
     protected $guarded = [ 'id' ];
     protected $fillable = ['model_id', 'user_id', 'history_event_id', 'data', 'occur_at'];

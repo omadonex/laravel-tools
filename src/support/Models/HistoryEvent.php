@@ -3,9 +3,7 @@
 namespace Omadonex\LaravelTools\Support\Models;
 
 
-use Illuminate\Database\Eloquent\Model;
-
-class HistoryEvent extends Model
+class HistoryEvent extends OmxModel
 {
     protected $guarded = [ 'id' ];
     protected $table   = 'support_history_event';

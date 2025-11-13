@@ -2,9 +2,9 @@
 
 namespace Omadonex\LaravelTools\Acl\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Omadonex\LaravelTools\Support\Models\OmxModel;
 
-class PermissionTranslate extends Model
+class PermissionTranslate extends OmxModel
 {
     protected $table = 'acl_permission_translate';
     protected $fillable = ['model_id', 'lang', 'name', 'description'];

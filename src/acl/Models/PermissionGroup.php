@@ -2,12 +2,12 @@
 
 namespace Omadonex\LaravelTools\Acl\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Omadonex\LaravelTools\Locale\Traits\TranslateTrait;
+use Omadonex\LaravelTools\Support\Models\OmxModel;
 
-class PermissionGroup extends Model
+class PermissionGroup extends OmxModel
 {
     use TranslateTrait;
 
@@ -32,6 +32,5 @@ class PermissionGroup extends Model
     {
         return $this
             ->hasMany(PermissionGroup::class, 'parent_id');
-            //->with(['children', 'permissions']);
     }
 }

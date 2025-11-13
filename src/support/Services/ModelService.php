@@ -5,6 +5,7 @@ namespace Omadonex\LaravelTools\Support\Services;
 use Illuminate\Database\Eloquent\Model;
 use Omadonex\LaravelTools\Acl\Interfaces\IAclService;
 use Omadonex\LaravelTools\Locale\Interfaces\ILocaleService;
+use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxUserException;
 use Omadonex\LaravelTools\Support\Events\ModelCreated;
 use Omadonex\LaravelTools\Support\Events\ModelCreatedT;
 use Omadonex\LaravelTools\Support\Events\ModelDeleted;
@@ -148,6 +149,18 @@ abstract class ModelService extends OmxService implements IModelService
 
     public function checkDelete(Model $model): void
     {
-        // Implement staff in descendants if need
+        if (!$this->canBeDeleted($model)) {
+            OmxUserException::throw(OmxUserException::ERR_CODE_1006);
+        }
+    }
+
+    public function canBeEdited(Model $model): bool
+    {
+        return true;
+    }
+
+    public function canBeDeleted(Model $model): bool
+    {
+        return true;
     }
 }

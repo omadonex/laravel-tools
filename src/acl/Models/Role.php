@@ -2,12 +2,12 @@
 
 namespace Omadonex\LaravelTools\Acl\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Omadonex\LaravelTools\Support\Classes\ConstCustom;
+use Omadonex\LaravelTools\Support\Models\OmxModel;
 use Omadonex\LaravelTools\Support\Traits\ProtectedGenerateTrait;
 use Omadonex\LaravelTools\Locale\Traits\TranslateTrait;
 
-class Role extends Model
+class Role extends OmxModel
 {
     use TranslateTrait;
     use ProtectedGenerateTrait;

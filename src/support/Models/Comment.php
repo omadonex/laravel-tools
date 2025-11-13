@@ -2,7 +2,6 @@
 
 namespace Omadonex\LaravelTools\Support\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Omadonex\LaravelTools\Acl\Models\User;
@@ -20,7 +19,7 @@ use Omadonex\LaravelTools\Acl\Models\User;
  * @property Carbon|null $updated_at       Дата обновления
  *
  */
-class Comment extends Model
+class Comment extends OmxModel
 {
     protected $guarded = [ 'id' ];
     protected $table   = 'support_comment';
