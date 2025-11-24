@@ -17,7 +17,7 @@ class NavbarService extends OmxAclNavbarService
 
         $rightIconHtml = '';
         if ($optParams) {
-            if ($optParams['rightIcon']) {
+            if ($optParams['rightIcon'] ?? false) {
                 $rightIcon = $optParams['rightIcon'];
                 $rightIconHtml = $this->iconHtml($rightIcon['icon'], $rightIcon['fill'], $rightIcon['stroke']);
             }

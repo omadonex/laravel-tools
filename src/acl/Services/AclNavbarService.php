@@ -41,9 +41,18 @@ abstract class AclNavbarService extends OmxService
         $optParams = [];
         foreach ($opt as $optKey => $optData) {
             $conditionDataMethod = $optData['conditionDataMethod'];
-            $condition = $optData['condition'];
-            $conditionField = $condition['field'];
-            $conditionPass = $this->aclService->hasAdminAccess($user) ?: $user->$conditionDataMethod()->$conditionField == $condition['value'];
+            $condition = $optData['condition'] ?? null;
+            $conditionField = $condition['field'] ?? null;
+            $conditionPass = false;
+
+            if ($this->aclService->hasAdminAccess($user)) {
+                $conditionPass = true;
+            } else {
+                $methodResult = $user->$conditionDataMethod();
+                if ($methodResult !== null) {
+                    $conditionPass = $conditionField ? $methodResult->$conditionField == $condition['value'] : $methodResult;
+                }
+            }
 
             switch ($optKey) {
                 case self::ACL_INNER_CHECK:
