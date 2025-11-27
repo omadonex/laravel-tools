@@ -2,10 +2,9 @@
 
 namespace Omadonex\LaravelTools\Support\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use Omadonex\LaravelTools\Support\Models\Comment;
 
-class CommentResource extends JsonResource
+class CommentResource extends OmxJsonResource
 {
     /**
      * Transform the resource into an array.

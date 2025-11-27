@@ -12,6 +12,7 @@ abstract class BaseTransformer
     protected $params;
     protected $response;
     protected $convertTranslate;
+    protected $columns;
 
     public function __construct($response, $params = [], $convertTranslate = true)
     {

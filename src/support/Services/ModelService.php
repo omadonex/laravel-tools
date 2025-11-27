@@ -154,12 +154,12 @@ abstract class ModelService extends OmxService implements IModelService
         }
     }
 
-    public function canBeEdited(Model $model): bool
+    public function canBeEdited($modelDataObj): bool
     {
         return true;
     }
 
-    public function canBeDeleted(Model $model): bool
+    public function canBeDeleted($modelDataObj): bool
     {
         return true;
     }

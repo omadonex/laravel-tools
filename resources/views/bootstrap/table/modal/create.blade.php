@@ -17,7 +17,7 @@
 @extends('omx-bootstrap::modal.base')
 
 @section("{$modalId}-body")
-    @include("{$tableFormPath}._form", array_merge($modalParams, ['formId' => $formId, 'method' => 'POST', 'action' => route("{$tablePath}.store")]))
+    @include($tableFormCreate, array_merge($modalParams, ['formId' => $formId, 'method' => 'POST', 'action' => route("{$tablePath}.store")]))
 @endsection
 
 @if ($modalWidth)

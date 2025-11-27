@@ -13,8 +13,8 @@ use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSearchedExceptio
 use Omadonex\LaravelTools\Support\Classes\Exceptions\OmxModelNotSmartFoundException;
 use Omadonex\LaravelTools\Support\Classes\Utils\UtilsFilter;
 use Omadonex\LaravelTools\Support\Interfaces\Repositories\IModelRepository;
+use Omadonex\LaravelTools\Support\Resources\PaginateResourceCollection;
 use Omadonex\LaravelTools\Support\Traits\CanBeEnabledTrait;
-use Omadonex\LaravelTools\Support\Transformers\PaginateResourceCollection;
 
 abstract class ModelRepository implements IModelRepository
 {

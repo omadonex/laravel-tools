@@ -5,7 +5,8 @@
 
     $tableId = $table['id'];
     $tablePath = $table['ext']['path'];
-    $tableFormPath = $table['ext']['formPath'];
+    $tableFormCreate = $table['ext']['formCreate'];
+    $tableFormEdit = $table['ext']['formEdit'];
     $tableModeList = $table['modeList'];
     $tableAclDeniedModeList = $table['aclDeniedModeList'];
 

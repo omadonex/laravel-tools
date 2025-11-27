@@ -1,6 +1,6 @@
 <?php
 
-namespace Omadonex\LaravelTools\Support\Transformers;
+namespace Omadonex\LaravelTools\Support\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Omadonex\LaravelTools\Support\Traits\AppendsToApiResourceTrait;

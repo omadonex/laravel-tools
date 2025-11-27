@@ -26,6 +26,9 @@ abstract class PageService extends OmxService implements IPageService
     public const MODE_ADMIN = 'admin';
     public const MODE_USER = 'user';
 
+    public const FORM_MODE_CREATE = 'create';
+    public const FORM_MODE_EDIT = 'edit';
+
     protected IAclService $aclService;
     protected ITableService $tableService;
     protected ColumnSetRepository $columnSetRepository;
@@ -285,17 +288,17 @@ abstract class PageService extends OmxService implements IPageService
                 $tableKey = $tableInfo['table'];
                 $modeList = $tableInfo['modeList'];
                 $tableId = "{$pageId}__Table" . ucfirst($tableKey);
-                $ext = $this->tableService->data($tableKey);
-                $ext['view'] = app($ext['modelView']);
-                $ext['path'] = $tableInfo['path'] ?? $pageData['path'];
-                $ext['formPath'] = ($tableInfo['noForm'] ?? false) ? null : ($pageData['formPath'] ?? ($tableInfo['formPath'] ?? $ext['formPath']));
+                $tableData = $this->tableService->data($tableKey);
+                $actualData = $this->tableService->getActualData($tableData, $tableInfo);
+                $actualData['view'] = app($actualData['modelView']);
+                $actualData['path'] = $tableInfo['path'] ?? $pageData['path'];
 
                 $tableList[] = [
                     'index' => $tableKey,
                     'id' => $tableId,
                     'modeList' => $modeList,
                     'columnSetList' => $this->columnSetRepository->getList($user ? $user->getKey() : 0, $pageId, $tableId),
-                    'ext' => $ext,
+                    'ext' => $actualData,
                     'aclDeniedModeList' => $aclDeniedModeList[$tableKey] ?? [],
                 ];
             }

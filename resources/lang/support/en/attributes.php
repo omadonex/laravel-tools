@@ -62,6 +62,7 @@ return [
     'is_default'                       => 'По умолчанию',
     'is_hidden'                        => 'Невидимый',
     'is_staff'                         => 'Персонал',
+    'is_verified'                      => 'Проверенный',
     'is_winner'                        => 'Победитель',
     'job_title'                        => 'Должность',
     'kpp'                              => 'КПП',

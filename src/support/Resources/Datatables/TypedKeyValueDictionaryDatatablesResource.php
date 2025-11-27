@@ -2,10 +2,10 @@
 
 namespace Omadonex\LaravelTools\Support\Resources\Datatables;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use Omadonex\LaravelTools\Support\Repositories\TypedKeyValueDictionaryRepository;
+use Omadonex\LaravelTools\Support\Resources\OmxJsonResource;
 
-abstract class TypedKeyValueDictionaryDatatablesResource extends JsonResource
+abstract class TypedKeyValueDictionaryDatatablesResource extends OmxJsonResource
 {
     /**
      * Transform the resource into an array.

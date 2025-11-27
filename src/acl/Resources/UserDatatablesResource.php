@@ -2,9 +2,9 @@
 
 namespace Omadonex\LaravelTools\Acl\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use Omadonex\LaravelTools\Support\Resources\OmxJsonResource;
 
-class UserDatatablesResource extends JsonResource
+class UserDatatablesResource extends OmxJsonResource
 {
     /**
      * Transform the resource into an array.

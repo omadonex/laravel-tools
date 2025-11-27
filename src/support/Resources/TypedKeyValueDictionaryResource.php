@@ -2,10 +2,9 @@
 
 namespace Omadonex\LaravelTools\Support\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use Omadonex\LaravelTools\Support\Models\TypedKeyValueDictionary;
 
-abstract class TypedKeyValueDictionaryResource extends JsonResource
+abstract class TypedKeyValueDictionaryResource extends OmxJsonResource
 {
     /**
      * Transform the resource into an array.

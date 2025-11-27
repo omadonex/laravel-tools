@@ -9,6 +9,7 @@ trait ConvertCheckboxValuesTrait
     public function convertFromCheckboxValues(array $data, array $fields): array
     {
         foreach ($data as $key => $value) {
+            $key = str_replace('_checkbox', '', $key);
             if (in_array($key, $fields)) {
                 $data[$key] = $value === 'on';
             }
@@ -35,5 +36,15 @@ trait ConvertCheckboxValuesTrait
         }
 
         return $resource;
+    }
+
+    public function convertToCheckboxValue(bool $value): string
+    {
+        return $value ? 'on' : 'off';
+    }
+
+    public function convertFromCheckboxValue(string $value): bool
+    {
+        return $value === 'on';
     }
 }

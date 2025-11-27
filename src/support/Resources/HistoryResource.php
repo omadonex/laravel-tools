@@ -2,9 +2,8 @@
 
 namespace Omadonex\LaravelTools\Support\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class HistoryResource extends JsonResource
+class HistoryResource extends OmxJsonResource
 {
     /**
      * Transform the resource into an array.

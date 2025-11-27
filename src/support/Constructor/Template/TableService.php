@@ -62,4 +62,39 @@ abstract class TableService extends OmxService implements ITableService
     {
         return $this->data($tableIndex)['title'] ?? '';
     }
+
+    public function getActualData($tableData, $tableInfo): array
+    {
+        if (!array_key_exists('form', $tableData) && !array_key_exists('formCreate', $tableData) && !array_key_exists('formEdit', $tableData)) {
+            $tableData['noForm'] = true;
+        } else {
+            $tableData['noForm'] = false;
+            if (!array_key_exists('formCreate', $tableData)) {
+                $tableData['formCreate'] = $tableData['form'];
+            }
+
+            if (!array_key_exists('formEdit', $tableData)) {
+                $tableData['formEdit'] = $tableData['form'];
+            }
+        }
+
+        $keyList = [
+            'table',
+            'modelView',
+            'title',
+            'noForm',
+            'form',
+            'formCreate',
+            'formEdit',
+            'captions',
+            'modalWidth',
+        ];
+
+        $data = [];
+        foreach ($keyList as $key) {
+            $data[$key] = $tableInfo[$key] ?? ($tableData[$key] ?? null);
+        }
+
+        return $data;
+    }
 }

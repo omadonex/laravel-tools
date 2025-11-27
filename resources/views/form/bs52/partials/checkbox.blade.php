@@ -1,4 +1,4 @@
-<div class="form-check" style="{{ $cmpStyle ?? '' }}">
+<div class="form-check" style="{{ $cmpStyle ?? '' }}" data-jst-field-box="{{ $cmpName }}">
     <input
         type="checkbox"
         @include('omx-form::bs52.partials.blocks.info')
