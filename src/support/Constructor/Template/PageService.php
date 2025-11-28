@@ -86,7 +86,7 @@ abstract class PageService extends OmxService implements IPageService
             self::OMX__CONFIG => [
                 'sub' => ['index', 'history'],
                 'title' => 'Конфигуратор',
-                'path' => Config::getPath(),
+                'pathList' => ['base' => Config::getPath()],
                 'icon' => 'streamline.regular.cog',
                 'tableList' => [
                     ['table' => ITableService::CONFIG, 'modeList' => ['edit', 'history', 'filter']],
@@ -95,7 +95,7 @@ abstract class PageService extends OmxService implements IPageService
             self::OMX__ROLE => [
                 'sub' => ['index', 'show', 'history'],
                 'title' => 'Роли',
-                'path' => Role::getPath(),
+                'pathList' => ['base' => Role::getPath()],
                 'icon' => 'streamline.regular.technology-privacy-consent-profile-lock-1',
                 'tableList' => [
                     ['table' => ITableService::ROLE, 'modeList' => ['create', 'edit', 'destroy', 'history', 'filter']],
@@ -104,7 +104,7 @@ abstract class PageService extends OmxService implements IPageService
             self::OMX__USER => [
                 'sub' => ['index', 'show'],
                 'title' => 'Пользователи',
-                'path' => User::getPath(),
+                'pathList' => ['base' => User::getPath()],
                 'icon' => 'streamline.regular.multiple-users-1',
                 'tableList' => [
                     ['table' => ITableService::USER, 'modeList' => ['create', 'edit', 'destroy', 'filter']],
@@ -149,7 +149,7 @@ abstract class PageService extends OmxService implements IPageService
 
         return array_merge([
             'name' => $data['title'],
-            'route' => ($data['sub'] ?? false) ? "{$data['path']}.index" : $data['route'],
+            'route' => ($data['sub'] ?? false) ? "{$data['pathList']['base']}.index" : $data['route'],
         ], $icon, $iconData, $role ? ['role' => $role] : [], $badge ? ['badge' => $badge] : [], ['opt' => $opt]);
     }
 
@@ -200,8 +200,8 @@ abstract class PageService extends OmxService implements IPageService
 
         foreach ($breadcrumbs as $key => $breadcrumb) {
             foreach ($breadcrumb as $index => $item) {
-                foreach ($breadcrumbReplaceData as $searth => $replace) {
-                    $str = str_replace($searth, $replace, $item);
+                foreach ($breadcrumbReplaceData as $search => $replace) {
+                    $str = str_replace($search, $replace, $item);
                 }
                 $breadcrumbs[$key][$index] = $str;
             }
@@ -276,7 +276,7 @@ abstract class PageService extends OmxService implements IPageService
 
         if ($pageData['sub'] ?? false) {
             $options['res'] = [
-                'path' => $pageData['path'] ?? null,
+                'path' => $pageData['pathList']['base'] ?? null,
                 'sub' => $sub,
                 'subList' => $pageData['sub'],
             ];
@@ -291,7 +291,7 @@ abstract class PageService extends OmxService implements IPageService
                 $tableData = $this->tableService->data($tableKey);
                 $actualData = $this->tableService->getActualData($tableData, $tableInfo);
                 $actualData['view'] = app($actualData['modelView']);
-                $actualData['path'] = $tableInfo['path'] ?? $pageData['path'];
+                $actualData['pathList'] = $this->getPathData($tableInfo['pathList'] ?? [], $pageData['pathList'] ?? []);
 
                 $tableList[] = [
                     'index' => $tableKey,
@@ -317,5 +317,36 @@ abstract class PageService extends OmxService implements IPageService
         $data['filter'] = $this->getFilterPage($this->getPageId($pageIndex, $sub));
 
         return view($viewName, $this->getViewData($pageIndex, $sub, $data, $breadcrumbReplaceData, $aclDeniedModeList));
+    }
+
+    public function getPathData(array $tableInfoPathList, array $pageDataTableList): array
+    {
+        $data = [];
+        $keyList = [
+            'index',
+            'data',
+            'create',
+            'store',
+            'show',
+            'edit',
+            'update',
+            'destroy',
+            'history',
+            'export',
+            'import',
+        ];
+
+        foreach ($keyList as $key) {
+            $data[$key] = $tableInfoPathList[$key] ?? ($pageDataTableList[$key] ?? null);
+        }
+
+        $basePath = $tableInfoPathList['base'] ?? ($pageDataTableList['base'] ?? null);
+        foreach ($keyList as $key) {
+            if ($data[$key] === null) {
+                $data[$key] = "{$basePath}.{$key}";
+            }
+        }
+
+        return $data;
     }
 }

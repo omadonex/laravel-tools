@@ -5,7 +5,7 @@
 
     $tableId = $table['id'];
     $tableTitle = $table['ext']['title'];
-    $tablePath = $table['ext']['path'];
+    $tablePathList = $table['ext']['pathList'];
     $tableFormPath = $table['ext']['formPath'];
     $view = $table['ext']['view'];
 
@@ -22,7 +22,7 @@
         <div class="col-xl-12 d-flex">
             <div class="card border-0 flex-fill w-100">
                 <div class="card-header border-0 card-header-space-between">
-                    <h2 class="card-header-title h4 text-uppercase">Карточка записи (ID: {{ $model->getKey() }}) <a href="{{ route("{$tablePath}.index") }}">Таблица</a></h2>
+                    <h2 class="card-header-title h4 text-uppercase">Карточка записи (ID: {{ $model->getKey() }}) <a href="{{ route($tablePathList['index']) }}">Таблица</a></h2>
                     @yield('page-buttons')
                 </div>
 

@@ -17,7 +17,7 @@
 @if (!isset($noHeader) || !$noHeader)
 <h2 class="card-header-title h4 text-uppercase">
     @if (!isset($specHeader) || !$specHeader)
-        Таблица <i>"{{ $tableTitle }}"</i> @if (in_array('history', $tableModeList))<a href="{{ route("{$tablePath}.history") }}">(История изменений)</a>@endif
+        Таблица <i>"{{ $tableTitle }}"</i> @if (in_array('history', $tableModeList))<a href="{{ route($tablePathList['history']) }}">(История изменений)</a>@endif
     @endif
     @yield('table-header')
 </h2>
@@ -35,11 +35,11 @@
 @yield('table-buttons')
 
 @if (in_array('export', $tableModeList) && !in_array('export', $tableAclDeniedModeList))
-    @include('omx-bootstrap::resource.export._form', ['formId' => "{$tableId}__formExport", 'method' => 'POST', 'action' => route("{$tablePath}.export"), 'tableParams' => isset($tableParams) ? $tableParams : []])
+    @include('omx-bootstrap::resource.export._form', ['formId' => "{$tableId}__formExport", 'method' => 'POST', 'action' => route($tablePathList['export']), 'tableParams' => isset($tableParams) ? $tableParams : []])
     @include('omx-bootstrap::buttons.standard.export', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;'])
 @endif
 @if (in_array('import', $tableModeList) && !in_array('import', $tableAclDeniedModeList))
-    @include('omx-bootstrap::buttons.standard.import', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;', 'btnHref' => route("{$tablePath}.import")])
+    @include('omx-bootstrap::buttons.standard.import', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;', 'btnHref' => route($tablePathList['import'])])
 @endif
 @if (in_array('create', $tableModeList) && !in_array('create', $tableAclDeniedModeList))
     @include('omx-bootstrap::buttons.standard.create', ['btnEntityId' => $tableId, 'btnStyle' => 'margin-right: 1em;'])

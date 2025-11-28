@@ -17,7 +17,7 @@
 @extends('omx-bootstrap::modal.base')
 
 @section("{$modalId}-body")
-    @include($tableFormEdit, array_merge($modalParams, ['editMode' => true, 'formId' => $formId, 'method' => 'PUT', 'action' => route("{$tablePath}.update", '*')]))
+    @include($tableFormEdit, array_merge($modalParams, ['editMode' => true, 'formId' => $formId, 'method' => 'PUT', 'action' => route($tablePathList['update'], '*')]))
 @endsection
 
 @if ($modalWidth)

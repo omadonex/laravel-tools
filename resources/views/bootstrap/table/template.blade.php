@@ -4,7 +4,7 @@
     /** @var \Omadonex\LaravelTools\Support\ModelView\ModelView $view */
 
     $tableId = $table['id'];
-    $tablePath = $table['ext']['path'];
+    $tablePathList = $table['ext']['pathList'];
     $tableFormCreate = $table['ext']['formCreate'];
     $tableFormEdit = $table['ext']['formEdit'];
     $tableModeList = $table['modeList'];

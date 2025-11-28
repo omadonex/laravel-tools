@@ -1,10 +1,10 @@
 <div class="table-responsive" style="margin-bottom: 15px; overflow: hidden;">
-    <input id="{{ $tableId }}_urlData" type="hidden" value="{{ route("{$tablePath}.data", isset($tableParams) ? $tableParams : null) }}"/>
+    <input id="{{ $tableId }}_urlData" type="hidden" value="{{ route($tablePathList['data'], isset($tableParams) ? $tableParams : null) }}"/>
     @if (in_array('edit', $tableModeList))
-        <input id="{{ $tableId }}_urlRowData" type="hidden" value="{{ route("{$tablePath}.edit", '*') }}"/>
+        <input id="{{ $tableId }}_urlRowData" type="hidden" value="{{ route($tablePathList['edit'], '*') }}"/>
     @endif
     @if (in_array('destroy', $tableModeList))
-        <input id="{{ $tableId }}_urlRowDelete" type="hidden" value="{{ route("{$tablePath}.destroy", '*') }}"/>
+        <input id="{{ $tableId }}_urlRowDelete" type="hidden" value="{{ route($tablePathList['destroy'], '*') }}"/>
     @endif
 
     @yield('table-hidden')
